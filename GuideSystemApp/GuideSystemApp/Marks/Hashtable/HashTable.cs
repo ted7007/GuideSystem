@@ -1,5 +1,5 @@
-﻿using GuideSystemApp.Marks;
-using Microsoft.VisualBasic.FileIO;
+﻿using System.Text;
+using GuideSystemApp.Marks;
 
 namespace Lab2_3;
 /*
@@ -31,7 +31,7 @@ public class HashTable
     /// <summary>
     /// текущие элементы
     /// </summary>
-    private  int _curCount;
+    private int _curCount;
     /// <summary>
     /// максимальный размер таблицы
     /// </summary>
@@ -56,20 +56,20 @@ public class HashTable
         _startCount = startCount;
     }
 
-    public bool Insert(Mark value)
+    public bool Insert(string key, int value)
     {
-        int hash1 = hashFunc(value);
+        int hash1 = hashFunc(key);
         int startHash = hash1;
         if (_table[hash1].Status == NodeStatus.Taken)
         {
-            (bool, int?) res = GetOutCollision(hash1, value);
+            (bool, int?) res = GetOutCollision(hash1, key);
             if (!res.Item1)
                 return res.Item1;
             hash1 = (int)res.Item2;
         }
         
         
-        _table[hash1] = new Node(value, startHash, startHash != hash1 ? hash1 : null);
+        _table[hash1] = new Node(key, value, startHash, startHash != hash1 ? hash1 : null);
 
         _curCount++;
         ResizeIfNeed();
@@ -106,11 +106,11 @@ public class HashTable
         {
             if (item.Status == NodeStatus.Taken)
             {
-                int hash1 = hashFunc(item);
+                int hash1 = hashFunc(item.Key);
                 int startHash = hash1;
                 if (_table[hash1].Status == NodeStatus.Taken)
                 {
-                    (bool, int?) res = GetOutCollision(hash1, item.Value);
+                    (bool, int?) res = GetOutCollision(hash1, item.Key);
                     if (!res.Item1)
                     {
                         Console.WriteLine("что то не так");
@@ -120,22 +120,21 @@ public class HashTable
                     hash1 = (int)res.Item2;
                 }
 
-                _table[hash1] = new Node(item.Value, startHash, startHash != hash1 ? hash1 : null); 
-                Insert(item.Value);
+                _table[hash1] = new Node(item.Key, item.Value, startHash, startHash != hash1 ? hash1 : null); 
+                //Insert(item.Value);
             }
         }
     }
     
-    public bool Find(Mark value)
+    public bool Find(string key)
     {
-        int hash1 = hashFunc(value);
+        int hash1 = hashFunc(key);
         int hash2 = hash1;
         int j = 0;
         while (_table[hash2].Status == NodeStatus.Taken || _table[hash2].Status == NodeStatus.Free && _table[hash2].Value != null)
         {
             j++;
-            string curFio = _table[hash2].Value.FirstName + _table[hash2].Value.LastName + _table[hash2].Value.MiddleName;
-            if (curFio == fio && _table[hash2].Value.GroupNumber == groupNumber)
+            if (_table[hash2].Key == key)
                 return true;
             hash2 = GetHash2(hash1, j);
         }
@@ -143,13 +142,13 @@ public class HashTable
         return false;
     }
     // вынести отдельно разрешение коллизий, MoveBack так чтоб последний элемент вставлялся на место удаляемого, также проверять значение первой хф
-    public bool Remove(Student value)
+    public bool Remove(string key)
     {
-        int hash1 = hashFunc(value.FirstName+value.LastName+value.MiddleName, value.GroupNumber);
+        int hash1 = hashFunc(key);
         int j = 0;
-        if (_table[hash1].Value != value)
+        if (_table[hash1].Key != key)
         {
-            (bool, int?, int) res = GetOutCollisionForRemove(hash1, value);
+            (bool, int?, int) res = GetOutCollisionForRemove(hash1, key);
             if (!res.Item1)
                 return res.Item1;
             hash1 = (int)res.Item2;
@@ -183,35 +182,19 @@ public class HashTable
         _table[hash1].Clear();
     }
 
-    private (bool, int?, int) GetOutCollisionForRemove(int hash1, Student value)
+    private (bool, int?, int) GetOutCollisionForRemove(int hash1, string key)
     {
         int hash2 = hash1;
         int j = 0;
-        while (_table[hash2].Status != NodeStatus.Free || _table[hash2].Status == NodeStatus.Free && _table[hash2].Value != null)
+        while (_table[hash2].Status != NodeStatus.Free || _table[hash2].Status == NodeStatus.Free && _table[hash2].Key != String.Empty)
         {
             j++;
-            if (_table[hash2].Value.Equals(value))
+            if (_table[hash2].Key.Equals(key))
                 return (true, hash2, j);
             hash2 = GetHash2(hash1, j);
         }
 
         return (false, 0, -1);
-    }
-    
-    private void MoveBack(int hash, int cur, int j)
-    {
-        j++;
-        int nextKey = GetHash2(hash, j);
-        int realCurHash = hashFunc(_table[nextKey].Value.FirstName + _table[nextKey].Value.LastName + _table[nextKey].Value.MiddleName, _table[nextKey].Value.GroupNumber);
-        
-        if (_table[nextKey].Status != NodeStatus.Taken || realCurHash != hash)
-        {
-            _table[cur].Clear();
-            return;
-        }
-        
-        _table[cur] = _table[nextKey];
-        MoveBack(hash, nextKey, j);
     }
 
     private void MoveBack2(int hash, int cur, int j)
@@ -226,23 +209,23 @@ public class HashTable
              j++;
              prevKey = nextKey;
              nextKey = GetHash2(hash, j);
-             if(_table[nextKey].Status == NodeStatus.Free && _table[nextKey].Value == null)
+             if(_table[nextKey].Status == NodeStatus.Free && _table[nextKey].Key == String.Empty)
                  break;
-             realCurHash = hashFunc(_table[nextKey].Value.FirstName + _table[nextKey].Value.LastName + _table[nextKey].Value.MiddleName, _table[nextKey].Value.GroupNumber);
+             realCurHash = hashFunc(_table[nextKey].Key);
         }
         
         _table[cur].Set(_table[prevKey]);
         _table[prevKey].Clear();
     }
     
-    private (bool, int?) GetOutCollision(int hash1, Mark value)
+    private (bool, int?) GetOutCollision(int hash1, string key)
     {
         int hash2 = hash1;
         int j = 0;
-        while (_table[hash2].Status == NodeStatus.Taken || _table[hash2].Status == NodeStatus.Free && _table[hash2].Value != null)
+        while (_table[hash2].Status == NodeStatus.Taken || _table[hash2].Status == NodeStatus.Free && _table[hash2].Key != String.Empty)
         {
             j++;
-            if (_table[hash2].Value.Equals(value))
+            if (_table[hash2].Key.Equals(key))
                 return (false, 0);
             hash2 = GetHash2(hash1, j);
         }
@@ -261,16 +244,18 @@ public class HashTable
         return table;
     }
 
-    public void Print()
+    public string Print()
     {
-        Console.WriteLine("-----------------");
+        var sb = new StringBuilder();
+        sb.Append("-----------------\n");
+        Console.WriteLine("");
         for (int i = 0; i < _maxCount; i++)
         {
-            var lineToStr = _table[i].Value is null ? "" : (_table[i].Value.GetString()); 
-            Console.WriteLine($"[{i}:{_table[i].Status}| h1:{_table[i].Hash1} h2: {_table[i].Hash2}] {lineToStr}");
+            var lineToStr = _table[i].Key +" " +_table[i].Value; 
+            sb.Append($"[{i}:{_table[i].Status}| h1:{_table[i].Hash1} h2: {_table[i].Hash2}] {lineToStr}\n");
         }
-
-        Console.WriteLine("-----------------");
+        sb.Append("-----------------\n");
+        return sb.ToString();
     }
 
     private int GetHash2(int hash1, int j)
@@ -280,10 +265,10 @@ public class HashTable
         return (hash1 + j * k1 + j * j * k2) % _maxCount;
     }
 
-    int hashFunc(Mark mark)
+    int hashFunc(string key)
     {
 
-        int v = getIntFromStr(fio) + groupNumber;
+        int v = getIntFromStr(key);
         int hash = 0;
         int newNumber = v * v;
         string newNumberStr = newNumber.ToString();

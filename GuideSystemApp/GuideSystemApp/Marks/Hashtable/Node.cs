@@ -5,7 +5,9 @@ namespace Lab2_3;
 
 public class Node
 {
-    public Mark Value { get; set; }
+    public string Key { get; set; }
+    
+    public int Value { get; set; }
 
     public NodeStatus Status { get; set; }
 
@@ -18,8 +20,9 @@ public class Node
         Status = NodeStatus.Free;
     }
 
-    public Node(Mark value, int? hash1, int? hash2)
+    public Node(string key, int value, int? hash1, int? hash2)
     {
+        Key = key;
         Value = value;
         Status = NodeStatus.Taken;
         Hash1 = hash1;

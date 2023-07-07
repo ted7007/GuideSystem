@@ -40,6 +40,6 @@ public class Mark
         if (mark.Date == Date && mark.Discipline == Discipline && mark.Value == Value &&
             mark.PassportSerialNumber == PassportSerialNumber)
             return true;
-        return false
+        return false;
     }
 }
