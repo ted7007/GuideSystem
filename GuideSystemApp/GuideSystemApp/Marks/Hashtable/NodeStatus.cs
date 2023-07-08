@@ -1,4 +1,4 @@
-﻿namespace Lab2_3;
+﻿namespace GuideSystemApp.Marks.Hashtable;
 
 public enum NodeStatus
 {

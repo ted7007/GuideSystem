@@ -1,7 +1,6 @@
 ﻿using System.Text;
-using GuideSystemApp.Marks;
 
-namespace Lab2_3;
+namespace GuideSystemApp.Marks.Hashtable;
 /*
 Косилов Александр - ХТ - динамическая (статус 0/1), 0/1, 0 - свободно, 1 - занято
  разрешение коллизий - открытая адресация (квадратичный),

@@ -1,7 +1,4 @@
-﻿using System.Security.AccessControl;
-using GuideSystemApp.Marks;
-
-namespace Lab2_3;
+﻿namespace GuideSystemApp.Marks.Hashtable;
 
 public class Node
 {
