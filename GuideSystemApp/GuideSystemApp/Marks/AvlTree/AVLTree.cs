@@ -1,3 +1,5 @@
+using System.Text;
+
 namespace GuideSystemApp.Marks.AvlTree;
 
 
@@ -93,6 +95,11 @@ public class AVLTree<T> where T : IComparable<T>
         return FindNode(_root, value) != null;
     }
 
+    public AVLNode<T> Find(T value)
+    {
+        return FindNode(_root, value);
+    }
+
     // Рекурсивный метод поиска узла в дереве
     private AVLNode<T> FindNode(AVLNode<T> node, T value)
     {
@@ -121,6 +128,23 @@ public class AVLTree<T> where T : IComparable<T>
     public void Print()
     {
         PrintTree(_root);
+    }
+
+    public string GetView()
+    {
+        return GetViewTree(_root);
+    }
+    
+    private string GetViewTree(AVLNode<T> node)
+    {
+        StringBuilder sb = new StringBuilder();
+        if (node != null)
+        {
+            sb.Append(GetViewTree(node.Left));
+            sb.Append(node.Value + ": " + string.Join(", ", node.List)+"\n");
+            sb.Append(GetViewTree(node.Right));
+        }
+        return sb.ToString();
     }
 
     private void PrintTree(AVLNode<T> node)

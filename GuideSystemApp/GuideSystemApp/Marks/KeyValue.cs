@@ -10,4 +10,9 @@ public class KeyValue : IComparable<KeyValue>
     {
         return Key.CompareTo(other.Key);
     }
+
+    public override string ToString()
+    {
+        return Key;
+    }
 }

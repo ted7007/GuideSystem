@@ -1,10 +1,13 @@
-﻿using Lab2_4;
+﻿using System.Text;
+using Lab2_4;
 
 namespace GuideSystemApp.Marks.List;
 
 public class LinkedList<T> where T : IComparable<T>
 {
     public Node<T> head;
+
+    public Node<T> tail;
 
     public void Add(T data)
     {
@@ -13,18 +16,16 @@ public class LinkedList<T> where T : IComparable<T>
         if (head == null)
         {
             head = newNode;
+            head.Next = head;
+            tail = newNode;
+            tail.Next = head;
         }
         else
         {
-            Node<T> currentNode = head;
-
-            while (currentNode.Next != head)
-            {
-                currentNode = currentNode.Next;
-            }
-
             newNode.Next = head;
-            currentNode.Next = newNode;
+            tail = newNode;
+            tail.Next = newNode;
+            
         }
     }
 
@@ -82,15 +83,22 @@ public class LinkedList<T> where T : IComparable<T>
         }
     }
 
-    public void Print()
+    public override string ToString()
     {
+        StringBuilder sb = new StringBuilder();
+        if (head == null)
+            return "Ошибка";
         Node<T> currentNode = head;
-
-        while (currentNode != null)
+        sb.Append(head.Data + "->");
+        head = head.Next;
+        while (currentNode != head)
         {
-            Console.WriteLine(currentNode.Data);
+            sb.Append(currentNode.Data + "->");
             currentNode = currentNode.Next;
         }
+
+        sb.Append("head");
+        return sb.ToString();
     }
     
     public Node<T>? Find(T data)

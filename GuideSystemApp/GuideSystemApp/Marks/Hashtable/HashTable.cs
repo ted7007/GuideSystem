@@ -125,20 +125,20 @@ public class HashTable
         }
     }
     
-    public bool Find(string key)
+    public int? Find(string key)
     {
         int hash1 = hashFunc(key);
         int hash2 = hash1;
         int j = 0;
-        while (_table[hash2].Status == NodeStatus.Taken || _table[hash2].Status == NodeStatus.Free && _table[hash2].Value != null)
+        while (_table[hash2].Status == NodeStatus.Taken || _table[hash2].Status == NodeStatus.Free && !String.IsNullOrEmpty(_table[hash2].Key))
         {
             j++;
             if (_table[hash2].Key == key)
-                return true;
+                return _table[hash2].Value;
             hash2 = GetHash2(hash1, j);
         }
 
-        return false;
+        return null;
     }
     // вынести отдельно разрешение коллизий, MoveBack так чтоб последний элемент вставлялся на место удаляемого, также проверять значение первой хф
     public bool Remove(string key)
@@ -185,7 +185,7 @@ public class HashTable
     {
         int hash2 = hash1;
         int j = 0;
-        while (_table[hash2].Status != NodeStatus.Free || _table[hash2].Status == NodeStatus.Free && _table[hash2].Key != String.Empty)
+        while (_table[hash2].Status != NodeStatus.Free || _table[hash2].Status == NodeStatus.Free && !String.IsNullOrEmpty(_table[hash2].Key))
         {
             j++;
             if (_table[hash2].Key.Equals(key))
@@ -208,7 +208,7 @@ public class HashTable
              j++;
              prevKey = nextKey;
              nextKey = GetHash2(hash, j);
-             if(_table[nextKey].Status == NodeStatus.Free && _table[nextKey].Key == String.Empty)
+             if(_table[nextKey].Status == NodeStatus.Free && !String.IsNullOrEmpty(_table[nextKey].Key))
                  break;
              realCurHash = hashFunc(_table[nextKey].Key);
         }
@@ -221,7 +221,7 @@ public class HashTable
     {
         int hash2 = hash1;
         int j = 0;
-        while (_table[hash2].Status == NodeStatus.Taken || _table[hash2].Status == NodeStatus.Free && _table[hash2].Key != String.Empty)
+        while (_table[hash2].Status == NodeStatus.Taken || _table[hash2].Status == NodeStatus.Free && !String.IsNullOrEmpty(_table[hash2].Key))
         {
             j++;
             if (_table[hash2].Key.Equals(key))
@@ -243,7 +243,7 @@ public class HashTable
         return table;
     }
 
-    public string Print()
+    public string GetView()
     {
         var sb = new StringBuilder();
         sb.Append("-----------------\n");
@@ -259,11 +259,49 @@ public class HashTable
 
     private int GetHash2(int hash1, int j)
     {
-        int k1 = 3;
-        int k2 = 19;
-        return (hash1 + j * k1 + j * j * k2) % _maxCount;
+        j = j % 1000;
+        int state = 0;
+        int k1=0, k2=0;
+        for (int i = 2; i < _maxCount; i++)
+        {
+            if(!IsCoprime(i, _maxCount))
+                 continue;
+            if (state == 0)
+                k1 = i;
+            if (state == 1)
+            {
+                k2 = i;
+                break;
+            }
+
+            state++;
+        }
+        var res = (hash1 + j * k1 + j * j * k2) % _maxCount;
+        if (res < 0)
+            res = res * -1;
+        return res;
     }
 
+    public static int gcd(int a, int b)
+    {
+        if (a == 0 || b == 0)
+            return 0;
+
+        while (b != 0)
+        {
+            int remainder = a % b;
+            a = b;
+            b = remainder;
+        }
+
+        return a;
+    }
+
+    public static bool IsCoprime(int a, int b)
+    {
+        return gcd(a, b) == 1;
+    }
+    
     int hashFunc(string key)
     {
 
