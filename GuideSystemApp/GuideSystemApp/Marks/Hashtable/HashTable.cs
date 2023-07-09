@@ -208,7 +208,7 @@ public class HashTable
              j++;
              prevKey = nextKey;
              nextKey = GetHash2(hash, j);
-             if(_table[nextKey].Status == NodeStatus.Free && !String.IsNullOrEmpty(_table[nextKey].Key))
+             if(_table[nextKey].Status == NodeStatus.Free && String.IsNullOrEmpty(_table[nextKey].Key))
                  break;
              realCurHash = hashFunc(_table[nextKey].Key);
         }

@@ -35,7 +35,7 @@ public class MarkRepository
         MarkIndexByDate = new AVLTree<KeyValue>();
     }
 
-    private void WriteToFile(string path)
+    public void WriteToFile(string path)
     {
 
         using (StreamWriter writer = new StreamWriter(path))
@@ -44,12 +44,12 @@ public class MarkRepository
 
             foreach (var mark in MarkArray)
             {
-                writer.WriteLine($"{mark.PassportSerialNumber}\\{mark.Discipline}\\{mark.Date}\\{mark.Value}");
+                writer.WriteLine($"{mark.PassportSerialNumber}\\{mark.Discipline}\\{mark.Date}\\{(int)mark.Value}");
             }
         }
     }
     
-    private void ReadFromFile(string path)
+    public void ReadFromFile(string path)
     {
         using (StreamReader reader = new StreamReader(path))
         {
@@ -61,7 +61,7 @@ public class MarkRepository
             // Записываем данные в массив
             for (int i = 0; i < count; i++)
             {
-                string[] markStr = reader.ReadLine().Split('/');
+                string[] markStr = reader.ReadLine().Split('\\');
                 Mark mark = new Mark()
                 {
                     PassportSerialNumber = markStr[0],
@@ -69,6 +69,7 @@ public class MarkRepository
                     Date = markStr[2],
                     Value = (MarkEnum)int.Parse(markStr[3])
                 };
+                MarkArray[i] = mark;
             }
         }
 
@@ -212,6 +213,16 @@ public class MarkRepository
         }
 
         return "Ошибка";
+    }
+
+    public void Edit(Mark oldValue, Mark newValue)
+    {
+        var num = Find(oldValue);
+        if(num == null)
+            return;
+        RemoveFromIndexes((int)num);
+        MarkArray[(int)num] = newValue;
+        AddToIndexes((int)num);
     }
 
     public Mark[] GetAll()
