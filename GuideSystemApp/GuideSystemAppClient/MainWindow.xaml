@@ -1,0 +1,43 @@
+﻿<Window x:Class="GuideSystemAppClient.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:GuideSystemAppClient"
+        mc:Ignorable="d"
+        Title="GuideSystem" Height="450" Width="800">
+    <Grid ShowGridLines="True">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition></ColumnDefinition>
+            <ColumnDefinition Width="4*"></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="0.5*"></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition Height="4*"></RowDefinition>
+            <RowDefinition></RowDefinition>
+        </Grid.RowDefinitions>
+        
+        <StackPanel Grid.ColumnSpan="3" Orientation="Horizontal" HorizontalAlignment="Left">
+            <Button Margin="5" Width="100" Command="{Binding DownloadCommand}">Загрузить</Button> 
+            <Button Margin="5" Width="100" Command="{Binding SaveCommand}">Сохранить</Button> 
+        </StackPanel>
+        
+        <ListBox Grid.Row="2" Grid.Column="0" SelectedItem="{Binding Path=SelectedList}">
+            <ListBoxItem>Оценки</ListBoxItem>
+            <ListBoxItem IsSelected="True">Студенты</ListBoxItem>
+            <ListBoxItem>Дисциплины</ListBoxItem>
+        </ListBox>
+        
+        <ListView Grid.Row="2" Grid.Column="1" ItemsSource="{Binding Path=CurrentList}" SelectedItem="{Binding Path=CurrentListSelectedItem}"/>
+        
+        <StackPanel Grid.Row="4" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center">
+            <Button Margin="5" Width="100" Command="{Binding AddCommand}">Добавить</Button> 
+            <Button Margin="5" Width="100" Command="{Binding RemoveCommand}">Удалить</Button> 
+            <Button Margin="5" Width="100" Command="{Binding EditCommand}">Изменить</Button> 
+        </StackPanel>
+        
+        
+    </Grid>
+</Window>
