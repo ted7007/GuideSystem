@@ -140,9 +140,9 @@ public class AVLTree<T> where T : IComparable<T>
         StringBuilder sb = new StringBuilder();
         if (node != null)
         {
-            sb.Append(GetViewTree(node.Left));
+            sb.Append("  " + GetViewTree(node.Left));
             sb.Append(node.Value + ": " + string.Join(", ", node.List)+"\n");
-            sb.Append(GetViewTree(node.Right));
+            sb.Append("  " + GetViewTree(node.Right));
         }
         return sb.ToString();
     }

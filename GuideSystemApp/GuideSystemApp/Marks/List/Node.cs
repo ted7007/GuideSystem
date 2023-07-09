@@ -1,4 +1,4 @@
-﻿namespace Lab2_4;
+﻿namespace GuideSystemApp.Marks.List;
 
 public class Node<T> where T : IComparable<T>
 {

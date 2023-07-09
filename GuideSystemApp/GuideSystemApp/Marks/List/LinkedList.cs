@@ -1,5 +1,4 @@
 ﻿using System.Text;
-using Lab2_4;
 
 namespace GuideSystemApp.Marks.List;
 
@@ -16,17 +15,15 @@ public class LinkedList<T> where T : IComparable<T>
         if (head == null)
         {
             head = newNode;
-            head.Next = head;
             tail = newNode;
-            tail.Next = head;
         }
         else
         {
-            newNode.Next = head;
-            tail = newNode;
             tail.Next = newNode;
-            
+            tail = newNode;
         }
+
+        tail.Next = head;
     }
 
     public void Remove(T data)
@@ -90,7 +87,7 @@ public class LinkedList<T> where T : IComparable<T>
             return "Ошибка";
         Node<T> currentNode = head;
         sb.Append(head.Data + "->");
-        head = head.Next;
+        currentNode = head.Next;
         while (currentNode != head)
         {
             sb.Append(currentNode.Data + "->");

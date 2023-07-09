@@ -2,12 +2,7 @@
 
 using GuideSystemApp.Marks;
 
-Console.WriteLine("Hello, World!");
-GuideSystemApp.Marks.List.LinkedList<int> list = new GuideSystemApp.Marks.List.LinkedList<int>();
-for(int i = 0; i < 5; i++)
-    list.Add(i);
-Console.WriteLine(
-list.ToString());
+
 MarkRepository repo = new MarkRepository();
 int count = 10;
 for (int i = 0; i < 10; i++)
@@ -22,6 +17,6 @@ for (int i = 0; i < 10; i++)
     repo.Add(mark);
 }
 
-Console.WriteLine(repo.GetIndexView(IndexType.Value));
 
-Console.WriteLine(repo.GetUniqueView());
+ Console.WriteLine(repo.GetIndexView(IndexType.Value));
+

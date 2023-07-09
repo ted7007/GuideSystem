@@ -214,6 +214,11 @@ public class MarkRepository
         return "Ошибка";
     }
 
+    public Mark[] GetAll()
+    {
+        return MarkArray;
+    }
+    
     public string GetUniqueView()
     {
         return HashTable.GetView();
