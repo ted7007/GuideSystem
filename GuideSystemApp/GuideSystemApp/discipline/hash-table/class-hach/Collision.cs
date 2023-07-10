@@ -89,7 +89,7 @@ public class Collision
         }
 
     }
-    public Discipline CollisionSearch(Key key, Item[] items)
+    public int CollisionSearch(Key key, Item[] items)
     {
         while (items[index].status != 0 && flag == 1 && j <= this.size)
         {
@@ -110,11 +110,11 @@ public class Collision
         }
         else
         {
-            return null;
+            return -1;
         }
     }
 
-    public void CollisionRemove(Key key, Discipline value, ref Item[] items, ref int count)
+    public void CollisionRemove(Key key, int value, ref Item[] items, ref int count)
     {
         while (items[index].status != 0 && flag == 1 && j <= this.size)
         {

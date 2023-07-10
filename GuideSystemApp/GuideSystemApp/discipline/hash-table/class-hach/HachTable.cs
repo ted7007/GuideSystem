@@ -10,12 +10,16 @@ public class HachTable
     public HachTable(int size)
     {
         items = new Item[size];
+        for (int i = 0; i < size; i++)
+        {
+            items[i] = new Item();
+        }
         this.size = size;
         this.count = 0;
         this.initial_size = size;
 
     }
-    public void Remove(Key key, Discipline value)
+    public void Remove(Key key, int value)
     {
         bool flag = true;
         int hash = HachOne(key);
@@ -45,13 +49,14 @@ public class HachTable
         float capacity = (float)count / size;
         if (capacity < 0.25 && initial_size < size)
         {
-            Increase(item,"remove");
+            Increase(item, "remove");
         }
     }
-    public void Add(Key key, Discipline value)
+    public void Add(Key key, int value)
     {
         int hash = HachOne(key);
         Item item = new Item(key, value, hash);
+
         if (items[hash].status == 0)
         {
             items[hash] = item;
@@ -59,16 +64,20 @@ public class HachTable
         }
         else
         {
-            Collision collision = new Collision(hash, size);
-            collision.CollisionAdd(item, ref items, ref count);
+            if (key != items[hash].key)
+            {
+                Collision collision = new Collision(hash, size);
+                collision.CollisionAdd(item, ref items, ref count);
+            }
         }
         float capacity = (float)count / size;
         if (capacity > 0.75)
         {
-            Increase(item,"add");
+            Increase(item, "add");
         }
+
     }
-    public Discipline Search(Key key)
+    public int Search(Key key)
     {
         int hash = HachOne(key);
         if (key == items[hash].key)
@@ -85,7 +94,8 @@ public class HachTable
     {
         for (int j = 0; j < size; j++)
         {
-            if (items[j].status == 1){
+            if (items[j].status == 1)
+            {
                 Console.Write($"{j}|");
                 items[j].print();
                 Console.WriteLine($"|{items[j].status}|hash={items[j].hash1}|шаг={items[j].k} ");
@@ -123,14 +133,18 @@ public class HachTable
             p = size * 2;
         }
         Item[] arr = new Item[size];
+        for (int i = 0; i < size; i++)
+        {
+            arr[i] = new Item();
+        }
         for (int j = 0; j < p; j++)
         {
             if (items[j].status == 1)
             {
                 int hash = HachOne(items[j].key);
+                item = new Item(items[j].key, items[j].value, hash);
                 if (arr[hash].status == 0)
                 {
-                    item = new Item(items[j].key, items[j].value, hash);
                     arr[hash] = item;
                     count++;
                 }
