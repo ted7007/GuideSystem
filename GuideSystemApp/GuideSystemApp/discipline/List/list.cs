@@ -6,7 +6,57 @@ public class Node
 
 public class CircularLinkedList
 {
-    private Node head;
+    public Node head;
+    public CircularLinkedList()
+    {
+
+    }
+
+    public CircularLinkedList(int data)
+    {
+        Node newNode = new Node();
+        newNode.Data = data;
+
+        if (head == null)
+        {
+            head = newNode;
+            newNode.Next = head;
+        }
+        else
+        {
+            Node current = head;
+            while (current.Next != head)
+            {
+                current = current.Next;
+            }
+
+            current.Next = newNode;
+            newNode.Next = head;
+        }
+    }
+
+    public bool Edit(int data, int value)
+    {
+        if (head == null)
+        {
+            return false;
+        }
+
+        Node current = head;
+
+        do
+        {
+            if (current.Data == data)
+            {
+                current.Data = value;
+                return true;
+            }
+
+            current = current.Next;
+        } while (current != head);
+
+        return false; // Элемент не найден
+    }
 
     public void AddNode(int data)
     {

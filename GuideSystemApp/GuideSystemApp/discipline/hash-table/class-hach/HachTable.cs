@@ -19,6 +19,20 @@ public class HachTable
         this.initial_size = size;
 
     }
+
+    public void Edit(Key key, int res)
+    {
+        int hash = HachOne(key);
+        if (key == items[hash].key)
+        {
+             items[hash].value = res;
+        }
+        else
+        {
+            Collision collision = new Collision(hash, size);
+            collision.CollisionEdit(key, items, res);
+        }
+    }
     public void Remove(Key key, int value)
     {
         bool flag = true;

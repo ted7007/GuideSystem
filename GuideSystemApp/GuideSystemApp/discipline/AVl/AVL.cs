@@ -2,15 +2,22 @@
 
 class NodeAvl
 {
-    public int value;
-    public int height;
-    public NodeAvl left;
-    public NodeAvl right;
+    public string key;
 
-    public NodeAvl(int value)
+    public int value;
+    public int balance;
+
+    public CircularLinkedList listAvl;
+    public int count;
+    public NodeAvl left, right;
+
+    public NodeAvl(string key, int value)
     {
+        this.listAvl = new CircularLinkedList();
+        this.key = key;
         this.value = value;
-        this.height = 1;
+        balance = 0;
+        count = 1;
     }
 }
 
@@ -18,20 +25,32 @@ class AVLTree
 {
     private NodeAvl root;
 
-    private int GetHeight(NodeAvl node)
+    private int Count(NodeAvl node)
     {
         if (node == null)
+        {
             return 0;
-        
-        return node.height;
+        }
+        return node.count;
     }
 
-    private int GetBalanceFactor(NodeAvl node)
+
+    private int BalanceFactor(NodeAvl node)
     {
         if (node == null)
+        {
             return 0;
-        
-        return GetHeight(node.left) - GetHeight(node.right);
+        }
+        return Height(node.left) - Height(node.right);
+    }
+
+    private int Height(NodeAvl node)
+    {
+        if (node == null)
+        {
+            return 0;
+        }
+        return Math.Max(Height(node.left), Height(node.right)) + 1;
     }
 
     private NodeAvl RotateRight(NodeAvl y)
@@ -42,8 +61,8 @@ class AVLTree
         x.right = y;
         y.left = T2;
 
-        y.height = Math.Max(GetHeight(y.left), GetHeight(y.right)) + 1;
-        x.height = Math.Max(GetHeight(x.left), GetHeight(x.right)) + 1;
+        y.balance = BalanceFactor(y);
+        x.balance = BalanceFactor(x);
 
         return x;
     }
@@ -56,50 +75,53 @@ class AVLTree
         y.left = x;
         x.right = T2;
 
-        x.height = Math.Max(GetHeight(x.left), GetHeight(x.right)) + 1;
-        y.height = Math.Max(GetHeight(y.left), GetHeight(y.right)) + 1;
+        x.balance = BalanceFactor(x);
+        y.balance = BalanceFactor(y);
 
         return y;
     }
 
-    public void Insert(int value)
-    {
-        root = InsertNode(root, value);
-    }
-
-    private NodeAvl InsertNode(NodeAvl node, int value)
+    private NodeAvl InsertNode(NodeAvl node, string key, int value)
     {
         if (node == null)
-            return new NodeAvl(value);
+        {
+            return new NodeAvl(key, value);
+        }
 
-        if (value < node.value)
-            node.left = InsertNode(node.left, value);
-        else if (value > node.value)
-            node.right = InsertNode(node.right, value);
+        if (key.CompareTo(node.key) < 0)
+        {
+            node.left = InsertNode(node.left, key, value);
+        }
+        else if (key.CompareTo(node.key) > 0)
+        {
+            node.right = InsertNode(node.right, key, value);
+        }
         else
+        {
+            node.listAvl.AddNode(value);
+            node.count += 1;// Добавляем повторяющийся элемент в список
             return node;
+        }
 
-        node.height = 1 + Math.Max(GetHeight(node.left), GetHeight(node.right));
+        node.balance = BalanceFactor(node);
 
-        int balanceFactor = GetBalanceFactor(node);
-
-        // Left Left Case
-        if (balanceFactor > 1 && value < node.left.value)
+        if (node.balance > 1 && key.CompareTo(node.left.key) < 0)
+        {
             return RotateRight(node);
+        }
 
-        // Right Right Case
-        if (balanceFactor < -1 && value > node.right.value)
+        if (node.balance < -1 && key.CompareTo(node.right.key) > 0)
+        {
             return RotateLeft(node);
+        }
 
-        // Left Right Case
-        if (balanceFactor > 1 && value > node.left.value)
+        if (node.balance > 1 && key.CompareTo(node.left.key) > 0)
         {
             node.left = RotateLeft(node.left);
             return RotateRight(node);
         }
 
-        // Right Left Case
-        if (balanceFactor < -1 && value < node.right.value)
+        if (node.balance < -1 && key.CompareTo(node.right.key) < 0)
         {
             node.right = RotateRight(node.right);
             return RotateLeft(node);
@@ -108,126 +130,182 @@ class AVLTree
         return node;
     }
 
-    public void Delete(int value)
+    public void Insert(string key, int value)
     {
-        root = DeleteNode(root, value);
+        root = InsertNode(root, key, value);
     }
 
-    private NodeAvl DeleteNode(NodeAvl root, int value)
+    public void Edit(string key, int value, int index)
     {
-        if (root == null)
-            return root;
-
-        if (value < root.value)
-            root.left = DeleteNode(root.left, value);
-        else if (value > root.value)
-            root.right = DeleteNode(root.right, value);
+        root = EditeNode(root, key, value, index);
+    }
+    public NodeAvl EditeNode(NodeAvl node, string key, int value, int index)
+    {
+        if (node == null)
+        {
+            return node;
+        }
+        if (key.CompareTo(node.key) < 0)
+        {
+            node.left = EditeNode(node.left, key, value, index);
+        }
+        else if (key.CompareTo(node.key) > 0)
+        {
+            node.right = EditeNode(node.right, key, value, index);
+        }
         else
         {
-            if ((root.left == null) || (root.right == null))
+            if (node.value == index)
             {
-                NodeAvl temp = null;
-                if (temp == root.left)
-                    temp = root.right;
-                else
-                    temp = root.left;
-
-                if (temp == null)
-                {
-                    temp = root;
-                    root = null;
-                }
-                else
-                    root = temp;
+                node.value = value;
             }
             else
             {
-                NodeAvl temp = FindMax(root.left);
-                root.value = temp.value;
-                root.left = DeleteNode(root.left, temp.value);
+                node.listAvl.Edit(index, value);
             }
         }
-
-        if (root == null)
-            return root;
-
-        root.height = 1 + Math.Max(GetHeight(root.left), GetHeight(root.right));
-
-        int balanceFactor = GetBalanceFactor(root);
-
-        // Left Left Case
-        if (balanceFactor > 1 && GetBalanceFactor(root.left) >= 0)
-            return RotateRight(root);
-
-        // Left Right Case
-        if (balanceFactor > 1 && GetBalanceFactor(root.left) < 0)
-        {
-            root.left = RotateLeft(root.left);
-            return RotateRight(root);
-        }
-
-        // Right Right Case
-        if (balanceFactor < -1 && GetBalanceFactor(root.right) <= 0)
-            return RotateLeft(root);
-
-        // Right Left Case
-        if (balanceFactor < -1 && GetBalanceFactor(root.right) > 0)
-        {
-            root.right = RotateRight(root.right);
-            return RotateLeft(root);
-        }
-
-        return root;
+        return node;
     }
 
-    private NodeAvl FindMax(NodeAvl node)
+    private NodeAvl FindMaxValueNode(NodeAvl node)
     {
+        if (node == null)
+        {
+            return null;
+        }
+
         while (node.right != null)
+        {
             node = node.right;
+        }
 
         return node;
     }
 
-    public void Print()
+    private NodeAvl DeleteNode(NodeAvl node, string key, int value, ref bool deleted)
     {
-        InOrderTraversal(root);
-        Console.WriteLine();
+        if (node == null)
+        {
+            return node;
+        }
+
+        if (key.CompareTo(node.key) < 0)
+        {
+            node.left = DeleteNode(node.left, key, value, ref deleted);
+        }
+        else if (key.CompareTo(node.key) > 0)
+        {
+            node.right = DeleteNode(node.right, key, value, ref deleted);
+        }
+        else
+        {
+            if (node.count > 1 && node.value != value)
+            {
+
+                node.listAvl.RemoveNode(value);
+                return node;
+
+            }
+            if (node.value == value && node.count == 1)
+            {
+                if ((node.left == null) || (node.right == null))
+                {
+                    NodeAvl temp = null;
+                    if (temp == node.left)
+                    {
+                        temp = node.right;
+                    }
+                    else
+                    {
+                        temp = node.left;
+                    }
+
+                    if (temp == null)
+                    {
+                        temp = node;
+                        node = null;
+                    }
+                    else
+                    {
+                        node = temp;
+                    }
+                }
+                else
+                {
+                    NodeAvl temp = FindMaxValueNode(node.left);
+                    node.key = temp.key;
+                    node.value = temp.value;
+                    node.count = temp.count;
+                    node.listAvl = temp.listAvl;
+                    node.left = DeleteNode(node.left, temp.key, temp.value, ref deleted);
+                }
+                return node;
+            }
+            if (node.count > 1 && node.value == value)
+            {
+                node.count -= 1;
+                node.value = node.listAvl.head.Data;
+                node.listAvl.RemoveNode(node.value);
+                return node;
+            }
+
+        }
+
+        if (node == null)
+        {
+            return node;
+        }
+
+        node.balance = BalanceFactor(node);
+
+        if (node.balance > 1 && BalanceFactor(node.left) >= 0)
+        {
+            return RotateRight(node);
+        }
+
+        if (node.balance > 1 && BalanceFactor(node.left) < 0)
+        {
+            node.left = RotateLeft(node.left);
+            return RotateRight(node);
+        }
+
+        if (node.balance < -1 && BalanceFactor(node.right) <= 0)
+        {
+            return RotateLeft(node);
+        }
+
+        if (node.balance < -1 && BalanceFactor(node.right) > 0)
+        {
+            node.right = RotateRight(node.right);
+            return RotateLeft(node);
+        }
+
+        return node;
     }
 
-    private void InOrderTraversal(NodeAvl node)
+    public void Delete(string key, int value)
     {
-        if (node != null)
+        bool deleted = false;
+        root = DeleteNode(root, key, value, ref deleted);
+
+    }
+
+    private void InorderTraversal(NodeAvl root)
+    {
+        if (root != null)
         {
-            InOrderTraversal(node.left);
-            Console.Write(node.value + " ");
-            InOrderTraversal(node.right);
+            InorderTraversal(root.left);
+            Console.Write(root.key + " ");
+            InorderTraversal(root.right);
         }
+    }
+
+    public void PrintTree()
+    {
+        InorderTraversal(root);
+        Console.WriteLine();
     }
 }
 
-// public class Program
-// {
-//     public static void Main(string[] args)
-//     {
-//         AVLTree tree = new AVLTree();
 
-//         tree.Insert(9);
-//         tree.Insert(5);
-//         tree.Insert(10);
-//         tree.Insert(0);
-//         tree.Insert(6);
-//         tree.Insert(11);
-//         tree.Insert(-1);
-//         tree.Insert(1);
-//         tree.Insert(2);
-
-//         Console.WriteLine("AVL Tree:");
-//         tree.Print();
-
-//         tree.Delete(10);
-
-//         Console.WriteLine("AVL Tree after deleting 10:");
-//         tree.Print();
-//     }
-// }
 
