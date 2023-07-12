@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Указатели_для_курсовой
+namespace GuideSystemApp.Student.List
 {
     // 1. Объявление типа Указатель
     class Node
