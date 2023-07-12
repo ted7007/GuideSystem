@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Переделанные_хэш_таблицы__под_курсач_
+namespace GuideSystemApp.Student
 {
     public class Student
     {

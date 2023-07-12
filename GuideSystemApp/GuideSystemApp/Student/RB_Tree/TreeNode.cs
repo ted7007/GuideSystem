@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace КЧ_дерево_для_курсовой
+namespace GuideSystemApp.Student
 {
     enum Colors { Black, Red };
     class TreeNode

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Переделанные_хэш_таблицы__под_курсач_
+namespace GuideSystemApp.Student.HashTable
 {
     internal class HashTable
     {
@@ -31,12 +31,12 @@ namespace Переделанные_хэш_таблицы__под_курсач_
 
         }
 
-        public int FirstHash(Student student) //2.Первая хэш функция
+        public int FirstHash(SuperKey key) //2.Первая хэш функция
         {
             string mass = "";
             int result = 0;
             string temp = "";
-            mass = student.Passport;
+            mass = key.Key;
 
 
 
@@ -69,7 +69,7 @@ namespace Переделанные_хэш_таблицы__под_курсач_
 
         }
 
-        private int ResolveCollisionLinearForAdd(Student student, int index)
+        private int ResolveCollisionLinearForAdd(SuperKey key, int index)
         {
             int j = 1;
             int startIndex = index;
@@ -86,7 +86,7 @@ namespace Переделанные_хэш_таблицы__под_курсач_
                 }//запомним первую попавшуюся ячейку со статусом 2
 
                 cur = SecondHash(index, j);
-                if (Check(student, cur) == true) return -1;
+                if (Check(key, cur) == true) return -1;
                 if (items[cur].status == 0) return cur;
                 if (cur == startIndex) return current_index;
                 j++;
@@ -94,13 +94,13 @@ namespace Переделанные_хэш_таблицы__под_курсач_
 
             return index;
         }
-        public void Add(Student student) // 4. Добавление
+        public void Add(SuperKey key) // 4. Добавление
         {
-            int index = FirstHash(student);
+            int index = FirstHash(key);
             int current;
             if (items[index].status == 0) // Проверяем, что ячейка пустая 
             {
-                Item item = new Item(student, index);
+                Item item = new Item(key, index);
                 items[index] = item;
                 count++;
                 items[index].status = 1; // Устанавливаем статус как занятую ячейку                                   
@@ -108,12 +108,12 @@ namespace Переделанные_хэш_таблицы__под_курсач_
 
             else
             {
-                if (Check(student, index) == true) return;
-                current = ResolveCollisionLinearForAdd(student, index);
+                if (Check(key, index) == true) return;
+                current = ResolveCollisionLinearForAdd(key, index);
                 if (current == -1) return;
                 if (items[current].status == 0 || items[current].status == 2) // Проверяем, что ячейка пустая или удаленная
                 {
-                    Item item = new Item(student, index);
+                    Item item = new Item(key, index);
                     items[current] = item;
                     count++;
                     items[current].status = 1; // Устанавливаем статус как занятую ячейку
@@ -122,11 +122,11 @@ namespace Переделанные_хэш_таблицы__под_курсач_
             CheckLoadFactor();
         }
 
-        public void Delete(Student student)
+        public void Delete(SuperKey key)
         {
-            int index = FirstHash(student);
+            int index = FirstHash(key);
 
-            if (Check(student, index) == true)
+            if (Check(key, index) == true)
             {
 
                 items[index] = new Item(); // Обновляем элемент
@@ -135,7 +135,7 @@ namespace Переделанные_хэш_таблицы__под_курсач_
             }
             else
             {
-                int cur = (Search(student));
+                int cur = (Search(key));
                 if (cur != -1)
                 {
                     items[cur] = new Item(); // Обновляем элемент
@@ -148,18 +148,16 @@ namespace Переделанные_хэш_таблицы__под_курсач_
             CheckLoadFactor();
         }
 
-        public int Search(Student student3)
+        public int Search(SuperKey key3)
         {
-            int index = FirstHash(student3);
+            int index = FirstHash(key3);
             int cur = index;
             int j = 1;
             while (j <= size)
             {
                 if (items[cur].status == 1 &&
-                    items[cur].student.FIO == student3.FIO &&
-                    items[cur].student.Group == student3.Group &&
-                    items[cur].student.Passport == student3.Passport &&
-                    items[cur].student.AdmissionDate == student3.AdmissionDate)
+                    items[cur].key.Key == key3.Key &&
+                    items[cur].key.Index == key3.Index)
                 {
                     return cur;
                 }
@@ -170,13 +168,11 @@ namespace Переделанные_хэш_таблицы__под_курсач_
             return -1;
         }
 
-        public bool Check(Student student3, int index)
+        public bool Check(SuperKey key3, int index)
         {
             if (items[index].status == 1 &&
-                    items[index].student.FIO == student3.FIO &&
-                    items[index].student.Group == student3.Group &&
-                    items[index].student.Passport == student3.Passport &&
-                    items[index].student.AdmissionDate == student3.AdmissionDate)
+                    items[index].key.Key == key3.Key &&
+                    items[index].key.Index == key3.Index)
 
             {
                 return true;
@@ -190,10 +186,8 @@ namespace Переделанные_хэш_таблицы__под_курсач_
                 if (items[j].status == 1 || items[j].status == 2 || items[j].status == 0)
                 {
                     Console.WriteLine
-                        ($"{j}|{items[j].student.FIO}" +
-                        $" {items[j].student.Group}" +
-                        $" {items[j].student.Passport}" +
-                        $" {items[j].student.AdmissionDate}" +
+                        ($"{j}|{items[j].key.Key}" +
+                        $" {items[j].key.Index}" +
                         $" " +
                         $"status = {items[j].status}" +
                         $" |hash = {items[j].hash}");
@@ -203,7 +197,7 @@ namespace Переделанные_хэш_таблицы__под_курсач_
             Console.WriteLine(size);
         }
 
-        private int ResolveCollisionLinearForAddNew(Student student, int index, Item[] newItems)
+        private int ResolveCollisionLinearForAddNew(SuperKey key, int index, Item[] newItems)
         {
             int j = 1;
             int startIndex = index;
@@ -246,7 +240,7 @@ namespace Переделанные_хэш_таблицы__под_курсач_
                 if (items[i].status == 1)
                 {
 
-                    int index = FirstHash(items[i].student);
+                    int index = FirstHash(items[i].key);
 
                     if (newItems[index].status == 0)
                     {
@@ -257,7 +251,7 @@ namespace Переделанные_хэш_таблицы__под_курсач_
                     else
                     {
 
-                        int cur = ResolveCollisionLinearForAddNew(items[i].student, index, newItems);
+                        int cur = ResolveCollisionLinearForAddNew(items[i].key, index, newItems);
                         newItems[cur] = items[i];
                         newItems[cur].hash = index;
                         newCount++;
@@ -291,7 +285,7 @@ namespace Переделанные_хэш_таблицы__под_курсач_
                 if (items[i].status == 1)
                 {
 
-                    int index = FirstHash(items[i].student);
+                    int index = FirstHash(items[i].key);
 
                     if (newItems[index].status == 0)
                     {
@@ -302,7 +296,7 @@ namespace Переделанные_хэш_таблицы__под_курсач_
                     else
                     {
 
-                        int cur = ResolveCollisionLinearForAddNew(items[i].student, index, newItems);
+                        int cur = ResolveCollisionLinearForAddNew(items[i].key, index, newItems);
                         newItems[cur] = items[i];
                         newItems[cur].hash = index;
                         newCount++;

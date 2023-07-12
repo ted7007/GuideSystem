@@ -4,25 +4,27 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Переделанные_хэш_таблицы__под_курсач_
+namespace GuideSystemApp.Student.HashTable
 {
     internal class Item
 
     {
-        public Student student;
+
+
+        public SuperKey key;
         public int status;
         public int hash;
 
 
-        public Item(Student student, int hash)
+        public Item(SuperKey key, int hash)
         {
             this.hash = hash;
-            this.student = new Student(student.FIO, student.Group, student.Passport, student.AdmissionDate);
+            this.key = new SuperKey(key.Key, key.Index);
             status = 1;
         }
         public Item()
         {
-            student = new Student("", "", "", "");
+            key = new SuperKey("", -1);
             status = 0;
         }
     }

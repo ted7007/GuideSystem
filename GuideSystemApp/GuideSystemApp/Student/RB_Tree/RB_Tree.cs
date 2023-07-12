@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace КЧ_дерево_для_курсовой
+namespace GuideSystemApp.Student.RB_Tree
 {
     internal class RB_Tree
     {
@@ -12,11 +12,11 @@ namespace КЧ_дерево_для_курсовой
 
         public bool IsComp(SuperKey b, SuperKey a)
         {
-            if (String.Compare(a.Surname, b.Surname, StringComparison.Ordinal) > 0)
+            if (String.Compare(a.Key, b.Key, StringComparison.Ordinal) > 0)
             {
                 return true;
             }
-            else if (String.Compare(a.Surname, b.Surname, StringComparison.Ordinal) == 0)
+            else if (String.Compare(a.Key, b.Key, StringComparison.Ordinal) == 0)
             {
                 if (a.Index > b.Index)
                 {
@@ -28,7 +28,7 @@ namespace КЧ_дерево_для_курсовой
 
         public bool IsEqual(SuperKey b, SuperKey a)
         {
-            return (a.Surname == b.Surname);
+            return (a.Key == b.Key);
         }
 
         public bool Poisk_RB(TreeNode root, SuperKey k)
@@ -61,7 +61,7 @@ namespace КЧ_дерево_для_курсовой
                     Console.Write("   ");
                 }
 
-                Console.WriteLine(root.Key.Surname + ", " + root.Key.Index + " " + root.Color);
+                Console.WriteLine(root.Key.Key + ", " + root.Key.Index + " " + root.Color);
 
                 Print_RB(root.Left, l + 1);
             }
@@ -418,7 +418,7 @@ namespace КЧ_дерево_для_курсовой
             string surname = surnames[random.Next(surnames.Length)];
             int index = random.Next(1000, 9999);
 
-            return new SuperKey { Surname = surname, Index = index };
+            return new SuperKey { Key = surname, Index = index };
         }
 
         public void CreateTree(ref TreeNode root, TreeNode[] rootArray, int count)

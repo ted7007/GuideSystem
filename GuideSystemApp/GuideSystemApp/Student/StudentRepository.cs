@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace КЧ_дерево_для_курсовой
+namespace GuideSystemApp.Student
 {
-    class SuperKey
+    public class StudentRepository
     {
-        public string Surname;
-        public int Index;
+
+
     }
 }
