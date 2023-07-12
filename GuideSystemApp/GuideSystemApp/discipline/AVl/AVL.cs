@@ -139,6 +139,32 @@ class AVLTree
     {
         root = EditeNode(root, key, value, index);
     }
+    public NodeAvl Find(string key)
+    {
+        return FindNode(root, key);
+    }
+    private NodeAvl FindNode(NodeAvl node, string key)
+    {
+        if (node == null)
+        {
+            return null;
+        }
+        while (key.CompareTo(node.key) != 0)
+        {
+            if (key.CompareTo(node.key) < 0)
+            {
+                node = node.left;
+            }
+            if (key.CompareTo(node.key) > 0)
+            {
+                node = node.right;
+            }
+        }
+
+
+        return node;
+
+    }
     public NodeAvl EditeNode(NodeAvl node, string key, int value, int index)
     {
         if (node == null)
@@ -166,6 +192,7 @@ class AVLTree
         }
         return node;
     }
+
 
     private NodeAvl FindMaxValueNode(NodeAvl node)
     {

@@ -1,4 +1,4 @@
-﻿
+﻿namespace GuideSystemApp.Disciplines;
 
 public class Discipline
 {
@@ -13,7 +13,8 @@ public class Discipline
         this.teacher = teacher;
         this.institute = institute;
     }
-    public void print(){
+    public void print()
+    {
         Console.Write($"{this.discipline} {this.department} {this.teacher} {this.institute}");
     }
 }

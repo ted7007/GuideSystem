@@ -109,5 +109,62 @@ public class DisciplineRepository
         return DisciplineArray;
     }
 
+    public Discipline FindUnique(string discipline, string department)
+    {
+        Key key = new Key(discipline, department);
+        int res = table.Search(key);
+        return DisciplineArray[res];
+    }
+    public void WriteToFile(string path)
+    {
 
+        using (StreamWriter writer = new StreamWriter(path))
+        {
+            writer.WriteLine(DisciplineArray.Count);
+
+            foreach (var discipline in DisciplineArray)
+            {
+                writer.WriteLine($"{discipline.discipline}\\{discipline.department}\\{discipline.teacher}\\{discipline.institute}");
+            }
+        }
+    }
+
+    public List<Discipline> FindByKey(string key, IndexType type)
+    {
+        NodeAvl res = null;
+        switch (type)
+        {
+            case IndexType.discipline:
+                res = treeDiscipline.Find(key);
+                break;
+            case IndexType.department:
+                res = treeDepartment.Find(key);
+                break;
+            case IndexType.teacher:
+                res = treeTeacher.Find(key);
+                break;
+            case IndexType.institute:
+                res = treeInstitute.Find(key);
+                break;
+            default:
+                return null;
+        }
+
+        var Disciplins = new List<Discipline>();
+        var head = res.listAvl.head;
+        Disciplins.Add(DisciplineArray[res.value]);
+        if (head == null)
+        {
+            return Disciplins;
+        }
+        Disciplins.Add(DisciplineArray[head.Data]);
+        var temp = head.Next;
+        while (head != temp)
+        {
+            Disciplins.Add(DisciplineArray[temp.Data]);
+            temp = temp.Next;
+        }
+
+        return Disciplins;
+    }
 }
