@@ -3,6 +3,8 @@ public class HachTable
 {
     private Item[] items;
     private int size;
+
+    public int k = 1;
     private int count;
 
     private int initial_size;
@@ -102,6 +104,7 @@ public class HachTable
         else
         {
             Collision collision = new Collision(hash, size);
+            k = collision.j + 1;
             return collision.CollisionSearch(key, items);
         }
     }
