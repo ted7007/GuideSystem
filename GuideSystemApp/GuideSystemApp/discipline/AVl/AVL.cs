@@ -1,6 +1,6 @@
 
 
-class NodeAvl
+public class NodeAvl
 {
     public string key;
 
@@ -24,6 +24,8 @@ class NodeAvl
 class AVLTree
 {
     public NodeAvl root;
+
+    public int i = 0;
 
     private int Count(NodeAvl node)
     {
@@ -153,10 +155,12 @@ class AVLTree
         {
             if (key.CompareTo(node.key) < 0)
             {
+                i = i + 1;
                 node = node.left;
             }
             if (key.CompareTo(node.key) > 0)
             {
+                i = i + 1;
                 node = node.right;
             }
         }
@@ -328,9 +332,9 @@ class AVLTree
             return "";
 
         string result = "";
-        result += GetIndentation(level) + node.key + "|" + node.value + node.listAvl.PrintList() + "\n";
-        result += DisplayTree(node.right, level + 1);
-        result += DisplayTree(node.left, level + 1);
+        result += DisplayTree(node.right, level + 2);
+        result += GetIndentation(level) + node.key + " " + node.value + node.listAvl.PrintList() + "\n";
+        result += DisplayTree(node.left, level + 2);
 
         return result;
     }
