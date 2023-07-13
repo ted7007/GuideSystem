@@ -95,32 +95,44 @@ public class AVLTree<T> where T : IComparable<T>
         return FindNode(_root, value) != null;
     }
 
-    public AVLNode<T> Find(T value)
+    public Comparisons<AVLNode<T>> Find(T value)
     {
         return FindNode(_root, value);
     }
 
+    public void EditValue(T value, Func<T,bool> expression, T newValue)
+    {
+        var node = FindNode(_root, value).node;
+        var resItem = node.List.Find(expression);
+        resItem.Data = newValue;
+    }
+
     // Рекурсивный метод поиска узла в дереве
-    private AVLNode<T> FindNode(AVLNode<T> node, T value)
+    private Comparisons<AVLNode<T>> FindNode(AVLNode<T> node, T value)
     {
         if (node == null)
         {
             return null;
         }
 
+        int k = 1;
         int compareResult = value.CompareTo(node.Value);
-
+        
         if (compareResult == 0)
         {
-            return node;
+            return new Comparisons<AVLNode<T>>(node, k);
         }
         else if (compareResult < 0)
         {
-            return FindNode(node.Left, value);
+             var res = FindNode(node.Left, value);
+             res.k++;
+             return res;
         }
         else
         {
-            return FindNode(node.Right, value);
+            var res = FindNode(node.Right, value);
+            res.k++;
+            return res;
         }
     }
     
@@ -132,17 +144,18 @@ public class AVLTree<T> where T : IComparable<T>
 
     public string GetView()
     {
-        return GetViewTree(_root);
+        return GetViewTree(_root, 0);
     }
     
-    private string GetViewTree(AVLNode<T> node)
+    private string GetViewTree(AVLNode<T> node, int level)
     {
         StringBuilder sb = new StringBuilder();
         if (node != null)
         {
-            sb.Append("  " + GetViewTree(node.Left));
-            sb.Append(node.Value + ": " + string.Join(", ", node.List)+"\n");
-            sb.Append("  " + GetViewTree(node.Right));
+            sb.Append(GetViewTree(node.Right, level + 1));
+            for (int i = 0; i < level; i++) sb.Append("   ");
+            sb.Append(string.Join(", ", node.List)+"\n");
+            sb.Append(GetViewTree(node.Left, level + 1));
         }
         return sb.ToString();
     }
@@ -207,9 +220,82 @@ public class AVLTree<T> where T : IComparable<T>
 
                     node.Value = minNode.Value;
                     node.List = minNode.List; // Заменяем список в удаляемом узле на список минимального узла
-                    node.Right = RemoveNode(node.Right, minNode.Value);
+                    node.Right = RemoveNodeForPastDelete(node.Right, minNode.Value);
                 }
             }
+        }
+
+        if (node != null)
+        {
+            node.UpdateHeight();
+
+            // Балансировка узла после удаления
+            int balance = node.GetBalance();
+
+            if (balance > 1) // Необходимо поворот вправо
+            {
+                if (node.Right.GetBalance() < 0)
+                {
+                    node.Right = RotateRight(node.Right);
+                }
+                node = RotateLeft(node);
+            }
+            else if (balance < -1) // Необходимо поворот влево
+            {
+                if (node.Left.GetBalance() > 0)
+                {
+                    node.Left = RotateLeft(node.Left);
+                }
+                node = RotateRight(node);
+            }
+        }
+
+        return node;
+    }
+
+    private AVLNode<T> RemoveNodeForPastDelete(AVLNode<T> node, T value)
+    {
+        if (node == null)
+        {
+            return null;
+        }
+
+        int compareResult = value.CompareTo(node.Value);
+
+        if (compareResult < 0)
+        {
+            node.Left = RemoveNodeForPastDelete(node.Left, value);
+        }
+        else if (compareResult > 0)
+        {
+            node.Right = RemoveNodeForPastDelete(node.Right, value);
+        }
+        else
+        {
+            
+            // Узел больше не содержит элементов, удаляем его из дерева
+            if (node.Left == null && node.Right == null)
+            {
+                node = null;
+            }
+            else if (node.Left == null)
+            {
+                node = node.Right;
+            }
+            else if (node.Right == null)
+            {
+                node = node.Left;
+            }
+            else
+            {
+                // Находим минимальный элемент в правом поддереве
+                AVLNode<T> minNode = FindMinNode(node.Right);
+
+                node.Value = minNode.Value;
+                node.List = minNode.List; // Заменяем список в удаляемом узле на список минимального узла
+                node.Right = RemoveNodeForPastDelete(node.Right, minNode.Value);
+            }
+        
         }
 
         if (node != null)

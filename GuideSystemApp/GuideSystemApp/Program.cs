@@ -1,7 +1,7 @@
 ﻿
 using GuideSystemApp.Disciplines;
 
-DisciplineRepository rep = new DisciplineRepository();
+DisciplineRepository rep = new DisciplineRepository(20);
 rep.ReadFromFile("input_discipline.txt");
 rep.FindUnique("Геометрия и топология", "Департамент математики");
 IndexType type = IndexType.institute;

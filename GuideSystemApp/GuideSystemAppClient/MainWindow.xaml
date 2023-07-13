@@ -22,6 +22,7 @@
         <StackPanel Grid.ColumnSpan="3" Orientation="Horizontal" HorizontalAlignment="Left">
             <Button Margin="5" Width="100" Command="{Binding DownloadCommand}">Загрузить</Button> 
             <Button Margin="5" Width="100" Command="{Binding SaveCommand}">Сохранить</Button> 
+            <Button Margin="5" Width="100" Command="{Binding LogCommand}">Посмотреть СД</Button> 
         </StackPanel>
         
         <ListBox Grid.Row="2" Grid.Column="0" SelectedItem="{Binding Path=SelectedList}">
@@ -35,7 +36,7 @@
         <StackPanel Grid.Row="4" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center">
             <Button Margin="5" Width="100" Command="{Binding AddCommand}">Добавить</Button> 
             <Button Margin="5" Width="100" Command="{Binding RemoveCommand}">Удалить</Button> 
-            <Button Margin="5" Width="100" Command="{Binding EditCommand}">Изменить</Button> 
+            <Button Margin="5" Width="100" Command="{Binding FindCommand}">Найти</Button> 
         </StackPanel>
         
         
