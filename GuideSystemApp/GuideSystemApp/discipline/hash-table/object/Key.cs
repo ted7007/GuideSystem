@@ -36,7 +36,7 @@ public class Key
             return false;
         }
     }
-    public void print(){
-        Console.Write($"{key1} {key2}");
+    public string print(){
+        return $"{key1} {key2}";
     }
 }

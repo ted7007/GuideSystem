@@ -25,7 +25,7 @@ public class HachTable
         int hash = HachOne(key);
         if (key == items[hash].key)
         {
-             items[hash].value = res;
+            items[hash].value = res;
         }
         else
         {
@@ -104,22 +104,24 @@ public class HachTable
             return collision.CollisionSearch(key, items);
         }
     }
-    public void Print()
+    public string Print()
     {
+        string res = "";
         for (int j = 0; j < size; j++)
         {
             if (items[j].status == 1)
             {
-                Console.Write($"{j}|");
-                items[j].print();
-                Console.WriteLine($"|{items[j].status}|hash={items[j].hash1}|шаг={items[j].k} ");
+                res = res + $"{j}|" + items[j].print() + $"|{items[j].status}|hash={items[j].hash1}|шаг={items[j].k}";
+                res = res + "\n";
             }
             else
             {
-                Console.WriteLine($"{j}|{items[j].status}");
+                res = res + $"{j}|{items[j].status}";
+                res = res + "\n";
             }
 
         }
+        return res;
 
     }
     private int HachOne(Key key)

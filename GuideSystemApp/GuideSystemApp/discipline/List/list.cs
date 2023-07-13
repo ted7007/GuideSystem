@@ -155,21 +155,20 @@ public class CircularLinkedList
         return false; // Элемент не найден
     }
 
-    public void PrintList()
+    public string PrintList()
     {
         if (head == null)
         {
-            Console.WriteLine("Список пуст");
-            return;
+            return "";
         }
-
+        string res = "";
         Node current = head;
         do
         {
-            Console.Write(current.Data + " ");
+            res = res + " - " + current.Data;
             current = current.Next;
         } while (current != head);
 
-        Console.WriteLine();
+        return res;
     }
 }

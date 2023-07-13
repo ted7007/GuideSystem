@@ -30,10 +30,10 @@ public class Item
         this.value = -1;
         this.status = 2;
     }
-    public void print()
+    public string print()
     {
-        key.print();
-        Console.Write(" => ");
-        Console.Write(value);
+        string res;
+        res = key.print() + " =>" + value;
+        return res;
     }
 };

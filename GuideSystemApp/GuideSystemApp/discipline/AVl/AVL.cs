@@ -23,7 +23,7 @@ class NodeAvl
 
 class AVLTree
 {
-    private NodeAvl root;
+    public NodeAvl root;
 
     private int Count(NodeAvl node)
     {
@@ -264,16 +264,21 @@ class AVLTree
                     node.value = temp.value;
                     node.count = temp.count;
                     node.listAvl = temp.listAvl;
+                    deleted = true;
                     node.left = DeleteNode(node.left, temp.key, temp.value, ref deleted);
                 }
                 return node;
             }
-            if (node.count > 1 && node.value == value)
+            if (node.count > 1 && node.value == value && !deleted)
             {
                 node.count -= 1;
                 node.value = node.listAvl.head.Data;
                 node.listAvl.RemoveNode(node.value);
                 return node;
+            }
+            else if (deleted)
+            {
+                node = null;
             }
 
         }
@@ -317,20 +322,26 @@ class AVLTree
 
     }
 
-    private void InorderTraversal(NodeAvl root)
+    public string DisplayTree(NodeAvl node, int level = 0)
     {
-        if (root != null)
-        {
-            InorderTraversal(root.left);
-            Console.Write(root.key + " ");
-            InorderTraversal(root.right);
-        }
-    }
+        if (node == null)
+            return "";
 
-    public void PrintTree()
+        string result = "";
+        result += GetIndentation(level) + node.key + "|" + node.value + node.listAvl.PrintList() + "\n";
+        result += DisplayTree(node.right, level + 1);
+        result += DisplayTree(node.left, level + 1);
+
+        return result;
+    }
+    private string GetIndentation(int level)
     {
-        InorderTraversal(root);
-        Console.WriteLine();
+        string indentation = "";
+        for (int i = 0; i < level; i++)
+        {
+            indentation += "    ";
+        }
+        return indentation;
     }
 }
 
