@@ -148,13 +148,67 @@ public class GuideSystemVM : INotifyPropertyChanged
                         }
                     });
                     w.DataContext = vm;
-                    w.ShowDialog();
-                    if (vm.ComboSelectedItem/*.Content.ToString()*/ == "По паспорту")
+                    var resDialog = w.ShowDialog();
+                    if ((bool)resDialog && vm.ComboSelectedItem/*.Content.ToString()*/ == "По паспорту")
                     {
                         var res = _markRepository.FindByKey(vm.FieldInputList.First().FieldValue, IndexType.Passport);
                         CurrentList = DtosFromMarks(res);
                     }
                     OnPropertyChanged("CurrentList");
+                    break;
+                default:
+                    throw new NotImplementedException();
+            }
+            
+        });
+    }
+    
+    public RelayCommand LogCommand
+    {
+        get => new RelayCommand(obj =>
+        {
+            switch (SelectedList.Content.ToString())
+            {
+                case "Оценки":
+                    var comboBoxWindow = new ComboBoxWindow();
+                    var vm = new ComboBoxViewModel()
+                    {
+                        ComboItems = new[]
+                        {
+                            "Дерево по полю Паспорта",
+                            "Дерево по полю Дисциплины",
+                            "Дерево по полю Даты сдачи",
+                            "Дерево по полю Оценки",
+                            "Хеш таблица"
+                        }
+                    };
+                    comboBoxWindow.DataContext = vm;
+                    var resDialog = comboBoxWindow.ShowDialog();
+                    if(!(bool)resDialog)
+                        return;
+                    switch (vm.ComboSelectedItem)
+                    {
+                          case  "Дерево по полю Паспорта":
+                              MessageBox.Show(_markRepository.GetIndexView(IndexType.Passport));
+                              break;
+                          case  "Дерево по полю Дисциплины":
+                              MessageBox.Show(_markRepository.GetIndexView(IndexType.Discipline));
+                              break;
+                          case  "Дерево по полю Даты сдачи":
+                              MessageBox.Show(_markRepository.GetIndexView(IndexType.Date));
+                              break;
+                          case  "Дерево по полю Оценки":
+                              MessageBox.Show(_markRepository.GetIndexView(IndexType.Value));
+                              break;
+                          case  "Хеш таблица":
+                              MessageBox.Show(_markRepository.GetUniqueView());
+                              break;
+                          
+                          default:
+                              MessageBox.Show("incorrect data");
+                              break;
+                    }
+
                     break;
                 default:
                     throw new NotImplementedException();
