@@ -6,6 +6,7 @@ using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
 using GuideSystemApp.Marks;
+using GuideSystemApp.Disciplines;
 using GuideSystemAppClient.Command;
 using GuideSystemAppClient.Dto;
 using GuideSystemAppClient.View;
@@ -15,16 +16,19 @@ namespace GuideSystemAppClient.ViewModel;
 public class GuideSystemVM : INotifyPropertyChanged
 {
     private MarkRepository _markRepository;
-    
+
+    private DisciplineRepository _disciplineRepository;
+
     public GuideSystemVM()
     {
         _markRepository = new MarkRepository();
+        // _disciplineRepository = new DisciplineRepository();
     }
 
     public IEnumerable<object> CurrentList { get; set; }
 
     public object CurrentListSelectedItem { get; set; }
-    
+
     private ListBoxItem selectedList;
     public ListBoxItem SelectedList
     {
@@ -38,13 +42,18 @@ public class GuideSystemVM : INotifyPropertyChanged
                     CurrentList = GetMarks();
                     OnPropertyChanged("CurrentList");
                     break;
+                // case "Дисциплины":
+                //     // CurrentList = GetDisciplines();
+                //     // OnPropertyChanged("CurrentList");
+                //     // break;
+
                 default:
                     MessageBox.Show("Функционал не реализован! Дальше могут быть ошибки.");
                     break;
             }
         }
     }
-    
+
     public RelayCommand DownloadCommand
     {
         get => new RelayCommand(obj =>
@@ -52,7 +61,7 @@ public class GuideSystemVM : INotifyPropertyChanged
             DownloadList();
         });
     }
-    
+
     public RelayCommand SaveCommand
     {
         get => new RelayCommand(obj =>
@@ -61,12 +70,12 @@ public class GuideSystemVM : INotifyPropertyChanged
             var vm = new TextBoxViewModel { Text = "Введите абсолютный путь до справочника" };
             textWindow.DataContext = vm;
             var res = textWindow.ShowDialog();
-            if(res == null || !(bool)res)
+            if (res == null || !(bool)res)
                 return;
             SaveList(vm.TextOutput);
         });
     }
-    
+
     public RelayCommand AddCommand
     {
         get => new RelayCommand(obj =>
@@ -78,7 +87,7 @@ public class GuideSystemVM : INotifyPropertyChanged
                     var vm = new MarkFieldsInputVM();
                     markFieldsInpitWindow.DataContext = vm;
                     var res = markFieldsInpitWindow.ShowDialog();
-                    if(res == null || !(bool)res)
+                    if (res == null || !(bool)res)
                         return;
                     //todo: validation
                     _markRepository.Add(new Mark()
@@ -94,10 +103,10 @@ public class GuideSystemVM : INotifyPropertyChanged
                 default:
                     throw new NotImplementedException();
             }
-            
+
         });
     }
-    
+
     public RelayCommand RemoveCommand
     {
         get => new RelayCommand(obj =>
@@ -123,7 +132,7 @@ public class GuideSystemVM : INotifyPropertyChanged
                 default:
                     throw new NotImplementedException();
             }
-            
+
         });
     }
 
@@ -135,18 +144,18 @@ public class GuideSystemVM : INotifyPropertyChanged
             {
                 case "Оценки":
                     if (CurrentListSelectedItem == null || !(CurrentListSelectedItem is MarkDto oldMark))
-                    {   
+                    {
                         MessageBox.Show("Для редактирования нужно выбрать элемент из списка!");
                         return;
                     }
-                    
+
                     var markFieldsInputWindow = new MarkFieldsInput();
                     var vm = new MarkFieldsInputVM();
                     markFieldsInputWindow.DataContext = vm;
                     var res = markFieldsInputWindow.ShowDialog();
-                    if(res == null || !(bool)res)
+                    if (res == null || !(bool)res)
                         return;
-                    
+
                     _markRepository.Edit(new Mark
                     {
                         PassportSerialNumber = oldMark.PassportSerialNumber,
@@ -167,10 +176,10 @@ public class GuideSystemVM : INotifyPropertyChanged
                 default:
                     throw new NotImplementedException();
             }
-            
+
         });
     }
-    
+
     private void DownloadList()
     {
         try
@@ -179,7 +188,7 @@ public class GuideSystemVM : INotifyPropertyChanged
             var vm = new TextBoxViewModel { Text = "Введите абсолютный путь до справочника" };
             textWindow.DataContext = vm;
             var res = textWindow.ShowDialog();
-            if(res == null || !(bool)res)
+            if (res == null || !(bool)res)
                 return;
             switch (SelectedList.Content.ToString())
             {
@@ -199,7 +208,7 @@ public class GuideSystemVM : INotifyPropertyChanged
             Console.WriteLine("Error mazafaka");//todo: error
         }
     }
-    
+
     private void SaveList(string vmTextOutput)
     {
         try
@@ -219,7 +228,7 @@ public class GuideSystemVM : INotifyPropertyChanged
             //todo: error
         }
     }
-    
+
 
     private IEnumerable<object> GetMarks()
     {
@@ -231,6 +240,14 @@ public class GuideSystemVM : INotifyPropertyChanged
             Value = m.Value
         });
     }
+    // private IEnumerable<object> GetDisciplines()
+    // {
+    //     return _disciplineRepository.GetAll().Select(m => (object)new Dto()
+    //     {
+
+    //     });
+
+    // }
 
 
     public event PropertyChangedEventHandler? PropertyChanged;

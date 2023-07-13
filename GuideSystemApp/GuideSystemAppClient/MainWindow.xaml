@@ -26,7 +26,7 @@
         
         <ListBox Grid.Row="2" Grid.Column="0" SelectedItem="{Binding Path=SelectedList}">
             <ListBoxItem>Оценки</ListBoxItem>
-            <ListBoxItem IsSelected="True">Студенты</ListBoxItem>
+            <ListBoxItem>Студенты</ListBoxItem>
             <ListBoxItem>Дисциплины</ListBoxItem>
         </ListBox>
         
