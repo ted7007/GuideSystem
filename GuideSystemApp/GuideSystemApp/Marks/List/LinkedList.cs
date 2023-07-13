@@ -33,17 +33,24 @@ public class LinkedList<T> where T : IComparable<T>
             return;
         }
 
-        if (head.Data.Equals(data))
+        if (head.Data.CompareTo(data) == 0)
         {
+            if (head.Next == head)
+            {
+                head = null;
+                return;
+            }
+            
+            tail.Next = head.Next;
             head = head.Next;
-            return;
-        }
+            return; 
+        } 
 
         Node<T> currentNode = head;
 
         while (currentNode.Next != head)
         {
-            if (currentNode.Next.Data.Equals(data))
+            if (currentNode.Next.Data.CompareTo(data) == 0)
             {
                 currentNode.Next = currentNode.Next.Next;
                 return;
@@ -118,10 +125,39 @@ public class LinkedList<T> where T : IComparable<T>
     public Node<T>? Find(Func<T, bool> exp)
     {
         Node<T> currentNode = head;
+        if (exp(currentNode.Data))
+        {
+            return currentNode;
+        }
 
+        currentNode = currentNode.Next;
+        
         while (currentNode != head)
         {
             if (exp(currentNode.Data))
+            {
+                return currentNode;
+            }
+
+            currentNode = currentNode.Next;
+        }
+
+        return null;
+    }
+
+    public object EditValue(Func<T, bool> expression, T newValue)
+    {
+        Node<T> currentNode = head;
+        if (expression(currentNode.Data))
+        {
+            return currentNode.Data = newValue;
+        }
+
+        currentNode = currentNode.Next;
+        
+        while (currentNode != head)
+        {
+            if (expression(currentNode.Data))
             {
                 return currentNode;
             }

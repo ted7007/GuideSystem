@@ -8,7 +8,7 @@ namespace GuideSystemApp.Marks;
 /// </summary>
 public class MarkRepository
 {
-    public Mark[] MarkArray { get; set; }
+    public List<Mark> MarkArray { get; set; }
 
     public HashTable HashTable { get; set; }
 
@@ -27,7 +27,7 @@ public class MarkRepository
 
     public MarkRepository()
     {
-        MarkArray = new Mark[0];
+        MarkArray = new List<Mark>();
         HashTable = new HashTable(100);
         MarkIndexByPassport = new AVLTree<KeyValue>();
         MarkIndexByDiscipline = new AVLTree<KeyValue>();
@@ -40,11 +40,11 @@ public class MarkRepository
 
         using (StreamWriter writer = new StreamWriter(path))
         {
-            writer.WriteLine(MarkArray.Length);
+            writer.WriteLine(MarkArray.Count);
 
             foreach (var mark in MarkArray)
             {
-                writer.WriteLine($"{mark.PassportSerialNumber}\\{mark.Discipline}\\{mark.Date}\\{(int)mark.Value}");
+                writer.WriteLine($"{mark.PassportSerialNumber}/{mark.Discipline}/{mark.Date}/{(int)mark.Value}");
             }
         }
     }
@@ -56,12 +56,12 @@ public class MarkRepository
 
             int count = int.Parse(reader.ReadLine()); // Преобразование строку в число
 
-            MarkArray = new Mark[count]; // Создаём массив с размером count
+            MarkArray = new List<Mark>(); // Создаём массив с размером count
 
             // Записываем данные в массив
             for (int i = 0; i < count; i++)
             {
-                string[] markStr = reader.ReadLine().Split('\\');
+                string[] markStr = reader.ReadLine().Split('/');
                 Mark mark = new Mark()
                 {
                     PassportSerialNumber = markStr[0],
@@ -69,7 +69,7 @@ public class MarkRepository
                     Date = markStr[2],
                     Value = (MarkEnum)int.Parse(markStr[3])
                 };
-                MarkArray[i] = mark;
+                MarkArray.Add(mark);
             }
         }
 
@@ -82,7 +82,7 @@ public class MarkRepository
         MarkIndexByDiscipline = new AVLTree<KeyValue>();
         MarkIndexByValue = new AVLTree<KeyValue>();
         MarkIndexByDate = new AVLTree<KeyValue>();
-        for (int i = 0; i < MarkArray.Length; i++)
+        for (int i = 0; i < MarkArray.Count; i++)
         {
             MarkIndexByPassport.Add(new KeyValue() {Key = MarkArray[i].PassportSerialNumber, Value = i});
             MarkIndexByDiscipline.Add(new KeyValue() {Key = MarkArray[i].Discipline, Value = i});
@@ -119,28 +119,29 @@ public class MarkRepository
     {
         var res = HashTable.Find(mark.PassportSerialNumber + mark.Discipline + mark.Date +
                               ((int)mark.Value));
-        return res;
+        return res.Value;
     }
 
     public Mark FindUnique(Mark mark)
     {
         var res = HashTable.Find(mark.PassportSerialNumber + mark.Discipline + mark.Date +
                                  ((int)mark.Value));
-        return MarkArray[(int)res];
+        return MarkArray[(int)res.Value];
     }
     
     public void Add(Mark mark)
     {
-        Mark[] tmp = MarkArray;
-        MarkArray = new Mark[MarkArray.Length+1];
-        for (int i = 0; i < tmp.Length; i++)
-        {
-            MarkArray[i] = tmp[i];
-        }
-
-        int newNum = tmp.Length;
-        MarkArray[newNum] = mark;
-        AddToIndexes(newNum);
+        MarkArray.Add(mark);
+        // var tmp = MarkArray;
+        // MarkArray = new List<Mark>(MarkArray.Count+1);
+        // for (int i = 0; i < tmp.Count; i++)
+        // {
+        //     MarkArray[i] = tmp[i];
+        // }
+        //
+        // int newNum = tmp.Count;
+        // MarkArray[newNum] = mark;
+        AddToIndexes(MarkArray.Count-1);
     }
 
     public void Delete(Mark mark)
@@ -148,18 +149,52 @@ public class MarkRepository
         var res = Find(mark);
         if(res is null)
             return;
-        var removeItem = MarkArray[(int)res];
-        RemoveFromIndexes((int)res);
-        var tmp = MarkArray;
-        MarkArray = new Mark[tmp.Length-1];
-        int count = 0;
-        foreach (var i in MarkArray)
+        var num = (int)res;
+        RemoveFromIndexes(num);
+        if (num == MarkArray.Count - 1)
         {
-            if (i == removeItem)
-                continue;
-            MarkArray[count] = i;
-            count++;
+            MarkArray.Remove(MarkArray[num]);
+            return;
         }
+
+        MarkArray[num] = new Mark()
+        {
+            Date = MarkArray[^1].Date, Discipline = MarkArray[^1].Discipline, Value = MarkArray[^1].Value,
+            PassportSerialNumber = MarkArray[^1].PassportSerialNumber
+        };
+        MarkArray.Remove(MarkArray[^1]);
+        ChangeIndexForMark(MarkArray[num], MarkArray.Count, num);
+        // var removeItem = MarkArray[(int)res];
+        // RemoveFromIndexes((int)res);
+        // var tmp = MarkArray;
+        // MarkArray = new Mark[tmp.Length-1];
+        // int count = 0;
+        // foreach (var i in MarkArray)
+        // {
+        //     if (i == removeItem)
+        //         continue;
+        //     MarkArray[count] = i;
+        //     count++;
+        // }
+    }
+
+    private void ChangeIndexForMark(Mark mark, int oldNum, int newNum)
+    {
+        MarkIndexByPassport.EditValue(new KeyValue() {Key = mark.PassportSerialNumber, Value = 0}, 
+            key => key.Value == oldNum, 
+            new KeyValue() { Key = mark.PassportSerialNumber, Value = newNum});
+        MarkIndexByDiscipline.EditValue(new KeyValue() {Key = mark.Discipline, Value = 0}, 
+            key => key.Value == oldNum, 
+            new KeyValue() { Key = mark.Discipline, Value = newNum});
+        MarkIndexByDate.EditValue(new KeyValue() {Key = mark.Date, Value = 0}, 
+            key => key.Value == oldNum, 
+            new KeyValue() { Key = mark.Date, Value = newNum});
+        MarkIndexByValue.EditValue(new KeyValue() {Key = ((int)mark.Value).ToString(), Value = 0}, 
+            key => key.Value == oldNum, 
+            new KeyValue() { Key = mark.Value.ToString(), Value = newNum});
+        HashTable.Edit(
+            mark.PassportSerialNumber + mark.Discipline + mark.Date +
+            ((int)mark.Value), newNum);
     }
 
     public List<Mark> FindByKey(string key, IndexType type)
@@ -188,11 +223,11 @@ public class MarkRepository
         if (head == null)
             return marks;
         marks.Add(MarkArray[head.Data.Value]);
-        head = head.Next;
-        while (head != head)
+        var curNode = head.Next;
+        while (curNode != head)
         {
             marks.Add(MarkArray[head.Data.Value]);
-            head = head.Next;
+            curNode = curNode.Next;
         }
 
         return marks;
@@ -225,7 +260,7 @@ public class MarkRepository
         AddToIndexes((int)num);
     }
 
-    public Mark[] GetAll()
+    public IEnumerable<Mark> GetAll()
     {
         return MarkArray;
     }

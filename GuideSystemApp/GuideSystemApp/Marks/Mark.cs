@@ -3,7 +3,7 @@
 /// <summary>
 /// Сущность оценки
 /// </summary>
-public class Mark
+public class Mark : IComparable<Mark>
 {
 
     /// <summary>
@@ -26,20 +26,14 @@ public class Mark
     /// </summary>
     public string Date { get; set; }
 
-    public override bool Equals(object? obj)
+    public int CompareTo(Mark? other)
     {
-        if (obj == this)
-            return true;
-        if (!(obj is Mark mark))
-            return false;
-        return Equals(mark);
-    }
+        if (other.Date == Date && other.Discipline == Discipline && other.Value == Value &&
+            other.PassportSerialNumber == PassportSerialNumber)
+            return 0;
+        if (other.Value > Value)
+            return 1;
 
-    public bool Equals(Mark mark)
-    {
-        if (mark.Date == Date && mark.Discipline == Discipline && mark.Value == Value &&
-            mark.PassportSerialNumber == PassportSerialNumber)
-            return true;
-        return false;
+        return -1;
     }
 }
