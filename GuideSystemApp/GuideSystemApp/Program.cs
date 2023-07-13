@@ -4,9 +4,8 @@ using GuideSystemApp.Disciplines;
 DisciplineRepository rep = new DisciplineRepository();
 rep.ReadFromFile("input_discipline.txt");
 rep.FindUnique("Геометрия и топология", "Департамент математики");
-IndexType type = IndexType.department;
-var one = rep.FindByKey("Департамент математики", type);
-var two = rep.FindByKey("Кафедра Русского языка", type);
+IndexType type = IndexType.institute;
+var one = rep.FindByKey("ИМКТ", type);
 
 Console.WriteLine(rep.GetIndexView(type));
 Console.WriteLine(rep.GetIndexView(IndexType.discipline));
