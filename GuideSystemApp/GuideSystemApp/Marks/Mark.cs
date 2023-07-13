@@ -36,4 +36,9 @@ public class Mark : IComparable<Mark>
 
         return -1;
     }
+    
+    public override string ToString()
+    {
+        return $"Паспорт: {PassportSerialNumber}, Дисциплина: {Discipline}, Дата: {Date}, Оценка: {Value}";
+    }
 }

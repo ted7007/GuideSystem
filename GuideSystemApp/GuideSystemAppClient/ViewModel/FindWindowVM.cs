@@ -31,13 +31,13 @@ public class FindWindowVM : INotifyPropertyChanged
         set
         {
             comboBoxItem = value;
-            var inputList = new ObservableCollection<FieldInput>(_searchModels.First(m => m.SearchName == (string)value)//.Content)
+            var inputList = _searchModels.First(m => m.SearchName == (string)value)//.Content)
                 .SearchFields
                 .Select(f => new FieldInput()
                 {
                     FieldName = f
-                }));
-            FieldInputList = inputList;
+                });
+            FieldInputList = new ObservableCollection<FieldInput>(inputList);
             OnPropertyChanged("FieldInputList");
         }
     }
@@ -84,10 +84,9 @@ public class SearchResult
     public Dictionary<string, string> SearchResults { get; set; }
 }
 
-public class FieldInput : INotifyPropertyChanged
+public class FieldInput
 {
     public string FieldName { get; set; }
  
     public string FieldValue { get; set; }
-    public event PropertyChangedEventHandler? PropertyChanged;
 }

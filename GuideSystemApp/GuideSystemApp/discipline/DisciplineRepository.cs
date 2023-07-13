@@ -11,10 +11,10 @@ public class DisciplineRepository
     private AVLTree treeInstitute;
     private AVLTree treeDepartment;
     private AVLTree treeTeacher;
-    public DisciplineRepository()
+    public DisciplineRepository(int count)
     {
         this.DisciplineArray = new List<Discipline>();
-        this.table = new HachTable(20);
+        this.table = new HachTable(count);
         this.treeDiscipline = new AVLTree();
         this.treeInstitute = new AVLTree();
         this.treeTeacher = new AVLTree();
@@ -131,7 +131,7 @@ public class DisciplineRepository
 
             foreach (var discipline in DisciplineArray)
             {
-                writer.WriteLine($"{discipline.discipline}\\{discipline.department}\\{discipline.teacher}\\{discipline.institute}");
+                writer.WriteLine($"{discipline.discipline}/{discipline.department}/{discipline.teacher}/{discipline.institute}");
             }
         }
     }

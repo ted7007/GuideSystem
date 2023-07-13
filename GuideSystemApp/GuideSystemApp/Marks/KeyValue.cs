@@ -13,6 +13,6 @@ public class KeyValue : IComparable<KeyValue>
 
     public override string ToString()
     {
-        return Key;
+        return Key+" "+Value;
     }
 }
