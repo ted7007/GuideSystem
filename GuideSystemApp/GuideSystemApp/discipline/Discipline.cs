@@ -17,4 +17,9 @@ public class Discipline
     {
         Console.Write($"{this.discipline} {this.department} {this.teacher} {this.institute}");
     }
+
+    public override string ToString()
+    {
+        return $"Дисциплина: {discipline}, Департамент: {department}, Преподаватель: {teacher}, Институт: {institute}";
+    }
 }

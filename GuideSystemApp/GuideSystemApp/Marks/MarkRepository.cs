@@ -20,15 +20,10 @@ public class MarkRepository
 
     public AVLTree<KeyValue> MarkIndexByDate { get; set; }
 
-    public MarkRepository(string path)
-    {
-        
-    }
-
-    public MarkRepository()
+    public MarkRepository(int startCount)
     {
         MarkArray = new List<Mark>();
-        HashTable = new HashTable(100);
+        HashTable = new HashTable(startCount);
         MarkIndexByPassport = new AVLTree<KeyValue>();
         MarkIndexByDiscipline = new AVLTree<KeyValue>();
         MarkIndexByValue = new AVLTree<KeyValue>();
@@ -119,14 +114,14 @@ public class MarkRepository
     {
         var res = HashTable.Find(mark.PassportSerialNumber + mark.Discipline + mark.Date +
                               ((int)mark.Value));
-        return res.Value;
+        return res.node.Value;
     }
 
-    public Mark FindUnique(Mark mark)
+    public Comparisons<Mark> FindUnique(Mark mark)
     {
         var res = HashTable.Find(mark.PassportSerialNumber + mark.Discipline + mark.Date +
                                  ((int)mark.Value));
-        return MarkArray[(int)res.Value];
+        return new Comparisons<Mark>(MarkArray[(int)res.node.Value], res.k);
     }
     
     public void Add(Mark mark)
@@ -197,9 +192,9 @@ public class MarkRepository
             ((int)mark.Value), newNum);
     }
 
-    public List<Mark> FindByKey(string key, IndexType type)
+    public Comparisons<List<Mark>> FindByKey(string key, IndexType type)
     {
-        AVLNode<KeyValue> res = null;
+        Comparisons<AVLNode<KeyValue>> res = null;
         switch (type)
         {
             case IndexType.Passport:
@@ -209,7 +204,7 @@ public class MarkRepository
                 res = MarkIndexByDiscipline.Find(new KeyValue() { Key = key });
                 break;
             case IndexType.Date:
-                res = MarkIndexByDate.Find(new KeyValue() { Key = key });
+                res = MarkIndexByDate.Find(new KeyValue() { Key = key });   
                 break;
             case IndexType.Value:
                 res = MarkIndexByValue.Find(new KeyValue() { Key = key });
@@ -219,18 +214,21 @@ public class MarkRepository
         }
         
         var marks = new List<Mark>();
-        var head = res.List.head;
+        if (res == null)
+            return null;
+        var head = res.node.List.head;
         if (head == null)
-            return marks;
+            return null;
         marks.Add(MarkArray[head.Data.Value]);
         var curNode = head.Next;
         while (curNode != head)
         {
+            res.k++;
             marks.Add(MarkArray[head.Data.Value]);
             curNode = curNode.Next;
         }
 
-        return marks;
+        return new Comparisons<List<Mark>>(marks, res.k);
     }
 
     public string GetIndexView(IndexType type)

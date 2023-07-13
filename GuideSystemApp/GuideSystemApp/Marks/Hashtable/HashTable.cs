@@ -125,16 +125,18 @@ public class HashTable
         }
     }
     
-    public Node Find(string key)
+    public Comparisons<Node> Find(string key)
     {
         int hash1 = hashFunc(key);
         int hash2 = hash1;
         int j = 0;
+        int k = 0;
         while (_table[hash2].Status == NodeStatus.Taken || _table[hash2].Status == NodeStatus.Free && !String.IsNullOrEmpty(_table[hash2].Key))
         {
+            k++;
             j++;
             if (_table[hash2].Key == key)
-                return _table[hash2];
+                return new Comparisons<Node>(_table[hash2], k);
             hash2 = GetHash2(hash1, j);
         }
 
@@ -143,7 +145,7 @@ public class HashTable
 
     public void Edit(string key, int newValue)
     {
-        var node = Find(key);
+        var node = Find(key).node;
         node.Value = newValue;
     }
     

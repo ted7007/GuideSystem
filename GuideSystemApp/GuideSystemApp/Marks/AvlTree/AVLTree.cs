@@ -95,39 +95,44 @@ public class AVLTree<T> where T : IComparable<T>
         return FindNode(_root, value) != null;
     }
 
-    public AVLNode<T> Find(T value)
+    public Comparisons<AVLNode<T>> Find(T value)
     {
         return FindNode(_root, value);
     }
 
     public void EditValue(T value, Func<T,bool> expression, T newValue)
     {
-        var node = FindNode(_root, value);
+        var node = FindNode(_root, value).node;
         var resItem = node.List.Find(expression);
         resItem.Data = newValue;
     }
 
     // Рекурсивный метод поиска узла в дереве
-    private AVLNode<T> FindNode(AVLNode<T> node, T value)
+    private Comparisons<AVLNode<T>> FindNode(AVLNode<T> node, T value)
     {
         if (node == null)
         {
             return null;
         }
 
+        int k = 1;
         int compareResult = value.CompareTo(node.Value);
-
+        
         if (compareResult == 0)
         {
-            return node;
+            return new Comparisons<AVLNode<T>>(node, k);
         }
         else if (compareResult < 0)
         {
-            return FindNode(node.Left, value);
+             var res = FindNode(node.Left, value);
+             res.k++;
+             return res;
         }
         else
         {
-            return FindNode(node.Right, value);
+            var res = FindNode(node.Right, value);
+            res.k++;
+            return res;
         }
     }
     
