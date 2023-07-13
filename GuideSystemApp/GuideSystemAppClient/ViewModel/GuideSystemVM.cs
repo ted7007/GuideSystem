@@ -91,7 +91,15 @@ public class GuideSystemVM : INotifyPropertyChanged
                     var res = markFieldsInpitWindow.ShowDialog();
                     if(res == null || !(bool)res)
                         return;
-                    //todo: validation
+                    if(_disciplineRepository.FindByKey(vm.Discipline, GuideSystemApp.Disciplines.IndexType.discipline) == null)
+                        ShowError();
+                    
+                    if (!Mark.Validate(vm.PassportSerialNumber, vm.Discipline, vm.Date, vm.Value))
+                    {
+                        ShowError();
+                        return;
+                    }
+                    
                     _markRepository.Add(new Mark()
                     {
                         PassportSerialNumber = vm.PassportSerialNumber,
@@ -118,11 +126,11 @@ public class GuideSystemVM : INotifyPropertyChanged
                         disciplineVm.TextBoxDatas[1].Answer,
                         disciplineVm.TextBoxDatas[2].Answer,
                         disciplineVm.TextBoxDatas[3].Answer);
-                    //if (!_disciplineRepository.isCorected(newDiscipline))
-                    //{
-                      //  ShowError();
-                        //return;
-                    //}
+                    if (!_disciplineRepository.isCorected(newDiscipline))
+                    {
+                        ShowError();
+                        return;
+                    }
                     
                     _disciplineRepository.Add(newDiscipline);
                     CurrentList = new ObservableCollection<object>(_disciplineRepository.GetAll());
@@ -159,7 +167,7 @@ public class GuideSystemVM : INotifyPropertyChanged
                     OnPropertyChanged("CurrentList");
                     break;
                 case "Дисциплины":
-                    if (CurrentListSelectedItem == null || !(CurrentListSelectedItem is Discipline discipline))
+                    if (CurrentListSelectedItem == null || !(CurrentListSelectedItem is Discipline discipline) || _markRepository.FindByKey(discipline.discipline, IndexType.Discipline) != null)
                     {
                         ShowError();
                         return;
@@ -204,31 +212,57 @@ public class GuideSystemVM : INotifyPropertyChanged
                     switch (vm.ComboSelectedItem)
                     {
                         case "По паспорту":
+                            if (!Mark.ValidatePassport(vm.FieldInputList.First().FieldValue))
+                            {
+                                ShowError();
+                                return;
+                            }
                             resMarks = 
                                 _markRepository.FindByKey(vm.FieldInputList.First().FieldValue, IndexType.Passport);
                             CurrentList = new ObservableCollection<object>(resMarks.node);
                             countChecks = resMarks.k;
                             break;
                         case "По дисциплине":
+                            if (!Mark.ValidateDiscipline(vm.FieldInputList.First().FieldValue))
+                            {
+                                ShowError();
+                                return;
+                            }
                             resMarks = 
                                 _markRepository.FindByKey(vm.FieldInputList.First().FieldValue, IndexType.Discipline);
                             CurrentList = new ObservableCollection<object>(resMarks.node);
                             countChecks = resMarks.k;
                             break;
                         case "По дате сдачи":
+                            if (!Mark.ValidateDate(vm.FieldInputList.First().FieldValue))
+                            {
+                                ShowError();
+                                return;
+                            }
                             resMarks = 
                                 _markRepository.FindByKey(vm.FieldInputList.First().FieldValue, IndexType.Date);
                             CurrentList = new ObservableCollection<object>(resMarks.node);
                             countChecks = resMarks.k;
                             break;
                         case "По оценке":
+                            if (!Mark.ValidateValue(vm.FieldInputList.First().FieldValue))
+                            {
+                                ShowError();
+                                return;
+                            }
                             resMarks = 
                                 _markRepository.FindByKey(vm.FieldInputList.First().FieldValue, IndexType.Value);
                             CurrentList = new ObservableCollection<object>(resMarks.node);
                             countChecks = resMarks.k;
                             break;
                         case "Поиск конкретной оценки":
+                            
                             var fields = vm.FieldInputList.Select(f => f.FieldValue).ToList();
+                            if (!Mark.Validate(fields[0], fields[1], fields[2], fields[3]))
+                            {
+                                ShowError();
+                                return;
+                            }
                             var resMarksOne = 
                                 _markRepository.FindUnique(new Mark() { PassportSerialNumber = fields[0], Date = fields[2], Discipline = fields[1], Value = (MarkEnum)Int32.Parse(fields[3])});
                             CurrentList = new ObservableCollection<object>(new []{resMarksOne.node});
