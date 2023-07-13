@@ -7,7 +7,7 @@ public class KeyValue : IComparable<KeyValue>
     public int Value { get; set; }
 
     public int CompareTo(KeyValue? other)
-    {
+    { 
         return Key.CompareTo(other.Key);
     }
 

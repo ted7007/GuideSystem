@@ -125,7 +125,7 @@ public class HashTable
         }
     }
     
-    public int? Find(string key)
+    public Node Find(string key)
     {
         int hash1 = hashFunc(key);
         int hash2 = hash1;
@@ -134,12 +134,19 @@ public class HashTable
         {
             j++;
             if (_table[hash2].Key == key)
-                return _table[hash2].Value;
+                return _table[hash2];
             hash2 = GetHash2(hash1, j);
         }
 
         return null;
     }
+
+    public void Edit(string key, int newValue)
+    {
+        var node = Find(key);
+        node.Value = newValue;
+    }
+    
     // вынести отдельно разрешение коллизий, MoveBack так чтоб последний элемент вставлялся на место удаляемого, также проверять значение первой хф
     public bool Remove(string key)
     {
