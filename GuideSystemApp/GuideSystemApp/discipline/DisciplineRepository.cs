@@ -87,6 +87,7 @@ public class DisciplineRepository
         DisciplineArray[index] = removeItem;
         DisciplineArray.Remove(removeItem);
 
+
         //удаляем
         Key key = new Key(removeItem.discipline, removeItem.department);
         treeDiscipline.Delete(removeItem.discipline, res);
@@ -96,13 +97,16 @@ public class DisciplineRepository
         table.Remove(key, res);
         // Console.WriteLine(treeDiscipline.DisplayTree(treeDiscipline.root));
         //заменяем
-        removeItem = DisciplineArray[res];
-        key = new Key(removeItem.discipline, removeItem.department);
-        treeDiscipline.Edit(removeItem.discipline, res, index);
-        treeInstitute.Edit(removeItem.institute, res, index);
-        treeTeacher.Edit(removeItem.teacher, res, index);
-        treeDepartment.Edit(removeItem.department, res, index);
-        table.Edit(key, res);
+        if (res == index)
+        {
+            removeItem = DisciplineArray[res];
+            key = new Key(removeItem.discipline, removeItem.department);
+            treeDiscipline.Edit(removeItem.discipline, res, index);
+            treeInstitute.Edit(removeItem.institute, res, index);
+            treeTeacher.Edit(removeItem.teacher, res, index);
+            treeDepartment.Edit(removeItem.department, res, index);
+            table.Edit(key, res);
+        }
 
     }
     public List<Discipline> GetAll()
@@ -110,11 +114,13 @@ public class DisciplineRepository
         return DisciplineArray;
     }
 
-    public Discipline FindUnique(string discipline, string department)
+    public Comparisons<Discipline> FindUnique(string discipline, string department)
     {
         Key key = new Key(discipline, department);
         int res = table.Search(key);
-        return DisciplineArray[res];
+        Comparisons<Discipline> comparisons = new Comparisons<Discipline>(DisciplineArray[res], table.k);
+        table.k = 0;
+        return comparisons;
     }
     public void WriteToFile(string path)
     {
@@ -130,22 +136,31 @@ public class DisciplineRepository
         }
     }
 
-    public List<Discipline> FindByKey(string key, IndexType type)
+    public Comparisons<List<Discipline>> FindByKey(string key, IndexType type)
     {
         NodeAvl res = null;
+        int i = 0;
         switch (type)
         {
             case IndexType.discipline:
+                treeDiscipline.i = 0;
                 res = treeDiscipline.Find(key);
+                i = treeDiscipline.i;
                 break;
             case IndexType.department:
+                treeDepartment.i = 0;
                 res = treeDepartment.Find(key);
+                i = treeDepartment.i;
                 break;
             case IndexType.teacher:
+                treeTeacher.i = 0;
                 res = treeTeacher.Find(key);
+                i = treeTeacher.i;
                 break;
             case IndexType.institute:
+                treeInstitute.i = 0;
                 res = treeInstitute.Find(key);
+                i = treeInstitute.i;
                 break;
             default:
                 return null;
@@ -154,9 +169,10 @@ public class DisciplineRepository
         var Disciplins = new List<Discipline>();
         var head = res.listAvl.head;
         Disciplins.Add(DisciplineArray[res.value]);
+        Comparisons<List<Discipline>> comparisons = new Comparisons<List<Discipline>>(Disciplins, i);
         if (head == null)
         {
-            return Disciplins;
+            return comparisons;
         }
         Disciplins.Add(DisciplineArray[head.Data]);
         var temp = head.Next;
@@ -165,11 +181,21 @@ public class DisciplineRepository
             Disciplins.Add(DisciplineArray[temp.Data]);
             temp = temp.Next;
         }
-
-        return Disciplins;
+        comparisons.node = Disciplins;
+        return comparisons;
     }
     public bool isCorected(Discipline discipline)
     {
+
+        if (discipline == null)
+        {
+            return false;
+        }
+        if (discipline.department == null && discipline.discipline == null && discipline.institute == null && discipline.teacher == null)
+        {
+            return false;
+        }
+
         bool isRussianWord1 = IsRussianWord(discipline.discipline);
         bool isRussianWord2 = IsRussianWord(discipline.discipline);
         bool isRussianWord3 = IsRussianWord(discipline.discipline);

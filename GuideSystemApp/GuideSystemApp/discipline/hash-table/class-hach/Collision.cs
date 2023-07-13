@@ -4,7 +4,7 @@ public class Collision
     private int index;
 
     private int hash_2;
-    private int j;
+    public int j;
 
     private int hash;
     private int k;
