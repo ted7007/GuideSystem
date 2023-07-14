@@ -125,12 +125,16 @@ public class AVLTree<T> where T : IComparable<T>
         else if (compareResult < 0)
         {
              var res = FindNode(node.Left, value);
+             if (res == null)
+                 return null;
              res.k++;
              return res;
         }
         else
         {
             var res = FindNode(node.Right, value);
+            if (res == null)
+                return null;
             res.k++;
             return res;
         }
