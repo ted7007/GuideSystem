@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace GuideSystemApp.Student.List
 {
     // 1. Объявление типа Указатель
-    class Node
+    public class Node
     {
         public int data;
         public Node next;

@@ -175,7 +175,7 @@ namespace GuideSystemApp.Student.RB
                 root.Right = InsertNode(root.Right, node);
                 root.Right.Parent = root;
             }
-            else if(String.Compare(root.Key, node.Key, StringComparison.Ordinal) == 0)
+            else if (String.Compare(root.Key, node.Key, StringComparison.Ordinal) == 0)
             {
                 if (root.List == null)
                 {
@@ -188,7 +188,7 @@ namespace GuideSystemApp.Student.RB
             return root;
         }
 
-        public void Insert(string Key,int value)
+        public void Insert(string Key, int value)
         {
             TreeNode node = new TreeNode(Key, value);
             if (root == null)
@@ -416,6 +416,24 @@ namespace GuideSystemApp.Student.RB
             }
         }
 
+        public List<TreeNode> GetNodes()
+        {
+            List<TreeNode> nodes = new List<TreeNode>();
+            InOrderTraversal(root, nodes);
+            return nodes;
+        }
+
+        private void InOrderTraversal(TreeNode node, List<TreeNode> nodes)
+        {
+            if (node == null)
+            {
+                return;
+            }
+
+            InOrderTraversal(node.Left, nodes);
+            nodes.Add(node);
+            InOrderTraversal(node.Right, nodes);
+        }
         private TreeNode GetSibling(TreeNode node)
         {
             if (node == node.Parent.Left)
@@ -432,6 +450,35 @@ namespace GuideSystemApp.Student.RB
             PrintTree(root, 0);
         }
 
+        public int Search(string key)
+        {
+            TreeNode node = Find(root, key);
+            return node != null ? node.value : -1;
+        }
+
+
+        private TreeNode Find(TreeNode node, string key)
+        {
+            if (node == null || key == null)
+            {
+                return null;
+            }
+
+            int comparisonResult = key.CompareTo(node.Key);
+
+            if (comparisonResult == 0)
+            {
+                return node;
+            }
+            else if (comparisonResult < 0)
+            {
+                return Find(node.Left, key);
+            }
+            else
+            {
+                return Find(node.Right, key);
+            }
+        }
         private void PrintTree(TreeNode node, int level)
         {
             if (node == null)

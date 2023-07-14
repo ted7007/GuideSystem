@@ -1,41 +1,34 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
-using System.Text;
-using GuideSystemApp.Student.RB;
 using GuideSystemApp.Student.Hash;
 using GuideSystemApp.Student.List;
-using GuideSystemApp.Student;
+using GuideSystemApp.Student.RB;
 
 namespace GuideSystemApp.Student
 {
     public class StudentRepository
     {
-
         public List<Student> StudentArray;
         public HashTable HashTable;
-        public RB_Tree StudentFIO;
-        public RB_Tree Group;
-        public RB_Tree AdmissionDate;
-
+        private RB_Tree StudentFIO;
+        private RB_Tree Group;
+        private RB_Tree AdmissionDate;
 
         public StudentRepository()
         {
             this.StudentArray = new List<Student>();
-            StudentFIO= new RB_Tree();
-            Group= new RB_Tree();
-            AdmissionDate= new RB_Tree();
+            StudentFIO = new RB_Tree();
+            Group = new RB_Tree();
+            AdmissionDate = new RB_Tree();
             HashTable = new HashTable(20);
-
         }
 
         public void ReadFromFile(string path)
         {
             using (StreamReader reader = new StreamReader(path))
             {
-
-                int count = int.Parse(reader.ReadLine()); // Преобразование строку в число
-
-
+                int count = int.Parse(reader.ReadLine()); // Преобразование строки в число
 
                 // Записываем данные в массив
                 for (int i = 0; i < count; i++)
@@ -48,12 +41,13 @@ namespace GuideSystemApp.Student
 
             CreateIndexes();
         }
+
         private void CreateIndexes()
         {
             for (int i = 0; i < StudentArray.Count; i++)
             {
                 StudentFIO.Insert(StudentArray[i].FIO, i);
-                Group.Insert(StudentArray[i].Group, i);               
+                Group.Insert(StudentArray[i].Group, i);
                 AdmissionDate.Insert(StudentArray[i].AdmissionDate, i);
                 HashTable.Add(StudentArray[i].Passport, i);
             }
@@ -64,6 +58,7 @@ namespace GuideSystemApp.Student
             StudentArray.Add(student);
             AddToIndexes(StudentArray.Count - 1);
         }
+
         private void AddToIndexes(int i)
         {
             StudentFIO.Insert(StudentArray[i].FIO, i);
@@ -79,14 +74,13 @@ namespace GuideSystemApp.Student
 
         public void WriteToFile(string path)
         {
-
             using (StreamWriter writer = new StreamWriter(path))
             {
                 writer.WriteLine(StudentArray.Count);
 
                 foreach (var student in StudentArray)
                 {
-                    writer.WriteLine($"{student.FIO}\\{student.Group}\\{student.Passport}\\{student.AdmissionDate}");
+                    writer.WriteLine($"{student.FIO}/{student.Group}/{student.Passport}/{student.AdmissionDate}");
                 }
             }
         }
@@ -96,78 +90,77 @@ namespace GuideSystemApp.Student
             int res = Find(student);
             if (res == -1)
                 return;
-            var removeItem = StudentArray[res];
-            int index = StudentArray.Count - 1;
-            if (index == res)
-            {
-                StudentFIO.Delete(removeItem.FIO, res);
-                Group.Delete(removeItem.Group, res);
-                AdmissionDate.Delete(removeItem.AdmissionDate, res);
 
-                HashTable.Delete(removeItem.Passport, res);
+            var removeItem = StudentArray[res];
+            int lastIndex = StudentArray.Count - 1;
+
+            if (res == lastIndex)
+            {
+                RemoveFromIndexes(res);
+                StudentArray.RemoveAt(res);
             }
             else
             {
-            StudentArray[res] = StudentArray[index];
-            StudentArray[index] = removeItem;
-            StudentArray.Remove(removeItem);
+                StudentArray[res] = StudentArray[lastIndex];
+                StudentArray.RemoveAt(lastIndex);
 
-            //удаляем
-
-            StudentFIO.Delete(removeItem.FIO, res);
-            Group.Delete(removeItem.Group, res);
-            AdmissionDate.Delete(removeItem.AdmissionDate, res);
-
-            HashTable.Delete(removeItem.Passport, res);
-                //заменяем
-                PrintStudentFIO();
-                PrintStudentGroup();
-                PrintStudentAdmissionDate();
-                PrintHashTable();
-
-            removeItem = StudentArray[res];
-
-            StudentFIO.EditValue(removeItem.FIO, res, index);
-            Group.EditValue(removeItem.Group, res, index);
-            AdmissionDate.EditValue(removeItem.AdmissionDate, res, index);
-
-            HashTable.Edit(removeItem.Passport, res);
+                UpdateIndexesAfterDelete(removeItem, lastIndex, res);
             }
-            
+        }
 
+        private void RemoveFromIndexes(int i)
+        {
+            StudentFIO.Delete(StudentArray[i].FIO, i);
+            Group.Delete(StudentArray[i].Group, i);
+            AdmissionDate.Delete(StudentArray[i].AdmissionDate, i);
+            HashTable.Delete(StudentArray[i].Passport, i);
+        }
+
+        private void UpdateIndexesAfterDelete(Student student, int oldIndex, int newIndex)
+        {
+            StudentFIO.EditValue(student.FIO, oldIndex, newIndex);
+            Group.EditValue(student.Group, oldIndex, newIndex);
+            AdmissionDate.EditValue(student.AdmissionDate, oldIndex, newIndex);
+            HashTable.Edit(student.Passport, newIndex);
         }
 
         private int Find(Student student)
         {
-
+            // Поиск по хеш-таблице
             var res = HashTable.Search(student.Passport);
+            if (res != -1)
+                return res;
+
+            // Поиск по деревьям
+            res = StudentFIO.Search(student.FIO);
+            if (res != -1)
+                return res;
+
+            res = Group.Search(student.Group);
+            if (res != -1)
+                return res;
+
+            res = AdmissionDate.Search(student.AdmissionDate);
             return res;
         }
 
-        public void PrintStudentFIO()
+        public List<TreeNode> GetStudentFIO()
         {
-            Console.WriteLine("Дерево ФИО:");
-            StudentFIO.PrintTree();
+            return StudentFIO.GetNodes();
         }
 
-        public void PrintStudentGroup()
+        public List<TreeNode> GetStudentGroup()
         {
-            Console.WriteLine("Дерево Группы:");
-            Group.PrintTree();
+            return Group.GetNodes();
         }
 
-        public void PrintStudentAdmissionDate()
+        public List<TreeNode> GetStudentAdmissionDate()
         {
-            Console.WriteLine("Дерево Даты поступления:");
-            AdmissionDate.PrintTree();
+            return AdmissionDate.GetNodes();
         }
-
-        public void PrintHashTable()
+        public List<KeyValuePair<string, int>> GetHashTable()
         {
-            Console.WriteLine("Хэш-таблица:");
-            HashTable.Print();
-
+            return HashTable.GetItems();
         }
     }
-        
 }

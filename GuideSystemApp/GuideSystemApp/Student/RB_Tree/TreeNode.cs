@@ -19,9 +19,9 @@ namespace GuideSystemApp.Student
             Color = Colors.Red;
         }
     }*/
-    enum Colors { Black, Red };
+    public enum Colors { Black, Red };
 
-    class TreeNode
+    public class TreeNode
     {
         public LinkedList List;
         public string Key;

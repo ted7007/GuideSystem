@@ -1,38 +1,52 @@
-﻿using GuideSystemApp.Student;
+﻿// Создание экземпляра класса StudentRepository
+using GuideSystemApp.Student;
 
 StudentRepository repository = new StudentRepository();
 
-// Чтение данных из файла
+// Чтение данных из файла и добавление студентов
 repository.ReadFromFile("input_student.txt");
 
-// Вывод списка студентов перед удалением
-Console.WriteLine("Список студентов перед удалением:");
-repository.PrintStudentFIO();
-repository.PrintStudentGroup();
-repository.PrintStudentAdmissionDate();
-repository.PrintHashTable();
-
-// Удаление студента по объекту
-Student studentToDelete = new Student("Бухалихин Богдан Владиславович", "Б9121-09.03.04прогин", "2985 987421", "13.06.2020");
-repository.Delete(studentToDelete);
-
-// Вывод списка студентов после удаления
-Console.WriteLine("Список студентов после удаления:");
-repository.PrintStudentFIO();
-repository.PrintStudentGroup();
-repository.PrintStudentAdmissionDate();
-repository.PrintHashTable();
+// Получение всех студентов
+List<Student> allStudents = repository.GetAll();
+foreach (var student in allStudents)
+{
+    Console.WriteLine($"Student: {student.FIO}, Group: {student.Group}, Admission Date: {student.AdmissionDate}, Passport: {student.Passport}");
+}
 
 // Добавление нового студента
-Student newStudent = new Student("Иванов Иван Иванович", "Б9121-09.03.04прогин", "1234 567890", "01.07.2020");
+Student newStudent = new Student("John Doe", "Group A", "AB1234567", "2022-01-01");
 repository.Add(newStudent);
 
-// Вывод списка студентов после добавления
-Console.WriteLine("Список студентов после добавления:");
-repository.PrintStudentFIO();
-repository.PrintStudentGroup();
-repository.PrintStudentAdmissionDate();
-repository.PrintHashTable();
+// Удаление студента
+repository.Delete(newStudent);
+
+// Получение списка студентов по ФИО
+List<TreeNode> studentFIOList = repository.GetStudentFIO();
+foreach (var node in studentFIOList)
+{
+    Console.WriteLine($"FIO: {node.Key}, Index: {node.value}");
+}
+
+// Получение списка студентов по группе
+List<TreeNode> studentGroupList = repository.GetStudentGroup();
+foreach (var node in studentGroupList)
+{
+    Console.WriteLine($"Group: {node.Key}, Index: {node.value}");
+}
+
+// Получение списка студентов по дате поступления
+List<TreeNode> studentAdmissionDateList = repository.GetStudentAdmissionDate();
+foreach (var node in studentAdmissionDateList)
+{
+    Console.WriteLine($"Admission Date: {node.Key}, Index: {node.value}");
+}
+
+// Получение таблицы хешей
+List<KeyValuePair<string, int>> hashTable = repository.GetHashTable();
+foreach (var entry in hashTable)
+{
+    Console.WriteLine($"Passport: {entry.Key}, Index: {entry.Value}");
+}
 
 // Запись данных в файл
-repository.WriteToFile("output_student.txt");
+repository.WriteToFile("students_updated.txt");

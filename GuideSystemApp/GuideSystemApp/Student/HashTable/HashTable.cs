@@ -220,6 +220,21 @@ namespace GuideSystemApp.Student.Hash
             Console.WriteLine(size);
         }
 
+        public List<KeyValuePair<string, int>> GetItems()
+        {
+            List<KeyValuePair<string, int>> itemList = new List<KeyValuePair<string, int>>();
+
+            for (int i = 0; i < size; i++)
+            {
+                if (items[i].status == 1)
+                {
+                    KeyValuePair<string, int> item = new KeyValuePair<string, int>(items[i].key, items[i].value);
+                    itemList.Add(item);
+                }
+            }
+
+            return itemList;
+        }
         private int ResolveCollisionLinearForAddNew(string key, int index, Item[] newItems)
         {
             int j = 1;

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace GuideSystemApp.Student.List
 {
-    internal class LinkedList
+    public class LinkedList
     {
         public Node head;
         public Node tail;
