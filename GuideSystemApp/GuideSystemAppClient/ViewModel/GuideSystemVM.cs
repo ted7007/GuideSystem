@@ -223,6 +223,8 @@ public class GuideSystemVM : INotifyPropertyChanged
                             {
                                 CurrentList = new ObservableCollection<object>();
                                 OnPropertyChanged("CurrentList");
+                                
+                                return;
                             }
                             CurrentList = new ObservableCollection<object>(resMarks.node);
                             countChecks = resMarks.k;
@@ -239,6 +241,8 @@ public class GuideSystemVM : INotifyPropertyChanged
                             {
                                 CurrentList = new ObservableCollection<object>();
                                 OnPropertyChanged("CurrentList");
+                                
+                                return;
                             }
                             CurrentList = new ObservableCollection<object>(resMarks.node);
                             countChecks = resMarks.k;
@@ -255,6 +259,8 @@ public class GuideSystemVM : INotifyPropertyChanged
                             {
                                 CurrentList = new ObservableCollection<object>();
                                 OnPropertyChanged("CurrentList");
+                                
+                                return;
                             }
                             CurrentList = new ObservableCollection<object>(resMarks.node);
                             countChecks = resMarks.k;
@@ -271,6 +277,8 @@ public class GuideSystemVM : INotifyPropertyChanged
                             {
                                 CurrentList = new ObservableCollection<object>();
                                 OnPropertyChanged("CurrentList");
+                                
+                                return;
                             }
                             CurrentList = new ObservableCollection<object>(resMarks.node);
                             countChecks = resMarks.k;
@@ -290,6 +298,8 @@ public class GuideSystemVM : INotifyPropertyChanged
                             {
                                 CurrentList = new ObservableCollection<object>();
                                 OnPropertyChanged("CurrentList");
+                                
+                                return;
                             }
                             CurrentList = new ObservableCollection<object>(new []{resMarksOne.node});
                             countChecks = resMarksOne.k;
@@ -324,6 +334,7 @@ public class GuideSystemVM : INotifyPropertyChanged
                             {
                                 CurrentList = new ObservableCollection<object>();
                                 OnPropertyChanged("CurrentList");
+                                return;
                             }
                             CurrentList = new ObservableCollection<object>(resDisciplines.node);
                             countChecks = resDisciplines.k;
@@ -335,6 +346,8 @@ public class GuideSystemVM : INotifyPropertyChanged
                             {
                                 CurrentList = new ObservableCollection<object>();
                                 OnPropertyChanged("CurrentList");
+                                
+                                return;
                             }
                             CurrentList = new ObservableCollection<object>(resDisciplines.node);
                             countChecks = resDisciplines.k;
@@ -346,6 +359,7 @@ public class GuideSystemVM : INotifyPropertyChanged
                             {
                                 CurrentList = new ObservableCollection<object>();
                                 OnPropertyChanged("CurrentList");
+                                return;
                             }
                             CurrentList = new ObservableCollection<object>(resDisciplines.node);
                             countChecks = resDisciplines.k;
@@ -353,6 +367,13 @@ public class GuideSystemVM : INotifyPropertyChanged
                         case "По Институту":
                             resDisciplines = 
                                 _disciplineRepository.FindByKey(findDisciplinesVm.FieldInputList.First().FieldValue, GuideSystemApp.Disciplines.IndexType.institute);
+                            if (resDisciplines == null)
+                            {
+                                CurrentList = new ObservableCollection<object>();
+                                OnPropertyChanged("CurrentList");
+                                return;
+                            }
+                            
                             CurrentList = new ObservableCollection<object>(resDisciplines.node);
                             countChecks = resDisciplines.k;
                             break;
@@ -364,6 +385,7 @@ public class GuideSystemVM : INotifyPropertyChanged
                             {
                                 CurrentList = new ObservableCollection<object>();
                                 OnPropertyChanged("CurrentList");
+                                return;
                             }
                             CurrentList = new ObservableCollection<object>(new []{resDisciplinesOne.node});
                             countChecks = resDisciplinesOne.k;
