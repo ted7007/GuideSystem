@@ -97,7 +97,7 @@ public class DisciplineRepository
         table.Remove(key, res);
         // Console.WriteLine(treeDiscipline.DisplayTree(treeDiscipline.root));
         //заменяем
-        if (res == index)
+        if (res != index)
         {
             removeItem = DisciplineArray[res];
             key = new Key(removeItem.discipline, removeItem.department);

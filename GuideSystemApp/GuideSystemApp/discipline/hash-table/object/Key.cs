@@ -10,23 +10,23 @@ public class Key
     }
     public static bool operator ==(Key key1, Key key2)
     {
-        if (ReferenceEquals(key1, key2))
+        if (ReferenceEquals(key1, null) || ReferenceEquals(key2, null))
         {
-            if (key1.key1 == key2.key1 && key1.key2 == key2.key2)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-        else {
             return false;
         }
+        if (key1.key1 == key2.key1 && key1.key2 == key2.key2)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+
     }
     public static bool operator !=(Key key1, Key key2)
     {
+
         if (key1.key1 != key2.key1 || key1.key2 != key2.key2)
         {
             return true;
@@ -35,8 +35,10 @@ public class Key
         {
             return false;
         }
+
     }
-    public string print(){
+    public string print()
+    {
         return $"{key1} {key2}";
     }
 }

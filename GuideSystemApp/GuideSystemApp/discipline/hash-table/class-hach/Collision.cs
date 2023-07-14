@@ -45,7 +45,7 @@ public class Collision
             if (items[index].status == 1)
             {
                 // Сравниваем их ключи
-                if (item.key.key1 == items[index].key.key1 && item.key.key2 == items[index].key.key2)
+                if (item.key == items[index].key)
                 {
                     flag = 0;
                 }
@@ -93,11 +93,12 @@ public class Collision
     {
         while (items[index].status != 0 && flag == 1 && j <= this.size)
         {
-            if ((key.key1 == items[index].key.key1 && key.key2 == items[index].key.key2))
-            {
-                flag = 0;
-                hash_2 = index;
-            }
+   
+                if ((key == items[index].key))
+                {
+                    flag = 0;
+                    hash_2 = index;
+                }
             else
             {
                 index = HachTwo(j);
@@ -118,7 +119,7 @@ public class Collision
     {
         while (items[index].status != 0 && flag == 1 && j <= this.size)
         {
-            if ((key.key1 == items[index].key.key1 && key.key2 == items[index].key.key2))
+            if ((key == items[index].key))
             {
                 flag = 0;
                 hash_2 = index;
@@ -143,7 +144,7 @@ public class Collision
     {
         while (items[index].status != 0 && flag == 1 && j <= this.size)
         {
-            if ((key.key1 == key.key1 && key.key2 == items[index].key.key2))
+            if ((key == items[index].key))
             {
                 if (value == items[index].value)
                 {
