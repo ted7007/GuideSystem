@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using GuideSystemApp.Disciplines;
@@ -232,7 +233,6 @@ public class GuideSystemVM : INotifyPropertyChanged
     {
         get => new RelayCommand(obj =>
         {
-            int countChecks = 0;
             switch (SelectedList.Content.ToString())
             {
                 case "Оценки":
@@ -266,13 +266,11 @@ public class GuideSystemVM : INotifyPropertyChanged
                                 _markRepository.FindByKey(vm.FieldInputList.First().FieldValue, IndexType.Passport);
                             if (resMarks == null)
                             {
-                                CurrentList = new ObservableCollection<object>();
-                                OnPropertyChanged("CurrentList");
-                                
+                                ShowError("Не найдено.");
                                 return;
                             }
-                            CurrentList = new ObservableCollection<object>(resMarks.node);
-                            countChecks = resMarks.k;
+
+                            MessageBox.Show(GetViewMarks(resMarks));
                             break;
                         case "По дисциплине":
                             if (!Mark.ValidateDiscipline(vm.FieldInputList.First().FieldValue))
@@ -284,13 +282,10 @@ public class GuideSystemVM : INotifyPropertyChanged
                                 _markRepository.FindByKey(vm.FieldInputList.First().FieldValue, IndexType.Discipline);
                             if (resMarks == null)
                             {
-                                CurrentList = new ObservableCollection<object>();
-                                OnPropertyChanged("CurrentList");
-                                
+                                ShowError("Не найдено.");
                                 return;
                             }
-                            CurrentList = new ObservableCollection<object>(resMarks.node);
-                            countChecks = resMarks.k;
+                            MessageBox.Show(GetViewMarks(resMarks));
                             break;
                         case "По дате сдачи":
                             if (!Mark.ValidateDate(vm.FieldInputList.First().FieldValue))
@@ -302,13 +297,10 @@ public class GuideSystemVM : INotifyPropertyChanged
                                 _markRepository.FindByKey(vm.FieldInputList.First().FieldValue, IndexType.Date);
                             if (resMarks == null)
                             {
-                                CurrentList = new ObservableCollection<object>();
-                                OnPropertyChanged("CurrentList");
-                                
+                                ShowError("Не найдено.");
                                 return;
                             }
-                            CurrentList = new ObservableCollection<object>(resMarks.node);
-                            countChecks = resMarks.k;
+                            MessageBox.Show(GetViewMarks(resMarks));
                             break;
                         case "По оценке":
                             if (!Mark.ValidateValue(vm.FieldInputList.First().FieldValue))
@@ -320,13 +312,10 @@ public class GuideSystemVM : INotifyPropertyChanged
                                 _markRepository.FindByKey(vm.FieldInputList.First().FieldValue, IndexType.Value);
                             if (resMarks == null)
                             {
-                                CurrentList = new ObservableCollection<object>();
-                                OnPropertyChanged("CurrentList");
-                                
+                                ShowError("Не найдено.");
                                 return;
                             }
-                            CurrentList = new ObservableCollection<object>(resMarks.node);
-                            countChecks = resMarks.k;
+                            MessageBox.Show(GetViewMarks(resMarks));
                             break;
                         case "Поиск конкретной оценки":
                             
@@ -341,13 +330,12 @@ public class GuideSystemVM : INotifyPropertyChanged
                             
                             if (resMarksOne == null)
                             {
-                                CurrentList = new ObservableCollection<object>();
-                                OnPropertyChanged("CurrentList");
+                                ShowError("Не найдено.");
                                 
                                 return;
                             }
-                            CurrentList = new ObservableCollection<object>(new []{resMarksOne.node});
-                            countChecks = resMarksOne.k;
+                            
+                            MessageBox.Show(GetViewMarks(new Comparisons<List<Mark>>(node:new List<Mark>{resMarksOne.node}, resMarksOne.k)));
                             break;
                     }
                     break;
@@ -373,67 +361,83 @@ public class GuideSystemVM : INotifyPropertyChanged
                     switch (findDisciplinesVm.ComboSelectedItem)
                     {
                         case "По Дисциплине":
+                            if (!Discipline.ValidateDiscipline(findDisciplinesVm.FieldInputList.First().FieldValue))
+                            {
+                                ShowError();
+                                return;
+                            }
+                            
                             resDisciplines = 
                                 _disciplineRepository.FindByKey(findDisciplinesVm.FieldInputList.First().FieldValue, GuideSystemApp.Disciplines.IndexType.discipline);
                             if (resDisciplines == null)
                             {
-                                CurrentList = new ObservableCollection<object>();
-                                OnPropertyChanged("CurrentList");
+                                ShowError("Не найдено.");
                                 return;
                             }
-                            CurrentList = new ObservableCollection<object>(resDisciplines.node);
-                            countChecks = resDisciplines.k;
+                           
+                            MessageBox.Show(GetViewDisciplines(resDisciplines));
                             break;
                         case "По Департаменту":
+                            if (!Discipline.ValiDepartment(findDisciplinesVm.FieldInputList.First().FieldValue))
+                            {
+                                ShowError();
+                                return;
+                            }
                             resDisciplines = 
                                 _disciplineRepository.FindByKey(findDisciplinesVm.FieldInputList.First().FieldValue, GuideSystemApp.Disciplines.IndexType.department);
                             if (resDisciplines == null)
                             {
-                                CurrentList = new ObservableCollection<object>();
-                                OnPropertyChanged("CurrentList");
-                                
+                                ShowError("Не найдено.");
                                 return;
                             }
-                            CurrentList = new ObservableCollection<object>(resDisciplines.node);
-                            countChecks = resDisciplines.k;
+                            MessageBox.Show(GetViewDisciplines(resDisciplines));
                             break;
                         case "По Преподавателю":
+                            if (!Discipline.ValidateTeacher(findDisciplinesVm.FieldInputList.First().FieldValue))
+                            {
+                                ShowError();
+                                return;
+                            }
                             resDisciplines = 
                                 _disciplineRepository.FindByKey(findDisciplinesVm.FieldInputList.First().FieldValue, GuideSystemApp.Disciplines.IndexType.teacher);
                             if (resDisciplines == null)
                             {
-                                CurrentList = new ObservableCollection<object>();
-                                OnPropertyChanged("CurrentList");
+                                ShowError("Не найдено.");
                                 return;
                             }
-                            CurrentList = new ObservableCollection<object>(resDisciplines.node);
-                            countChecks = resDisciplines.k;
+                            MessageBox.Show(GetViewDisciplines(resDisciplines));
                             break;
                         case "По Институту":
+                            if (!Discipline.ValiInstitute(findDisciplinesVm.FieldInputList.First().FieldValue))
+                            {
+                                ShowError();
+                                return;
+                            }
                             resDisciplines = 
                                 _disciplineRepository.FindByKey(findDisciplinesVm.FieldInputList.First().FieldValue, GuideSystemApp.Disciplines.IndexType.institute);
                             if (resDisciplines == null)
                             {
-                                CurrentList = new ObservableCollection<object>();
-                                OnPropertyChanged("CurrentList");
+                                ShowError("Не найдено.");
                                 return;
                             }
                             
-                            CurrentList = new ObservableCollection<object>(resDisciplines.node);
-                            countChecks = resDisciplines.k;
+                            MessageBox.Show(GetViewDisciplines(resDisciplines));
                             break;
                         case "Поиск конкретной дисциплины":
                             var fields = findDisciplinesVm.FieldInputList.Select(f => f.FieldValue).ToList();
+                            if (!Discipline.ValidateDiscipline(fields[0]) && !Discipline.ValiDepartment(fields[1]))
+                            {
+                                ShowError();
+                                return;
+                            }
                             var resDisciplinesOne = 
                                 _disciplineRepository.FindUnique(fields[0], fields[1]);
                             if (resDisciplinesOne == null)
                             {
-                                CurrentList = new ObservableCollection<object>();
-                                OnPropertyChanged("CurrentList");
+                                ShowError("Не найдено.");
                                 return;
                             }
-                            CurrentList = new ObservableCollection<object>(new []{resDisciplinesOne.node});
-                            countChecks = resDisciplinesOne.k;
+                            MessageBox.Show(GetViewDisciplines(new Comparisons<List<Discipline>>(node:new List<Discipline>{resDisciplinesOne.node}, resDisciplinesOne.k)));
                             break;
                     }
                     break;
@@ -510,8 +514,6 @@ public class GuideSystemVM : INotifyPropertyChanged
                 default:
                     throw new NotImplementedException();
             }
-            OnPropertyChanged("CurrentList");
-            MessageBox.Show($"Количество проверок - {countChecks}");
         });
     }
     
@@ -716,6 +718,41 @@ public class GuideSystemVM : INotifyPropertyChanged
     private void ShowError(string text)
     {
         MessageBox.Show(text);
+    }
+
+    private string GetViewMarks(Comparisons<List<Mark>> marks)
+    {
+        StringBuilder sb = new StringBuilder();
+        int i = 0;
+        
+        sb.Append($"Поиск занял {marks.k} итераций.");
+        sb.Append("Оценки: \n");
+        foreach (var mark in marks.node)
+        {
+            var newMark = mark;
+            newMark.Index = i;
+            sb.Append(newMark + "\n");
+            i++;
+        }
+
+        return sb.ToString();
+    }
+    
+    private string GetViewDisciplines(Comparisons<List<Discipline>> disciplines)
+    {
+        StringBuilder sb = new StringBuilder();
+        int i = 0;
+        sb.Append($"Поиск занял {disciplines.k} итераций.");
+        sb.Append("Дисциплины: \n");
+        foreach (var mark in disciplines.node)
+        {
+            var newMark = mark;
+            newMark.Index = i;
+            sb.Append(newMark + "\n");
+            i++;
+        }
+
+        return sb.ToString();
     }
     
     public event PropertyChangedEventHandler? PropertyChanged;
