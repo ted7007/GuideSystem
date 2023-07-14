@@ -97,7 +97,7 @@ public class DisciplineRepository
         table.Remove(key, res);
         // Console.WriteLine(treeDiscipline.DisplayTree(treeDiscipline.root));
         //заменяем
-        if (res == index)
+        if (res != index)
         {
             removeItem = DisciplineArray[res];
             key = new Key(removeItem.discipline, removeItem.department);
@@ -118,9 +118,16 @@ public class DisciplineRepository
     {
         Key key = new Key(discipline, department);
         int res = table.Search(key);
-        Comparisons<Discipline> comparisons = new Comparisons<Discipline>(DisciplineArray[res], table.k);
-        table.k = 0;
-        return comparisons;
+        if (res == -1)
+        {
+            return null;
+        }
+        else
+        {
+            Comparisons<Discipline> comparisons = new Comparisons<Discipline>(DisciplineArray[res], table.k);
+            table.k = 0;
+            return comparisons;
+        }
     }
     public void WriteToFile(string path)
     {
@@ -165,24 +172,30 @@ public class DisciplineRepository
             default:
                 return null;
         }
-
-        var Disciplins = new List<Discipline>();
-        var head = res.listAvl.head;
-        Disciplins.Add(DisciplineArray[res.value]);
-        Comparisons<List<Discipline>> comparisons = new Comparisons<List<Discipline>>(Disciplins, i);
-        if (head == null)
+        if (res == null)
         {
+            return null;
+        }
+        else
+        {
+            var Disciplins = new List<Discipline>();
+            var head = res.listAvl.head;
+            Disciplins.Add(DisciplineArray[res.value]);
+            Comparisons<List<Discipline>> comparisons = new Comparisons<List<Discipline>>(Disciplins, i);
+            if (head == null)
+            {
+                return comparisons;
+            }
+            Disciplins.Add(DisciplineArray[head.Data]);
+            var temp = head.Next;
+            while (head != temp)
+            {
+                Disciplins.Add(DisciplineArray[temp.Data]);
+                temp = temp.Next;
+            }
+            comparisons.node = Disciplins;
             return comparisons;
         }
-        Disciplins.Add(DisciplineArray[head.Data]);
-        var temp = head.Next;
-        while (head != temp)
-        {
-            Disciplins.Add(DisciplineArray[temp.Data]);
-            temp = temp.Next;
-        }
-        comparisons.node = Disciplins;
-        return comparisons;
     }
     public bool isCorected(Discipline discipline)
     {
