@@ -102,10 +102,15 @@ public class MarkRepository
 
     private void RemoveFromIndexes(int i)
     {
-        MarkIndexByPassport.Remove(new KeyValue() {Key = MarkArray[i].PassportSerialNumber, Value = i});
-        MarkIndexByDiscipline.Remove(new KeyValue() {Key = MarkArray[i].Discipline, Value = i});
-        MarkIndexByDate.Remove(new KeyValue() {Key = MarkArray[i].Date, Value = i});
-        MarkIndexByValue.Remove(new KeyValue() {Key = ((int)MarkArray[i].Value).ToString(), Value = i});
+        var deleteElem = MarkArray[i];
+        MarkIndexByPassport.Find(new KeyValue() {Key = MarkArray[i].PassportSerialNumber, Value = i})
+            .node.List.Remove(elem => elem.Key == deleteElem.PassportSerialNumber && elem.Value == i);
+        MarkIndexByDiscipline.Find(new KeyValue() {Key = MarkArray[i].Discipline, Value = i})
+            .node.List.Remove(elem => elem.Key == deleteElem.Discipline && elem.Value == i);
+        MarkIndexByDate.Find(new KeyValue() {Key = MarkArray[i].Date, Value = i})
+            .node.List.Remove(elem => elem.Key == deleteElem.Date && elem.Value == i);
+        MarkIndexByValue.Find(new KeyValue() {Key = ((int)MarkArray[i].Value).ToString(), Value = i})
+            .node.List.Remove(elem => elem.Key == ((int)deleteElem.Value).ToString() && elem.Value == i);
         HashTable.Remove(
             MarkArray[i].PassportSerialNumber + MarkArray[i].Discipline + MarkArray[i].Date +
             ((int)MarkArray[i].Value));
@@ -175,16 +180,16 @@ public class MarkRepository
 
     private void ChangeIndexForMark(Mark mark, int oldNum, int newNum)
     {
-        MarkIndexByPassport.EditValue(new KeyValue() {Key = mark.PassportSerialNumber, Value = 0}, 
+        MarkIndexByPassport.EditValue(new KeyValue() {Key = mark.PassportSerialNumber, Value = oldNum}, 
             key => key.Value == oldNum, 
             new KeyValue() { Key = mark.PassportSerialNumber, Value = newNum});
-        MarkIndexByDiscipline.EditValue(new KeyValue() {Key = mark.Discipline, Value = 0}, 
+        MarkIndexByDiscipline.EditValue(new KeyValue() {Key = mark.Discipline, Value = oldNum}, 
             key => key.Value == oldNum, 
             new KeyValue() { Key = mark.Discipline, Value = newNum});
-        MarkIndexByDate.EditValue(new KeyValue() {Key = mark.Date, Value = 0}, 
+        MarkIndexByDate.EditValue(new KeyValue() {Key = mark.Date, Value = oldNum}, 
             key => key.Value == oldNum, 
             new KeyValue() { Key = mark.Date, Value = newNum});
-        MarkIndexByValue.EditValue(new KeyValue() {Key = ((int)mark.Value).ToString(), Value = 0}, 
+        MarkIndexByValue.EditValue(new KeyValue() {Key = ((int)mark.Value).ToString(), Value = oldNum}, 
             key => key.Value == oldNum, 
             new KeyValue() { Key = mark.Value.ToString(), Value = newNum});
         HashTable.Edit(
