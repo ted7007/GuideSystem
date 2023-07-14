@@ -219,6 +219,11 @@ public class GuideSystemVM : INotifyPropertyChanged
                             }
                             resMarks = 
                                 _markRepository.FindByKey(vm.FieldInputList.First().FieldValue, IndexType.Passport);
+                            if (resMarks == null)
+                            {
+                                CurrentList = new ObservableCollection<object>();
+                                OnPropertyChanged("CurrentList");
+                            }
                             CurrentList = new ObservableCollection<object>(resMarks.node);
                             countChecks = resMarks.k;
                             break;
@@ -230,6 +235,11 @@ public class GuideSystemVM : INotifyPropertyChanged
                             }
                             resMarks = 
                                 _markRepository.FindByKey(vm.FieldInputList.First().FieldValue, IndexType.Discipline);
+                            if (resMarks == null)
+                            {
+                                CurrentList = new ObservableCollection<object>();
+                                OnPropertyChanged("CurrentList");
+                            }
                             CurrentList = new ObservableCollection<object>(resMarks.node);
                             countChecks = resMarks.k;
                             break;
@@ -241,6 +251,11 @@ public class GuideSystemVM : INotifyPropertyChanged
                             }
                             resMarks = 
                                 _markRepository.FindByKey(vm.FieldInputList.First().FieldValue, IndexType.Date);
+                            if (resMarks == null)
+                            {
+                                CurrentList = new ObservableCollection<object>();
+                                OnPropertyChanged("CurrentList");
+                            }
                             CurrentList = new ObservableCollection<object>(resMarks.node);
                             countChecks = resMarks.k;
                             break;
@@ -252,6 +267,11 @@ public class GuideSystemVM : INotifyPropertyChanged
                             }
                             resMarks = 
                                 _markRepository.FindByKey(vm.FieldInputList.First().FieldValue, IndexType.Value);
+                            if (resMarks == null)
+                            {
+                                CurrentList = new ObservableCollection<object>();
+                                OnPropertyChanged("CurrentList");
+                            }
                             CurrentList = new ObservableCollection<object>(resMarks.node);
                             countChecks = resMarks.k;
                             break;
@@ -265,6 +285,12 @@ public class GuideSystemVM : INotifyPropertyChanged
                             }
                             var resMarksOne = 
                                 _markRepository.FindUnique(new Mark() { PassportSerialNumber = fields[0], Date = fields[2], Discipline = fields[1], Value = (MarkEnum)Int32.Parse(fields[3])});
+                            
+                            if (resMarksOne == null)
+                            {
+                                CurrentList = new ObservableCollection<object>();
+                                OnPropertyChanged("CurrentList");
+                            }
                             CurrentList = new ObservableCollection<object>(new []{resMarksOne.node});
                             countChecks = resMarksOne.k;
                             break;
@@ -294,18 +320,33 @@ public class GuideSystemVM : INotifyPropertyChanged
                         case "По Дисциплине":
                             resDisciplines = 
                                 _disciplineRepository.FindByKey(findDisciplinesVm.FieldInputList.First().FieldValue, GuideSystemApp.Disciplines.IndexType.discipline);
+                            if (resDisciplines == null)
+                            {
+                                CurrentList = new ObservableCollection<object>();
+                                OnPropertyChanged("CurrentList");
+                            }
                             CurrentList = new ObservableCollection<object>(resDisciplines.node);
                             countChecks = resDisciplines.k;
                             break;
                         case "По Департаменту":
                             resDisciplines = 
                                 _disciplineRepository.FindByKey(findDisciplinesVm.FieldInputList.First().FieldValue, GuideSystemApp.Disciplines.IndexType.department);
+                            if (resDisciplines == null)
+                            {
+                                CurrentList = new ObservableCollection<object>();
+                                OnPropertyChanged("CurrentList");
+                            }
                             CurrentList = new ObservableCollection<object>(resDisciplines.node);
                             countChecks = resDisciplines.k;
                             break;
                         case "По Преподавателю":
                             resDisciplines = 
                                 _disciplineRepository.FindByKey(findDisciplinesVm.FieldInputList.First().FieldValue, GuideSystemApp.Disciplines.IndexType.teacher);
+                            if (resDisciplines == null)
+                            {
+                                CurrentList = new ObservableCollection<object>();
+                                OnPropertyChanged("CurrentList");
+                            }
                             CurrentList = new ObservableCollection<object>(resDisciplines.node);
                             countChecks = resDisciplines.k;
                             break;
@@ -319,6 +360,11 @@ public class GuideSystemVM : INotifyPropertyChanged
                             var fields = findDisciplinesVm.FieldInputList.Select(f => f.FieldValue).ToList();
                             var resDisciplinesOne = 
                                 _disciplineRepository.FindUnique(fields[0], fields[1]);
+                            if (resDisciplinesOne == null)
+                            {
+                                CurrentList = new ObservableCollection<object>();
+                                OnPropertyChanged("CurrentList");
+                            }
                             CurrentList = new ObservableCollection<object>(new []{resDisciplinesOne.node});
                             countChecks = resDisciplinesOne.k;
                             break;
