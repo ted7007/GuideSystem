@@ -8,6 +8,7 @@ using System.Windows;
 using System.Windows.Controls;
 using GuideSystemApp.Disciplines;
 using GuideSystemApp.Marks;
+using GuideSystemApp.Student;
 using GuideSystemAppClient.Command;
 using GuideSystemAppClient.Dto;
 using GuideSystemAppClient.View;
@@ -36,6 +37,7 @@ public class GuideSystemVM : INotifyPropertyChanged
          
         _markRepository = new MarkRepository(count);
         _disciplineRepository = new DisciplineRepository(count);
+        _studentRepository = new StudentRepository(count);
     }
 
     public ObservableCollection<object> CurrentList { get; set; }
@@ -43,6 +45,8 @@ public class GuideSystemVM : INotifyPropertyChanged
     public object CurrentListSelectedItem { get; set; }
     
     private ListBoxItem selectedList;
+    private readonly StudentRepository _studentRepository;
+
     public ListBoxItem SelectedList
     {
         get => selectedList;
@@ -56,6 +60,9 @@ public class GuideSystemVM : INotifyPropertyChanged
                     break;
                 case "Дисциплины":
                     CurrentList = new ObservableCollection<object>(_disciplineRepository.GetAll());
+                    break;
+                case "Студенты":
+                    CurrentList = new ObservableCollection<object>(_studentRepository.GetAll());
                     break;
                 default:
                     MessageBox.Show("Функционал не реализован! Дальше могут быть ошибки.");
@@ -91,14 +98,17 @@ public class GuideSystemVM : INotifyPropertyChanged
                     var res = markFieldsInpitWindow.ShowDialog();
                     if(res == null || !(bool)res)
                         return;
-                    if(_disciplineRepository.FindByKey(vm.Discipline, GuideSystemApp.Disciplines.IndexType.discipline) == null)
-                        ShowError();
-                    
                     if (!Mark.Validate(vm.PassportSerialNumber, vm.Discipline, vm.Date, vm.Value))
                     {
                         ShowError();
                         return;
                     }
+                    
+                    if(_disciplineRepository.FindByKey(vm.Discipline, GuideSystemApp.Disciplines.IndexType.discipline) == null
+                       )//|| _studentRepository.FindByKey(vm.PassportSerialNumber))
+                        ShowError("Ошибка валидации");
+                    
+                    
                     
                     _markRepository.Add(new Mark()
                     {
@@ -135,7 +145,32 @@ public class GuideSystemVM : INotifyPropertyChanged
                     _disciplineRepository.Add(newDiscipline);
                     CurrentList = new ObservableCollection<object>(_disciplineRepository.GetAll());
                     break;
-
+                case "Студенты":
+                    var inputWindowStudent = new DynamicTextBoxesView();
+                    var studentVm = new DynamicTextBoxVM(new[]
+                    {
+                        new DynamicTextBoxVM.TextBoxData() { Question = "ФИО:" },
+                        new DynamicTextBoxVM.TextBoxData() { Question = "Группа:" },
+                        new DynamicTextBoxVM.TextBoxData() { Question = "Паспорт:" },
+                        new DynamicTextBoxVM.TextBoxData() { Question = "Дата поступления:" }
+                    });
+                    inputWindowStudent.DataContext = studentVm;
+                    var resStudent = inputWindowStudent.ShowDialog();
+                    if(resStudent is null || !(bool)resStudent)
+                        return;
+                    var newStudent = new Student(studentVm.TextBoxDatas[0].Answer,
+                        studentVm.TextBoxDatas[1].Answer,
+                        studentVm.TextBoxDatas[2].Answer,
+                        studentVm.TextBoxDatas[3].Answer);
+                    // if (!_markRepository.isCorrect(newStudent))
+                    // {
+                    //     ShowError();
+                    //     return;
+                    // }
+                    
+                    _studentRepository.Add(newStudent);
+                    CurrentList = new ObservableCollection<object>(_studentRepository.GetAll());
+                    break;
                 default:
                     throw new NotImplementedException();
             }
@@ -169,11 +204,21 @@ public class GuideSystemVM : INotifyPropertyChanged
                 case "Дисциплины":
                     if (CurrentListSelectedItem == null || !(CurrentListSelectedItem is Discipline discipline) || _markRepository.FindByKey(discipline.discipline, IndexType.Discipline) != null)
                     {
-                        ShowError();
+                        ShowError("Ошибка целостности данных");
                         return;
                     }
                     _disciplineRepository.Delete(new Discipline(discipline.discipline, discipline.department, discipline.teacher, discipline.institute));
                     CurrentList = new ObservableCollection<object>(_disciplineRepository.GetAll());
+                    OnPropertyChanged("CurrentList");
+                    break;
+                case "Студенты":
+                    if (CurrentListSelectedItem == null || !(CurrentListSelectedItem is Student student) || _markRepository.FindByKey(student.Passport, IndexType.Passport) != null)
+                    {
+                        ShowError("Ошибка целостности данных");
+                        return;
+                    }
+                    _studentRepository.Delete(new Student(student.FIO, student.Group, student.Passport, student.AdmissionDate));
+                    CurrentList = new ObservableCollection<object>(_studentRepository.GetAll());
                     OnPropertyChanged("CurrentList");
                     break;
                 default:
@@ -391,9 +436,77 @@ public class GuideSystemVM : INotifyPropertyChanged
                             countChecks = resDisciplinesOne.k;
                             break;
                     }
-                    
-                    
                     break;
+                /*case "Студенты":
+                    var findStudents = new FindWindow();
+                    var findStudentsVm = new FindWindowVM(new List<SearchModel>()
+                    {
+                        new SearchModel() { SearchName = "По ФИО", SearchFields = new[] { "ФИО" } },
+                        new SearchModel() { SearchName = "По Группе", SearchFields = new[] { "Группа" } },
+                        new SearchModel() { SearchName = "По Дате поступления", SearchFields = new[] { "Дата поступления" } },
+                        new SearchModel()
+                        {
+                            SearchName = "Поиск конкретного студента",
+                            SearchFields = new[] { "Паспорт"}
+                        }
+                    });
+                    findStudents.DataContext = findStudentsVm;
+                    var resStudent = findStudents.ShowDialog();
+                    if (!(bool)resStudent)
+                        return;
+                    Comparisons<List<Student>> resStudents = null;
+                    switch (findStudentsVm.ComboSelectedItem)
+                    {
+                        case "По ФИО":
+                            resStudents = 
+                                _studentRepository.FindByKey(findStudentsVm.FieldInputList.First().FieldValue, GuideSystemApp.Disciplines.IndexType.discipline);
+                            if (resStudents == null)
+                            {
+                                CurrentList = new ObservableCollection<object>();
+                                OnPropertyChanged("CurrentList");
+                                return;
+                            }
+                            CurrentList = new ObservableCollection<object>(resStudents.node);
+                            countChecks = resStudents.k;
+                            break;
+                        case "По группе":
+                            resStudents = 
+                                _studentRepository.FindByKey(findStudentsVm.FieldInputList.First().FieldValue, GuideSystemApp.Disciplines.IndexType.discipline);
+                            if (resStudents == null)
+                            {
+                                CurrentList = new ObservableCollection<object>();
+                                OnPropertyChanged("CurrentList");
+                                return;
+                            }
+                            CurrentList = new ObservableCollection<object>(resStudents.node);
+                            countChecks = resStudents.k;
+                            break;
+                        case "По Дате поступления":
+                            resStudents = 
+                                _studentRepository.FindByKey(findStudentsVm.FieldInputList.First().FieldValue, GuideSystemApp.Disciplines.IndexType.discipline);
+                            if (resStudents == null)
+                            {
+                                CurrentList = new ObservableCollection<object>();
+                                OnPropertyChanged("CurrentList");
+                                return;
+                            }
+                            CurrentList = new ObservableCollection<object>(resStudents.node);
+                            countChecks = resStudents.k;
+                            break;
+                        case "Поиск конкретной дисциплины":
+                            resStudents = 
+                                _studentRepository.FindByKey(findStudentsVm.FieldInputList.First().FieldValue, GuideSystemApp.Disciplines.IndexType.discipline);
+                            if (resStudents == null)
+                            {
+                                CurrentList = new ObservableCollection<object>();
+                                OnPropertyChanged("CurrentList");
+                                return;
+                            }
+                            CurrentList = new ObservableCollection<object>(resStudents.node);
+                            countChecks = resStudents.k;
+                            break;
+                    }
+                    break;*/
                 default:
                     throw new NotImplementedException();
             }
@@ -451,7 +564,7 @@ public class GuideSystemVM : INotifyPropertyChanged
                     break;
 
                 case "Дисциплины":
-                {
+                
                     var comboBoxWindowDiscipline = new ComboBoxWindow();
                     var vmDiscipline = new ComboBoxViewModel()
                     {
@@ -490,8 +603,47 @@ public class GuideSystemVM : INotifyPropertyChanged
                             MessageBox.Show("incorrect data");
                             break;
                     }
-                }
                     break;
+                
+                /*case "Студенты":
+                    var comboBoxWindowStudent = new ComboBoxWindow();
+                    var vmStudent = new ComboBoxViewModel()
+                    {
+                        ComboItems = new[]
+                        {
+                            "Дерево по полю ФИО",
+                            "Дерево по полю Группе",
+                            "Дерево по полю Дате поступления",
+                            "Хеш таблица"
+                        }
+                    };
+                    comboBoxWindowStudent.DataContext = vmStudent;
+                    var resDialogStudent = comboBoxWindowStudent.ShowDialog();
+                    if(!(bool)resDialogStudent)
+                        return;
+                    switch (vmStudent.ComboSelectedItem)
+                    {
+                        case  "Дерево по полю ФИО":
+                            MessageBox.Show(_studentRepository.V());
+                            break;
+                        case  "Дерево по полю Группе":
+                            MessageBox.Show(_disciplineRepository.GetIndexView(GuideSystemApp.Disciplines.IndexType.department));
+                            break;
+                        case  "Дерево по полю Дате поступления":
+                            MessageBox.Show(_disciplineRepository.GetIndexView(GuideSystemApp.Disciplines.IndexType.teacher));
+                            break;
+                        case  "Дерево по полю Института":
+                            MessageBox.Show(_disciplineRepository.GetIndexView(GuideSystemApp.Disciplines.IndexType.institute));
+                            break;
+                        case  "Хеш таблица":
+                            MessageBox.Show(_disciplineRepository.GetUniqueView());
+                            break;
+                          
+                        default:
+                            MessageBox.Show("incorrect data");
+                            break;
+                    }
+                    break;*/
                 default:
                     ShowError();
                     break;
@@ -515,8 +667,8 @@ public class GuideSystemVM : INotifyPropertyChanged
                     CurrentList = new ObservableCollection<object>(_disciplineRepository.GetAll());
                     break;
                 case "Студенты":
-                    //_studentRepository.ReadFromFile("dataStudents.txt");
-                    //CurrentList = _studentRepository.GetAll();
+                    _studentRepository.ReadFromFile("dataStudents.txt");
+                    CurrentList = new ObservableCollection<object>(_studentRepository.GetAll());
                     break;
                 default:
                     MessageBox.Show("Выберите нужный список!");
@@ -543,7 +695,7 @@ public class GuideSystemVM : INotifyPropertyChanged
                     _disciplineRepository.WriteToFile("dataDisciplines.txt");
                     break;
                 case "Студенты":
-                  //  _markRepository.WriteToFile("dataStudents.txt");
+                    _studentRepository.WriteToFile("dataStudents.txt");
                     break;
                 default:
                     MessageBox.Show("Выберите нужный список!");
@@ -559,6 +711,11 @@ public class GuideSystemVM : INotifyPropertyChanged
     private void ShowError()
     {
         MessageBox.Show("incorrect data");
+    }
+    
+    private void ShowError(string text)
+    {
+        MessageBox.Show(text);
     }
     
     public event PropertyChangedEventHandler? PropertyChanged;

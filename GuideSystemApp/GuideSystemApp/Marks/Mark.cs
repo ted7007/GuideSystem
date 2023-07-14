@@ -28,6 +28,8 @@ public class Mark : IComparable<Mark>
     /// </summary>
     public string Date { get; set; }
 
+    public int Index { get; set; }
+
     public int CompareTo(Mark? other)
     {
         if (other.Date == Date && other.Discipline == Discipline && other.Value == Value &&
@@ -41,7 +43,7 @@ public class Mark : IComparable<Mark>
     
     public override string ToString()
     {
-        return $"Паспорт: {PassportSerialNumber}, Дисциплина: {Discipline}, Дата: {Date}, Оценка: {Value}";
+        return $"[{Index}]: Паспорт: {PassportSerialNumber}, Дисциплина: {Discipline}, Дата: {Date}, Оценка: {Value}";
     }
     
     public static bool ValidatePassport(string passport)

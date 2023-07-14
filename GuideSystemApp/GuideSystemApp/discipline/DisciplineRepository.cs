@@ -114,9 +114,16 @@ public class DisciplineRepository
         }
 
     }
-    public List<Discipline> GetAll()
+    public IEnumerable<Discipline> GetAll()
     {
-        return DisciplineArray;
+        List<Discipline> disciplines = new List<Discipline>();
+        for (int i = 0; i < DisciplineArray.Count; i++)
+        {
+            disciplines.Add(DisciplineArray[i]);
+            disciplines[i].Index = i;
+        }
+
+        return disciplines;
     }
 
     public Comparisons<Discipline> FindUnique(string discipline, string department)

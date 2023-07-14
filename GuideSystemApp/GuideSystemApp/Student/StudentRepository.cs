@@ -15,13 +15,13 @@ namespace GuideSystemApp.Student
         private RB_Tree Group;
         private RB_Tree AdmissionDate;
 
-        public StudentRepository()
+        public StudentRepository(int count)
         {
             this.StudentArray = new List<Student>();
             StudentFIO = new RB_Tree();
             Group = new RB_Tree();
             AdmissionDate = new RB_Tree();
-            HashTable = new HashTable(20);
+            HashTable = new HashTable(count);
         }
 
         public void ReadFromFile(string path)
@@ -69,7 +69,14 @@ namespace GuideSystemApp.Student
 
         public List<Student> GetAll()
         {
-            return StudentArray;
+            var marks = new List<Student>();
+            for (int i = 0; i < StudentArray.Count; i++)
+            {
+                marks.Add(StudentArray[i]);
+                marks[i].Index = i;
+            }
+
+            return marks;
         }
 
         public void WriteToFile(string path)

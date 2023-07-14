@@ -263,12 +263,13 @@ public class MarkRepository
         AddToIndexes((int)num);
     }
 
-    public IEnumerable<Comparisons<Mark>> GetAll()
+    public IEnumerable<Mark> GetAll()
     {
-        var marks = new List<Comparisons<Mark>>();
+        var marks = new List<Mark>();
         for (int i = 0; i < MarkArray.Count; i++)
         {
-            marks.Add(new Comparisons<Mark>(MarkArray[i], i));
+            marks.Add(MarkArray[i]);
+            marks[i].Index = i;
         }
 
         return marks;

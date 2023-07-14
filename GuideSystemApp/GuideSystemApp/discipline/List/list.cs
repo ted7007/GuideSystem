@@ -1,174 +1,182 @@
-public class Node
+namespace GuideSystemApp.Disciplines
 {
-    public int Data { get; set; }
-    public Node Next { get; set; }
-}
 
-public class CircularLinkedList
-{
-    public Node head;
-    public CircularLinkedList()
+
+
+    public class Node
     {
-
+        public int Data { get; set; }
+        public Node Next { get; set; }
     }
 
-    public CircularLinkedList(int data)
+    public class CircularLinkedList
     {
-        Node newNode = new Node();
-        newNode.Data = data;
+        public Node head;
 
-        if (head == null)
+        public CircularLinkedList()
         {
-            head = newNode;
-            newNode.Next = head;
+
         }
-        else
+
+        public CircularLinkedList(int data)
         {
-            Node current = head;
-            while (current.Next != head)
+            Node newNode = new Node();
+            newNode.Data = data;
+
+            if (head == null)
             {
-                current = current.Next;
+                head = newNode;
+                newNode.Next = head;
             }
-
-            current.Next = newNode;
-            newNode.Next = head;
-        }
-    }
-
-    public bool Edit(int data, int value)
-    {
-        if (head == null)
-        {
-            return false;
-        }
-
-        Node current = head;
-
-        do
-        {
-            if (current.Data == data)
+            else
             {
-                current.Data = value;
-                return true;
-            }
-
-            current = current.Next;
-        } while (current != head);
-
-        return false; // Элемент не найден
-    }
-
-    public void AddNode(int data)
-    {
-        Node newNode = new Node();
-        newNode.Data = data;
-
-        if (head == null)
-        {
-            head = newNode;
-            newNode.Next = head;
-        }
-        else
-        {
-            Node current = head;
-            while (current.Next != head)
-            {
-                current = current.Next;
-            }
-
-            current.Next = newNode;
-            newNode.Next = head;
-        }
-    }
-
-    public bool RemoveNode(int data)
-    {
-        if (head == null)
-        {
-            return false;
-        }
-
-        Node current = head;
-        Node previous = null;
-
-        do
-        {
-            if (current.Data == data)
-            {
-                if (previous != null)
+                Node current = head;
+                while (current.Next != head)
                 {
-                    previous.Next = current.Next;
-
-                    if (current == head)
-                    {
-                        head = current.Next;
-                    }
+                    current = current.Next;
                 }
-                else // Удаление головного узла
+
+                current.Next = newNode;
+                newNode.Next = head;
+            }
+        }
+
+        public bool Edit(int data, int value)
+        {
+            if (head == null)
+            {
+                return false;
+            }
+
+            Node current = head;
+
+            do
+            {
+                if (current.Data == data)
                 {
-                    if (current.Next == head) // Список содержал только один элемент
+                    current.Data = value;
+                    return true;
+                }
+
+                current = current.Next;
+            } while (current != head);
+
+            return false; // Элемент не найден
+        }
+
+        public void AddNode(int data)
+        {
+            Node newNode = new Node();
+            newNode.Data = data;
+
+            if (head == null)
+            {
+                head = newNode;
+                newNode.Next = head;
+            }
+            else
+            {
+                Node current = head;
+                while (current.Next != head)
+                {
+                    current = current.Next;
+                }
+
+                current.Next = newNode;
+                newNode.Next = head;
+            }
+        }
+
+        public bool RemoveNode(int data)
+        {
+            if (head == null)
+            {
+                return false;
+            }
+
+            Node current = head;
+            Node previous = null;
+
+            do
+            {
+                if (current.Data == data)
+                {
+                    if (previous != null)
                     {
-                        head = null;
-                    }
-                    else
-                    {
-                        Node temp = head;
-                        while (temp.Next != head)
+                        previous.Next = current.Next;
+
+                        if (current == head)
                         {
-                            temp = temp.Next;
+                            head = current.Next;
                         }
-
-                        head = head.Next;
-                        temp.Next = head;
                     }
+                    else // Удаление головного узла
+                    {
+                        if (current.Next == head) // Список содержал только один элемент
+                        {
+                            head = null;
+                        }
+                        else
+                        {
+                            Node temp = head;
+                            while (temp.Next != head)
+                            {
+                                temp = temp.Next;
+                            }
+
+                            head = head.Next;
+                            temp.Next = head;
+                        }
+                    }
+
+                    return true;
                 }
 
-                return true;
-            }
+                previous = current;
+                current = current.Next;
+            } while (current != head);
 
-            previous = current;
-            current = current.Next;
-        } while (current != head);
-
-        return false; // Элемент не найден
-    }
-
-    public bool Search(int data)
-    {
-        if (head == null)
-        {
-            return false;
+            return false; // Элемент не найден
         }
 
-        Node current = head;
-
-        do
+        public bool Search(int data)
         {
-            if (current.Data == data)
+            if (head == null)
             {
-                return true;
+                return false;
             }
 
-            current = current.Next;
-        } while (current != head);
+            Node current = head;
 
-        return false; // Элемент не найден
-    }
+            do
+            {
+                if (current.Data == data)
+                {
+                    return true;
+                }
 
-    public string PrintList()
-    {
-        if (head == null)
-        {
-            return "";
+                current = current.Next;
+            } while (current != head);
+
+            return false; // Элемент не найден
         }
-        string res = "";
-        Node current = head;
-        do
-        {
-            res = res + " - " + current.Data;
-            current = current.Next;
-        } while (current != head);
 
-        return res;
+        public string PrintList()
+        {
+            if (head == null)
+            {
+                return "";
+            }
+
+            string res = "";
+            Node current = head;
+            do
+            {
+                res = res + " - " + current.Data;
+                current = current.Next;
+            } while (current != head);
+
+            return res;
+        }
     }
 }

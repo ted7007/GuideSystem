@@ -6,6 +6,9 @@ public class Discipline
     public string department;
     public string teacher;
     public string institute;
+
+    public int Index { get; set; }
+    
     public Discipline(string discipline, string department, string teacher, string institute)
     {
         this.discipline = discipline;
@@ -15,12 +18,12 @@ public class Discipline
     }
     public void print()
     {
-        Console.Write($"{this.discipline} {this.department} {this.teacher} {this.institute}");
+        Console.Write($"[{Index}]: {this.discipline} {this.department} {this.teacher} {this.institute}");
     }
 
     public override string ToString()
     {
-        return $"Дисциплина: {discipline}, Департамент: {department}, Преподаватель: {teacher}, Институт: {institute}";
+        return $"[{Index}]: Дисциплина: {discipline}, Департамент: {department}, Преподаватель: {teacher}, Институт: {institute}";
     }
     public bool Validate()
     {

@@ -1,8 +1,8 @@
-
+﻿
 
 using GuideSystemApp.Student;
 using GuideSystemApp.Disciplines;
-var repository = new StudentRepository();
+var repository = new StudentRepository(5);
 
 // Чтение данных из файла
 repository.ReadFromFile("input_student.txt");

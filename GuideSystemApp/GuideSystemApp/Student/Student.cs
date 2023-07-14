@@ -12,6 +12,8 @@ namespace GuideSystemApp.Student
         public string Group;
         public string Passport;
         public string AdmissionDate;
+
+        public int Index { get; set; }
         public Student(string FIO, string Group, string Passport, string AdmissionDate)
         {
             this.FIO = FIO;
@@ -20,5 +22,9 @@ namespace GuideSystemApp.Student
             this.AdmissionDate = AdmissionDate;
         }
 
+        public override string ToString()
+        {
+            return $"[{Index}]: ФИО: {FIO}, Группа: {Group}, Пасспорт: {Passport}, Дата поступления: {AdmissionDate}";
+        }
     }
 }

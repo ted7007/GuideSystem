@@ -1,5 +1,7 @@
 
 
+using GuideSystemApp.Disciplines;
+
 public class NodeAvl
 {
     public string key;
