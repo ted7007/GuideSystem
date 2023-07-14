@@ -48,9 +48,9 @@ Console.WriteLine(rep.GetUniqueView());
 // Console.WriteLine(rep.GetUniqueView());
 rep.FindUnique("Геометрия и топология", "Департамент математик");
 // IndexType type = IndexType.institute;
-// var one = rep.FindByKey("ИМКТ", IndexType.teacher);
+var one = rep.FindByKey("ИМКТ", IndexType.teacher);
 
-// Console.WriteLine(rep.GetIndexView(type));
+Console.WriteLine(1);
 
 // Console.WriteLine(1);
 
