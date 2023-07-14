@@ -17,7 +17,7 @@
             <TextBox Text="{Binding Path=TextOutput}"></TextBox>
         </StackPanel>
         <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center">
-            <Button Padding = "5" Margin="10" Width="100" Command="{Binding Path= AcceptCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}">OK</Button>
+            <Button Padding = "5" Margin="10" Width="100" Command="{Binding Path= AcceptCommand}" IsDefault="True" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}">OK</Button>
             <Button Padding = "5" Margin="10" Width="100" IsCancel="True">Отмена</Button>
         </StackPanel>
     </Grid>

@@ -103,14 +103,14 @@ public class MarkRepository
     private void RemoveFromIndexes(int i)
     {
         var deleteElem = MarkArray[i];
-        MarkIndexByPassport.Find(new KeyValue() {Key = MarkArray[i].PassportSerialNumber, Value = i})
-            .node.List.Remove(elem => elem.Key == deleteElem.PassportSerialNumber && elem.Value == i);
-        MarkIndexByDiscipline.Find(new KeyValue() {Key = MarkArray[i].Discipline, Value = i})
-            .node.List.Remove(elem => elem.Key == deleteElem.Discipline && elem.Value == i);
-        MarkIndexByDate.Find(new KeyValue() {Key = MarkArray[i].Date, Value = i})
-            .node.List.Remove(elem => elem.Key == deleteElem.Date && elem.Value == i);
-        MarkIndexByValue.Find(new KeyValue() {Key = ((int)MarkArray[i].Value).ToString(), Value = i})
-            .node.List.Remove(elem => elem.Key == ((int)deleteElem.Value).ToString() && elem.Value == i);
+        MarkIndexByPassport.Remove(new KeyValue() {Key = MarkArray[i].PassportSerialNumber, Value = i},
+            (elem => elem.Key == deleteElem.PassportSerialNumber && elem.Value == i));
+        MarkIndexByDiscipline.Remove(new KeyValue() {Key = MarkArray[i].Discipline, Value = i},
+            (elem => elem.Key == deleteElem.Discipline && elem.Value == i));
+        MarkIndexByDate.Remove(new KeyValue() {Key = MarkArray[i].Date, Value = i},
+            (elem => elem.Key == deleteElem.Date && elem.Value == i));
+        MarkIndexByValue.Remove(new KeyValue() {Key = ((int)MarkArray[i].Value).ToString(), Value = i},
+            (elem => elem.Key == ((int)deleteElem.Value).ToString() && elem.Value == i));
         HashTable.Remove(
             MarkArray[i].PassportSerialNumber + MarkArray[i].Discipline + MarkArray[i].Date +
             ((int)MarkArray[i].Value));
@@ -191,7 +191,7 @@ public class MarkRepository
             new KeyValue() { Key = mark.Date, Value = newNum});
         MarkIndexByValue.EditValue(new KeyValue() {Key = ((int)mark.Value).ToString(), Value = oldNum}, 
             key => key.Value == oldNum, 
-            new KeyValue() { Key = mark.Value.ToString(), Value = newNum});
+            new KeyValue() { Key = ((int)mark.Value).ToString(), Value = newNum});
         HashTable.Edit(
             mark.PassportSerialNumber + mark.Discipline + mark.Date +
             ((int)mark.Value), newNum);

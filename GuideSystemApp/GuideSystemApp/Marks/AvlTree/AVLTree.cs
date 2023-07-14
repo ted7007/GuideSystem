@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using System.Text;
 
 namespace GuideSystemApp.Marks.AvlTree;
@@ -174,13 +175,13 @@ public class AVLTree<T> where T : IComparable<T>
     }
 
     // Удаление элемента из дерева
-    public void Remove(T value)
+    public void Remove(T value, Func<T, bool> removeExp)
     {
-        _root = RemoveNode(_root, value);
+        _root = RemoveNode(_root, value, removeExp);
     }
 
     // Рекурсивный метод удаления узла из дерева
-    private AVLNode<T> RemoveNode(AVLNode<T> node, T value)
+    private AVLNode<T> RemoveNode(AVLNode<T> node, T value, Func<T, bool> removeExp)
     {
         if (node == null)
         {
@@ -191,16 +192,16 @@ public class AVLTree<T> where T : IComparable<T>
 
         if (compareResult < 0)
         {
-            node.Left = RemoveNode(node.Left, value);
+            node.Left = RemoveNode(node.Left, value, removeExp);
         }
         else if (compareResult > 0)
         {
-            node.Right = RemoveNode(node.Right, value);
+            node.Right = RemoveNode(node.Right, value, removeExp);
         }
         else
         {
             // Удаляем элемент из списка в узле
-            node.List.Remove(value);
+            node.List.Remove(removeExp);
 
             if (node.List.head == null)
             {

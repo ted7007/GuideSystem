@@ -69,16 +69,24 @@ public class LinkedList<T> where T : IComparable<T>
 
         if (exp(head.Data))
         {
+            if (head.Next == head)
+            {
+                head = null;
+                return;
+            }
+            
+            tail.Next = head.Next;
             head = head.Next;
-            return;
+            return; 
         }
 
         Node<T> currentNode = head;
 
         while (currentNode.Next != head)
         {
-            if (exp(head.Data))
+            if (exp(currentNode.Next.Data))
             {
+                
                 currentNode.Next = currentNode.Next.Next;
                 return;
             }

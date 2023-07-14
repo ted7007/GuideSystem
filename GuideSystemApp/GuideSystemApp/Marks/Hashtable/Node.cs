@@ -33,6 +33,7 @@ public class Node
 
     public void Set(Node value)
     {
+        Key = value.Key;
         Value = value.Value;
         Status = value.Status;
         Hash1 = value.Hash1;

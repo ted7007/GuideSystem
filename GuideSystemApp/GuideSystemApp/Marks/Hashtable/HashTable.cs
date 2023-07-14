@@ -274,7 +274,7 @@ public class HashTable
     {
         j = j % 1000;
         CalculateCoefficients();
-        var res = (hash1 + j * _k1 + j * j * _k2) % _maxCount;
+        var res = (hash1 + j * _k1 + j * j * _k2) % _maxCount-1;
         if (res < 0)
             res = res * -1;
         return res;
@@ -322,16 +322,7 @@ public class HashTable
         }
         return true;
     }
-
-    private int FindCoprime(int num)
-    {
-        for (int i = 2; i < num; i++)
-        {
-            if (IsCoprime(i, num))
-                return i;
-        }
-        return -1; // Возвращаем -1, если не найдено взаимно простых чисел
-    }
+    
     private bool IsCoprime(int a, int b)
     {
         while (b != 0)
