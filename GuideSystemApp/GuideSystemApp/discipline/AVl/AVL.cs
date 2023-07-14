@@ -158,10 +158,18 @@ class AVLTree
                 i = i + 1;
                 node = node.left;
             }
+            if (node == null)
+            {
+                return null;
+            }
             if (key.CompareTo(node.key) > 0)
             {
                 i = i + 1;
                 node = node.right;
+            }
+            if (node == null)
+            {
+                return null;
             }
         }
 
@@ -232,7 +240,7 @@ class AVLTree
         {
             if (node.count > 1 && node.value != value)
             {
-
+                node.count--;
                 node.listAvl.RemoveNode(value);
                 return node;
 
