@@ -124,7 +124,7 @@ namespace GuideSystemApp.Student
             HashTable.Edit(student.Passport, newIndex);
         }
 
-        private int Find(Student student)
+        public int Find(Student student)
         {
             // Поиск по хеш-таблице
             var res = HashTable.Search(student.Passport);
