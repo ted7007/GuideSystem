@@ -493,7 +493,8 @@ public class GuideSystemVM : INotifyPropertyChanged
                 }
                     break;
                 default:
-                    throw new NotImplementedException();
+                    ShowError();
+                    break;
             }
             
         });
