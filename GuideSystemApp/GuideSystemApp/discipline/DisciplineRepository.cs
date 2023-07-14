@@ -208,74 +208,7 @@ public class DisciplineRepository
         {
             return false;
         }
-
-        bool isRussianWord1 = IsRussianWord(discipline.discipline);
-        bool isRussianWord2 = IsRussianWord(discipline.discipline);
-        bool isRussianWord3 = IsRussianWord(discipline.discipline);
-        bool isRussianWord4 = IsRussianWord(discipline.discipline);
-        bool flagWord = isRussianWord1 && isRussianWord2 && isRussianWord3 && isRussianWord4;
-        bool startsWithUppercaseLetter1 = char.IsUpper(discipline.discipline[0]);
-        bool startsWithUppercaseLetter2 = MyIsUpper(discipline.department);
-        bool startsWithUppercaseLetter3 = MyIsUpper(discipline.teacher);
-        bool startsWithUppercaseLetter4 = MyIsUpperAll(discipline.teacher);
-
-        bool flagUpper = startsWithUppercaseLetter1 && startsWithUppercaseLetter2 && startsWithUppercaseLetter3 && startsWithUppercaseLetter4;
-        if (flagWord && flagUpper)
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
-
-    private bool IsRussianWord(string word)
-    {
-        foreach (char letter in word)
-        {
-            // Проверяем, что символ относится к диапазону русских букв по таблице Unicode.
-            if (!(letter >= 'А' && letter <= 'я'))
-            {
-                return false;
-            }
-        }
-        return true;
-
-    }
-    private bool MyIsUpper(string word)
-    {
-        bool startsWithUppercaseLetter = false;
-        string[] wordArray = word.Split(' ');
-        for (int i = 0; i < wordArray.Length; i++)
-        {
-            if (char.IsUpper(wordArray[i][0]))
-            {
-                startsWithUppercaseLetter = true;
-                break;
-            }
-        }
-        if (startsWithUppercaseLetter)
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
-
-    private bool MyIsUpperAll(string word)
-    {
-        foreach (char letter in word)
-        {
-            // Проверяем, что символ относится к диапазону русских букв по таблице Unicode.
-            if (!char.IsUpper(letter))
-            {
-                return false;
-            }
-        }
-        return true;
+        return discipline.Validate();
     }
     public string GetIndexView(IndexType type)
     {
