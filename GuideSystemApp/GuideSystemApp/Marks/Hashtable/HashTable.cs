@@ -40,6 +40,10 @@ public class HashTable
     /// начальное кол-во элементов
     /// </summary>
     private int _startCount;
+
+    private int _k1;
+
+    private int _k2;
     
     /// <summary>
     /// таблица 
@@ -269,47 +273,76 @@ public class HashTable
     private int GetHash2(int hash1, int j)
     {
         j = j % 1000;
-        int state = 0;
-        int k1=0, k2=0;
-        for (int i = 2; i < _maxCount; i++)
-        {
-            if(!IsCoprime(i, _maxCount))
-                 continue;
-            if (state == 0)
-                k1 = i;
-            if (state == 1)
-            {
-                k2 = i;
-                break;
-            }
-
-            state++;
-        }
-        var res = (hash1 + j * k1 + j * j * k2) % _maxCount;
+        CalculateCoefficients();
+        var res = (hash1 + j * _k1 + j * j * _k2) % _maxCount;
         if (res < 0)
             res = res * -1;
         return res;
     }
 
-    public static int gcd(int a, int b)
+    
+    private void CalculateCoefficients()
     {
-        if (a == 0 || b == 0)
-            return 0;
+        int prime = FindNextPrime(_maxCount); // Находим следующее простое число больше maxCount
+        int k = FindCoprime(_maxCount, prime); // Ищем число, которое является простым, взаимно простым с maxCount и prime
+        // Используем найденное значение k для дальнейшего вычисления хеша
+        _k1 = k;
+        _k2 = FindNextPrime(k); // Для k2 используем следующее простое число после k1
+    }
 
+    private int FindCoprime(int num, int prime)
+    {
+        int coprime = 2; // Начинаем с 2, проверяем на взаимно простые числа
+        while (!IsCoprime(coprime, num) || !IsCoprime(coprime, prime))
+        {
+            coprime = FindNextPrime(coprime); // Ищем следующее простое число
+        }
+        return coprime;
+    }
+
+
+    private int FindNextPrime(int num)
+    {
+        while (true)
+        {
+            num++;
+            if (IsPrime(num))
+                return num;
+        }
+    }
+
+    private bool IsPrime(int num)
+    {
+        if (num <= 1)
+            return false;
+        for (int i = 2; i * i <= num; i++)
+        {
+            if (num % i == 0)
+                return false;
+        }
+        return true;
+    }
+
+    private int FindCoprime(int num)
+    {
+        for (int i = 2; i < num; i++)
+        {
+            if (IsCoprime(i, num))
+                return i;
+        }
+        return -1; // Возвращаем -1, если не найдено взаимно простых чисел
+    }
+    private bool IsCoprime(int a, int b)
+    {
         while (b != 0)
         {
-            int remainder = a % b;
-            a = b;
-            b = remainder;
+            int temp = b;
+            b = a % b;
+            a = temp;
         }
-
-        return a;
+        return a == 1;
     }
 
-    public static bool IsCoprime(int a, int b)
-    {
-        return gcd(a, b) == 1;
-    }
     
     int hashFunc(string key)
     {
