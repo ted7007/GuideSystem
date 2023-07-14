@@ -71,7 +71,7 @@ public class HachTable
     public void Add(Key key, int value)
     {
         int hash = HachOne(key);
-        Console.WriteLine(hash);
+
         Item item = new Item(key, value, hash);
 
         if (items[hash].status == 0)
@@ -88,7 +88,7 @@ public class HachTable
             }
         }
         float capacity = (float)count / size;
-        if (capacity > 0.75)
+        if (capacity > 0.6)
         {
             Increase(item, "add");
         }

@@ -1,7 +1,7 @@
 ﻿
 using GuideSystemApp.Disciplines;
 
-DisciplineRepository rep = new DisciplineRepository(20);
+DisciplineRepository rep = new DisciplineRepository(1);
 rep.ReadFromFile("dataDisciplines.txt");
 
 
