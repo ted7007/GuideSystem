@@ -8,6 +8,8 @@ namespace GuideSystemApp.Student.List
 {
     internal class LinkedList
     {
+        public Node head;
+        public Node tail;
 
         // 2. Инициализация списка
         public void Inicializaciya(ref Node head)
@@ -53,36 +55,80 @@ namespace GuideSystemApp.Student.List
 
         // 5. Метод удаления элемента перед заданным
         public void DeletePeredElementom(ref Node head, int a)
+        {
+            if (head != null)
             {
-                if (head != null)
-                {
-                    Node curr = head;
-                    while (curr != null && curr.next != null)
-                    {
-                        if (curr.next.data == a && head == curr)
-                        {
-                            while (curr.next.data == a && head == curr)
-                            {
-                                head = curr.next;
-                                Node deleting = curr;
-                                curr = head;
-                                deleting = null;
-                                if (curr.next == null) break;
-                            }
-                        }
-                        if (curr.next.next == null) break;
+                Node curr = head;
 
-                        if (curr.next.next.data == a && curr.next.next != null)
-                        {
-                            Node deleting = curr.next;
-                            curr.next = deleting.next;
-                            deleting = null;
-                            if (curr.next.next == null) break;
-                        }
-                        else curr = curr.next;
+                // Удаление узлов в начале списка
+                while (curr != null && curr.data == a)
+                {
+                    Node deleting = curr;
+                    curr = curr.next;
+                    head = curr;
+                    deleting = null;
+                }
+
+                // Удаление узлов в середине и конце списка
+                Node prev = null;
+                while (curr != null)
+                {
+                    if (curr.data == a)
+                    {
+                        Node deleting = curr;
+                        curr = curr.next;
+                        prev.next = curr;
+                        deleting = null;
+                    }
+                    else
+                    {
+                        prev = curr;
+                        curr = curr.next;
                     }
                 }
             }
+        }
+        public void DeleteNode(ref Node head, int index)
+        {
+            if (head == null)
+            {
+                return;
+            }
+
+            if (head.data == index)
+            {
+                head = head.next;
+                return;
+            }
+
+            Node current = head;
+            Node previous = null;
+
+            while (current != null)
+            {
+                if (current.data == index)
+                {
+                    previous.next = current.next;
+                    return;
+                }
+
+                previous = current;
+                current = current.next;
+            }
+        }
+        public bool Contains(int index)
+        {
+            Node current = head;
+            while (current != null)
+            {
+                if (current.data == index)
+                {
+                    return true;
+                }
+                current = current.next;
+            }
+            return false;
+        }
 
         // 6. Поиск заданного элемента
         public bool PoiskChisla(Node head, int chislo)
@@ -99,7 +145,20 @@ namespace GuideSystemApp.Student.List
                 }
                 return f;
             }
-
+        public Node PoiskUzla(Node head, int chislo)
+        {
+            bool f = false;
+            Node current = head;
+            if (head != null)
+            {
+                while (current.next != null && current.data != chislo)
+                {
+                    current = current.next;
+                }
+                if (current.data == chislo) return current;
+            }
+            return null;
+        }
         // 7. Разность списков
         public void Raznost(Node a, Node b, ref Node c)
             {
@@ -125,5 +184,7 @@ namespace GuideSystemApp.Student.List
                 }
                 Console.WriteLine();
             }
+        
         }
-}
+    }
+

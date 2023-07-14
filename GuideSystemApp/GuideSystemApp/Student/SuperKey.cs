@@ -6,19 +6,18 @@ using System.Threading.Tasks;
 
 namespace GuideSystemApp.Student
 {
-    class SuperKey
+    public class SuperKey
     {
         public string Key;
         public int Index;
-        public SuperKey(string Key, int Index)
+        public SuperKey(string key, int index)
         {
-            this.Key = Key;
-            this.Index = Index;
+            Key = key;
+            Index = index;
         }
         public SuperKey()
         {
-            this.Key = Key;
-            this.Index = Index;
+            // Пустой конструктор без параметров
         }
     }
 }

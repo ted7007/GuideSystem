@@ -1,435 +1,467 @@
-﻿using System;
+﻿using GuideSystemApp.Student.List;
+using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GuideSystemApp.Student.RB_Tree
+namespace GuideSystemApp.Student.RB
 {
-    internal class RB_Tree
+    public class RB_Tree
     {
-        public TreeNode T_NULL;
+        private TreeNode root;
 
-        public bool IsComp(SuperKey b, SuperKey a)
+        public RB_Tree()
         {
-            if (String.Compare(a.Key, b.Key, StringComparison.Ordinal) > 0)
-            {
-                return true;
-            }
-            else if (String.Compare(a.Key, b.Key, StringComparison.Ordinal) == 0)
-            {
-                if (a.Index > b.Index)
-                {
-                    return true;
-                }
-            }
-            return false;
+            root = null;
         }
-
-        public bool IsEqual(SuperKey b, SuperKey a)
+        private void RotateLeft(TreeNode node)
         {
-            return (a.Key == b.Key);
-        }
+            TreeNode newNode = node.Right;
+            node.Right = newNode.Left;
 
-        public bool Poisk_RB(TreeNode root, SuperKey k)
-        {
-            bool a = false;
-            while (root != T_NULL && !IsEqual(root.Key, k))
+            if (newNode.Left != null)
             {
-                if (IsEqual(root.Key, k))
-                    a = true;
-                if (!IsComp(root.Key, k))
-                    root = root.Left;
-                else
-                    root = root.Right;
-                if (IsEqual(root.Key, k))
-                    a = true;
-            }
-            if (IsEqual(root.Key, k))
-                a = true;
-            return a;
-        }
-
-        public void Print_RB(TreeNode root, int l)
-        {
-            if (root != T_NULL)
-            {
-                Print_RB(root.Right, l + 1);
-
-                for (int i = 1; i <= l; i++)
-                {
-                    Console.Write("   ");
-                }
-
-                Console.WriteLine(root.Key.Key + ", " + root.Key.Index + " " + root.Color);
-
-                Print_RB(root.Left, l + 1);
-            }
-        }
-
-        public int Count_RB(TreeNode root)
-        {
-            if (root == T_NULL)
-            {
-                return 0;
+                newNode.Left.Parent = node;
             }
 
-            int l = Count_RB(root.Left);
-            int r = Count_RB(root.Right);
+            if (newNode != null)
+            {
+                newNode.Parent = node.Parent;
+            }
 
-            return 1 + l + r;
-        }
-
-        public void Print_Count(TreeNode root)
-        {
-            int count = Count_RB(root);
-            Console.WriteLine("count = " + count);
-        }
-
-        public void Left_Rotate(ref TreeNode root, TreeNode x)
-        {
-            TreeNode y;
-            y = x.Right;
-            x.Right = y.Left;
-
-            if (y.Left != T_NULL)
-                y.Left.Parent = x;
-
-            y.Parent = x.Parent;
-
-            if (x.Parent == T_NULL)
-                root = y;
-            else if (x == x.Parent.Left)
-                x.Parent.Left = y;
+            if (node.Parent == null)
+            {
+                root = newNode;
+            }
+            else if (node == node.Parent.Left)
+            {
+                node.Parent.Left = newNode;
+            }
             else
-                x.Parent.Right = y;
+            {
+                node.Parent.Right = newNode;
+            }
 
-            y.Left = x;
-            x.Parent = y;
+            newNode.Left = node;
+
+            if (node != null)
+            {
+                node.Parent = newNode;
+            }
         }
 
-        public void Right_Rotate(ref TreeNode root, TreeNode x)
+        private void RotateRight(TreeNode node)
         {
-            TreeNode y;
-            y = x.Left;
-            x.Left = y.Right;
+            TreeNode newNode = node.Left;
+            node.Left = newNode.Right;
 
-            if (y.Right != T_NULL)
-                y.Right.Parent = x;
+            if (newNode.Right != null)
+            {
+                newNode.Right.Parent = node;
+            }
 
-            y.Parent = x.Parent;
+            if (newNode != null)
+            {
+                newNode.Parent = node.Parent;
+            }
 
-            if (x.Parent == T_NULL)
-                root = y;
-            else if (x == x.Parent.Right)
-                x.Parent.Right = y;
+            if (node.Parent == null)
+            {
+                root = newNode;
+            }
+            else if (node == node.Parent.Right)
+            {
+                node.Parent.Right = newNode;
+            }
             else
-                x.Parent.Left = y;
-
-            y.Right = x;
-            x.Parent = y;
-        }
-
-        public void Inicializaciya(ref TreeNode root)
-        {
-            T_NULL = new TreeNode();
-            T_NULL.Color = Colors.Black;
-            T_NULL.Key = new SuperKey();
-            T_NULL.Right = null;
-            T_NULL.Left = null;
-            T_NULL.Parent = null;
-            root = T_NULL;
-        }
-
-        public TreeNode Tree_Minimum(TreeNode x)
-        {
-            if (x != T_NULL)
             {
-                while (x.Left != T_NULL)
-                {
-                    x = x.Left;
-                }
-                return x;
+                node.Parent.Left = newNode;
             }
-            return null;
-        }
 
-        public TreeNode Tree_Max_Left(TreeNode y)
-        {
-            if (y != T_NULL)
+            newNode.Right = node;
+
+            if (node != null)
             {
-                TreeNode x = y.Left;
-                while (x.Right != T_NULL)
-                {
-                    x = x.Right;
-                }
-                return x;
+                node.Parent = newNode;
             }
-            return null;
         }
 
-        public TreeNode Tree_Maximum(TreeNode x)
+        private void FixViolation(TreeNode node)
         {
-            if (x != T_NULL)
+            TreeNode parent = null;
+            TreeNode grandparent = null;
+
+            while (node != null && node != root && node.Color != Colors.Black && node.Parent != null && node.Parent.Color == Colors.Red)
             {
-                while (x.Right != T_NULL)
+                parent = node.Parent;
+                grandparent = node.Parent.Parent;
+
+                if (parent == grandparent.Left)
                 {
-                    x = x.Right;
-                }
-                return x;
-            }
-            return null;
-        }
+                    TreeNode uncle = grandparent.Right;
 
-        public void RB_Transplant(ref TreeNode root, TreeNode u, TreeNode v)
-        {
-            if (u.Parent == T_NULL)
-                root = v;
-            else if (u == u.Parent.Left)
-                u.Parent.Left = v;
-            else
-                u.Parent.Right = v;
-
-            v.Parent = u.Parent;
-        }
-
-        public void RB_Insert_Fixup(ref TreeNode root, TreeNode z)
-        {
-            TreeNode y;
-            while (z.Parent.Color == Colors.Red)
-            {
-                if (z.Parent == z.Parent.Parent.Left)
-                {
-                    y = z.Parent.Parent.Right;
-                    if (y.Color == Colors.Red)            //Случай 1
+                    if (uncle != null && uncle.Color == Colors.Red)
                     {
-                        z.Parent.Color = Colors.Black;
-                        y.Color = Colors.Black;
-                        z.Parent.Parent.Color = Colors.Red;
-                        z = z.Parent.Parent;
+                        grandparent.Color = Colors.Red;
+                        parent.Color = Colors.Black;
+                        uncle.Color = Colors.Black;
+                        node = grandparent;
                     }
                     else
                     {
-                        if (z == z.Parent.Right) //Случай 2
+                        if (node == parent.Right)
                         {
-                            z = z.Parent;
-                            Left_Rotate(ref root, z);
+                            RotateLeft(parent);
+                            node = parent;
+                            parent = node.Parent;
                         }
-                        z.Parent.Color = Colors.Black;       //Случай 3
-                        z.Parent.Parent.Color = Colors.Red;
-                        Right_Rotate(ref root, z.Parent.Parent);
+
+                        RotateRight(grandparent);
+                        Colors temp = parent.Color;
+                        parent.Color = grandparent.Color;
+                        grandparent.Color = temp;
+                        node = parent;
                     }
                 }
                 else
                 {
-                    y = z.Parent.Parent.Left;
-                    if (y.Color == Colors.Red)            //Случай 1
+                    TreeNode uncle = grandparent.Left;
+
+                    if (uncle != null && uncle.Color == Colors.Red)
                     {
-                        z.Parent.Color = Colors.Black;
-                        y.Color = Colors.Black;
-                        z.Parent.Parent.Color = Colors.Red;
-                        z = z.Parent.Parent;
+                        grandparent.Color = Colors.Red;
+                        parent.Color = Colors.Black;
+                        uncle.Color = Colors.Black;
+                        node = grandparent;
                     }
                     else
                     {
-                        if (z == z.Parent.Left)  //Случай 2
+                        if (node == parent.Left)
                         {
-                            z = z.Parent;
-                            Right_Rotate(ref root, z);
+                            RotateRight(parent);
+                            node = parent;
+                            parent = node.Parent;
                         }
-                        z.Parent.Color = Colors.Black;       //Случай 3
-                        z.Parent.Parent.Color = Colors.Red;
-                        Left_Rotate(ref root, z.Parent.Parent);
+
+                        RotateLeft(grandparent);
+                        Colors temp = parent.Color;
+                        parent.Color = grandparent.Color;
+                        grandparent.Color = temp;
+                        node = parent;
                     }
                 }
             }
+
             root.Color = Colors.Black;
         }
 
-        public void RB_Delete_Fixup(ref TreeNode root, TreeNode x)
+        private TreeNode InsertNode(TreeNode root, TreeNode node)
         {
-            while (x != root && x.Color == Colors.Black)
+            if (root == null)
             {
-                if (x == x.Parent.Left)//??????????
-                {
-                    TreeNode w = x.Parent.Right;
+                return node;
+            }
 
-                    if (w.Color == Colors.Red) // Случай 1
+            if (String.Compare(root.Key, node.Key, StringComparison.Ordinal) > 0)
+            {
+                root.Left = InsertNode(root.Left, node);
+                root.Left.Parent = root;
+            }
+            else if (String.Compare(root.Key, node.Key, StringComparison.Ordinal) < 0)
+            {
+                root.Right = InsertNode(root.Right, node);
+                root.Right.Parent = root;
+            }
+            else if(String.Compare(root.Key, node.Key, StringComparison.Ordinal) == 0)
+            {
+                if (root.List == null)
+                {
+                    root.List = new LinkedList();
+                }
+
+                root.List.AddNode(ref root.List.head, node.value);
+            }
+
+            return root;
+        }
+
+        public void Insert(string Key,int value)
+        {
+            TreeNode node = new TreeNode(Key, value);
+            if (root == null)
+            {
+                root = node; // Инициализация root
+            }
+            else
+            {
+                root = InsertNode(root, node);
+            }
+            FixViolation(node);
+        }
+        public void Delete(string key, int index)
+        {
+            var node = Find(key);
+            if (node != null)
+            {
+                if (node.List != null && node.List.Contains(index))
+                {
+                    node.List.DeleteNode(ref node.List.head, index);
+                }
+            }
+        }
+
+        private TreeNode DeleteNode(TreeNode root, string key, int i)
+        {
+            if (root == null)
+            {
+                return null;
+            }
+
+            int comparisonResult = String.Compare(key, root.Key, StringComparison.Ordinal);
+
+            if (comparisonResult < 0)
+            {
+                root.Left = DeleteNode(root.Left, key, i);
+            }
+            else if (comparisonResult > 0)
+            {
+                root.Right = DeleteNode(root.Right, key, i);
+            }
+            else
+            {
+                if (root.Left == null || root.Right == null)
+                {
+                    TreeNode replacement = root.Left ?? root.Right;
+
+                    if (replacement == null)
                     {
-                        w.Color = Colors.Black;
-                        x.Parent.Color = Colors.Red;
-                        Left_Rotate(ref root, x.Parent);
-                        w = x.Parent.Right;
-                    }
-                    if (w.Left.Color == Colors.Black && w.Right.Color == Colors.Black) // Случай 2
-                    {
-                        w.Color = Colors.Red;
-                        x = x.Parent;
+                        return null;
                     }
                     else
                     {
-
-                        if (w.Right.Color == Colors.Black) // Случай 3
+                        replacement.Parent = root.Parent;
+                        if (root.Parent == null)
                         {
-                            w.Left.Color = Colors.Black;
-                            w.Color = Colors.Red;
-                            Right_Rotate(ref root, w);
-                            w = x.Parent.Right;
+                            this.root = replacement;
                         }
-                        w.Color = x.Parent.Color; // Случай 4
-                        x.Parent.Color = Colors.Black;
-                        w.Right.Color = Colors.Black;
-                        Left_Rotate(ref root, x.Parent);
-                        x = root;
-                    }
-                }
-                else
-                {
-                    TreeNode w = x.Parent.Left;
-
-                    if (w.Color == Colors.Red) // Случай 1
-                    {
-                        w.Color = Colors.Black;
-                        x.Parent.Color = Colors.Red;
-                        Right_Rotate(ref root, x.Parent);
-                        w = x.Parent.Left;
-                    }
-                    if (w.Right.Color == Colors.Black && w.Left.Color == Colors.Black) // Случай 2
-                    {
-                        w.Color = Colors.Red;
-                        x = x.Parent;
-                    }
-                    else
-                    {
-                        if (w.Left.Color == Colors.Black) // Случай 3
+                        else if (root == root.Parent.Left)
                         {
-                            w.Right.Color = Colors.Black;
-                            w.Color = Colors.Red;
-                            Left_Rotate(ref root, w);
-                            w = x.Parent.Left;
+                            root.Parent.Left = replacement;
                         }
-                        w.Color = x.Parent.Color; // Случай 4
-                        x.Parent.Color = Colors.Black;
-                        w.Left.Color = Colors.Black;
-                        Right_Rotate(ref root, x.Parent);
-                        x = root;
+                        else
+                        {
+                            root.Parent.Right = replacement;
+                        }
+
+                        if (root.Color == Colors.Black)
+                        {
+                            if (replacement.Color == Colors.Red)
+                            {
+                                replacement.Color = Colors.Black;
+                            }
+                            else
+                            {
+                                FixDoubleBlack(replacement);
+                            }
+                        }
                     }
                 }
-            }
-            x.Color = Colors.Black;
-        }
-
-        public void DeletePamyat(ref TreeNode root)
-        {
-            if (root != T_NULL)
-            {
-                if (root.Left != T_NULL)
-                    DeletePamyat(ref root.Left);
-                if (root.Right != T_NULL)
-                    DeletePamyat(ref root.Right);
-                root = T_NULL;
-            }
-        }
-
-        public void InsertNew(ref TreeNode root, TreeNode node, SuperKey k)
-        {
-            node.Right = T_NULL;
-            node.Left = T_NULL;
-            node.Parent = T_NULL;
-            node.Key = k;
-            RB_Insert(ref root, node);
-        }
-
-        public void RB_Insert(ref TreeNode root, TreeNode z)
-        {
-            if (Poisk_RB(root, z.Key) != true)
-            {
-                TreeNode y = T_NULL;
-                TreeNode x = root;
-                while (x != T_NULL)
-                {
-                    y = x;
-                    if (IsComp(z.Key, x.Key) == true)
-                        x = x.Left;
-                    else
-                        x = x.Right;
-                }
-                z.Parent = y;
-                if (y == T_NULL)
-                    root = z;
-                else if (IsComp(z.Key, y.Key) == true)
-                    y.Left = z;
-                else
-                    y.Right = z;
-                z.Left = T_NULL;
-                z.Right = T_NULL;
-                z.Color = Colors.Red;
-                RB_Insert_Fixup(ref root, z);
-            }
-        }
-
-        public void RB_Delete(ref TreeNode root, TreeNode z)
-        {
-            TreeNode x;
-            TreeNode y = z;
-            Colors y_original_color = y.Color;
-            if (root != T_NULL)
-            {
-                if (z.Left == T_NULL)
-                {
-                    x = z.Right;
-                    RB_Transplant(ref root, z, z.Right);
-                }
-                else if (z.Right == T_NULL)
-                {
-                    x = z.Left;
-                    RB_Transplant(ref root, z, z.Left);
-                }
                 else
                 {
-                    y = Tree_Max_Left(z);
-                    y_original_color = y.Color;
-                    x = y.Left;
-                    if (y.Parent == z)
-                        x.Parent = y;
+                    if (root.List != null && root.List.Contains(i))
+                    {
+                        root.List.DeleteNode(ref root.List.head, i);
+                    }
+
+                    TreeNode successor = FindMinimum(root.Right);
+                    root.Key = successor.Key;
+                    root.Right = DeleteNode(root.Right, successor.Key, i);
+                }
+            }
+
+            return root;
+        }
+
+        /*   public void Edit(string key, int value, int index)
+           {
+               var node = FindNode(_root, value);
+               var resItem = node.List.Find(expression);
+               resItem.Data = newValue;
+           }*/
+        private TreeNode Find(string value)
+        {
+            return FindNode(root, value);
+        }
+        public void EditValue(string key, int value, int newValue)
+        {
+            var node = FindNode(root, key);
+            if (node != null)
+            {
+                var resItem = node.List.PoiskUzla(node.List.head, value);
+                if (resItem != null)
+                {
+                    resItem.data = newValue;
+                }
+            }
+        }
+
+        private TreeNode FindNode(TreeNode root, string key)
+        {
+            if (root == null)
+            {
+                return null;
+            }
+
+            int compareResult = key.CompareTo(root.Key);
+
+            if (compareResult == 0)
+            {
+                return root;
+            }
+            else if (compareResult < 0)
+            {
+                return FindNode(root.Left, key);
+            }
+            else
+            {
+                return FindNode(root.Right, key);
+            }
+        }
+        private TreeNode FindMinimum(TreeNode node)
+        {
+            while (node.Left != null)
+            {
+                node = node.Left;
+            }
+
+            return node;
+        }
+
+        private void FixDoubleBlack(TreeNode node)
+        {
+            if (node == root)
+            {
+                return;
+            }
+
+            TreeNode sibling = GetSibling(node);
+            TreeNode parent = node.Parent;
+
+            if (sibling == null)
+            {
+                FixDoubleBlack(parent);
+            }
+            else
+            {
+                if (sibling.Color == Colors.Red)
+                {
+                    parent.Color = Colors.Red;
+                    sibling.Color = Colors.Black;
+                    if (node == parent.Left)
+                    {
+                        RotateLeft(parent);
+                    }
                     else
                     {
-                        RB_Transplant(ref root, y, y.Left);
-                        y.Left = z.Left;
-                        y.Left.Parent = y;
+                        RotateRight(parent);
                     }
-                    RB_Transplant(ref root, z, y);
-                    y.Right = z.Right;
-                    y.Right.Parent = y;
-                    y.Color = z.Color;
+                    FixDoubleBlack(node);
                 }
-
-                if (y_original_color == Colors.Black)
-                    RB_Delete_Fixup(ref root, x);
+                else
+                {
+                    if ((sibling.Left == null || sibling.Left.Color == Colors.Black) && (sibling.Right == null || sibling.Right.Color == Colors.Black))
+                    {
+                        sibling.Color = Colors.Red;
+                        if (parent.Color == Colors.Black)
+                        {
+                            FixDoubleBlack(parent);
+                        }
+                        else
+                        {
+                            parent.Color = Colors.Black;
+                        }
+                    }
+                    else
+                    {
+                        if (node == parent.Left && (sibling.Right == null || sibling.Right.Color == Colors.Black))
+                        {
+                            sibling.Color = Colors.Red;
+                            sibling.Left.Color = Colors.Black;
+                            RotateRight(sibling);
+                        }
+                        else if (node == parent.Right && (sibling.Left == null || sibling.Left.Color == Colors.Black))
+                        {
+                            sibling.Color = Colors.Red;
+                            sibling.Right.Color = Colors.Black;
+                            RotateLeft(sibling);
+                        }
+                        sibling = GetSibling(node);
+                        sibling.Color = parent.Color;
+                        parent.Color = Colors.Black;
+                        if (node == parent.Left)
+                        {
+                            sibling.Right.Color = Colors.Black;
+                            RotateLeft(parent);
+                        }
+                        else
+                        {
+                            sibling.Left.Color = Colors.Black;
+                            RotateRight(parent);
+                        }
+                    }
+                }
             }
         }
 
-        public Random random = new Random();
-
-        public string[] surnames = { "Антон", "Бухалихин Богдан Владиславович", "Бухалихин Богдан Владиславович", "Антошкин Богдан Антонович", "Brown", "Davis", "Miller", "Wilson", "Moore", "Taylor" };
-
-        public SuperKey GetRandomData()
+        private TreeNode GetSibling(TreeNode node)
         {
-            string surname = surnames[random.Next(surnames.Length)];
-            int index = random.Next(1000, 9999);
-
-            return new SuperKey { Key = surname, Index = index };
-        }
-
-        public void CreateTree(ref TreeNode root, TreeNode[] rootArray, int count)
-        {
-            for (int i = 0; i < count; i++)
+            if (node == node.Parent.Left)
             {
-                SuperKey data = GetRandomData();
-                TreeNode node = new TreeNode();
-                InsertNew(ref root, node, data);
-                rootArray[i] = node;
+                return node.Parent.Right;
             }
+            else
+            {
+                return node.Parent.Left;
+            }
+        }
+        public void PrintTree()
+        {
+            PrintTree(root, 0);
+        }
+
+        private void PrintTree(TreeNode node, int level)
+        {
+            if (node == null)
+            {
+                return;
+            }
+
+            PrintTree(node.Right, level + 1);
+
+            string indent = GetIndent(level);
+            Console.WriteLine($"{indent}{node.Key} ({node.value})");
+
+            if (node.List != null)
+            {
+                Node current = node.List.head;
+                while (current != null)
+                {
+                    string listIndent = GetIndent(level + 1);
+                    Console.WriteLine($"{listIndent}Index: {current.data}");
+                    current = current.next;
+                }
+            }
+
+            PrintTree(node.Left, level + 1);
+        }
+
+        private string GetIndent(int level)
+        {
+            const int SpacesPerLevel = 4;
+            return new string(' ', level * SpacesPerLevel);
         }
     }
 }

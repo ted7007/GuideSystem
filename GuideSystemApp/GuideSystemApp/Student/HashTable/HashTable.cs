@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GuideSystemApp.Student.HashTable
+namespace GuideSystemApp.Student.Hash
 {
-    internal class HashTable
+    public class HashTable
     {
         private Item[] items;
         private int size;
@@ -31,12 +31,13 @@ namespace GuideSystemApp.Student.HashTable
 
         }
 
-        public int FirstHash(SuperKey key) //2.Первая хэш функция
+       
+        public int FirstHash(string key) //2.Первая хэш функция
         {
             string mass = "";
             int result = 0;
             string temp = "";
-            mass = key.Key;
+            mass = key;
 
 
 
@@ -69,7 +70,7 @@ namespace GuideSystemApp.Student.HashTable
 
         }
 
-        private int ResolveCollisionLinearForAdd(SuperKey key, int index)
+        private int ResolveCollisionLinearForAdd(string key, int index)
         {
             int j = 1;
             int startIndex = index;
@@ -94,13 +95,13 @@ namespace GuideSystemApp.Student.HashTable
 
             return index;
         }
-        public void Add(SuperKey key) // 4. Добавление
+        public void Add(string key, int value) // 4. Добавление
         {
             int index = FirstHash(key);
             int current;
             if (items[index].status == 0) // Проверяем, что ячейка пустая 
             {
-                Item item = new Item(key, index);
+                Item item = new Item(key, value, index);
                 items[index] = item;
                 count++;
                 items[index].status = 1; // Устанавливаем статус как занятую ячейку                                   
@@ -113,7 +114,7 @@ namespace GuideSystemApp.Student.HashTable
                 if (current == -1) return;
                 if (items[current].status == 0 || items[current].status == 2) // Проверяем, что ячейка пустая или удаленная
                 {
-                    Item item = new Item(key, index);
+                    Item item = new Item(key, value, index);
                     items[current] = item;
                     count++;
                     items[current].status = 1; // Устанавливаем статус как занятую ячейку
@@ -121,8 +122,8 @@ namespace GuideSystemApp.Student.HashTable
             }
             CheckLoadFactor();
         }
-
-        public void Delete(SuperKey key)
+       
+        public void Delete(string key,int value)
         {
             int index = FirstHash(key);
 
@@ -148,7 +149,7 @@ namespace GuideSystemApp.Student.HashTable
             CheckLoadFactor();
         }
 
-        public int Search(SuperKey key3)
+        public int Search(string key3)
         {
             int index = FirstHash(key3);
             int cur = index;
@@ -156,10 +157,9 @@ namespace GuideSystemApp.Student.HashTable
             while (j <= size)
             {
                 if (items[cur].status == 1 &&
-                    items[cur].key.Key == key3.Key &&
-                    items[cur].key.Index == key3.Index)
+                    items[cur].key == key3)
                 {
-                    return cur;
+                    return items[cur].value;
                 }
                 cur = SecondHash(index, j);
                 j++;
@@ -167,12 +167,35 @@ namespace GuideSystemApp.Student.HashTable
 
             return -1;
         }
+        private Item SearchNode(string key3)
+        {
+            int index = FirstHash(key3);
+            int cur = index;
+            int j = 1;
+            while (j <= size)
+            {
+                if (items[cur].status == 1 &&
+                    items[cur].key == key3)
+                {
+                    return items[cur];
+                }
+                cur = SecondHash(index, j);
+                j++;
+            }
 
-        public bool Check(SuperKey key3, int index)
+            return null;
+        }
+
+        public void Edit(string key, int newValue)
+        {
+            var node = SearchNode(key);
+            node.value = newValue;
+        }
+
+        public bool Check(string key3, int index)
         {
             if (items[index].status == 1 &&
-                    items[index].key.Key == key3.Key &&
-                    items[index].key.Index == key3.Index)
+                    items[index].key == key3)
 
             {
                 return true;
@@ -186,8 +209,8 @@ namespace GuideSystemApp.Student.HashTable
                 if (items[j].status == 1 || items[j].status == 2 || items[j].status == 0)
                 {
                     Console.WriteLine
-                        ($"{j}|{items[j].key.Key}" +
-                        $" {items[j].key.Index}" +
+                        ($"{j}|{items[j].key}" +
+                        $" {items[j].value}" +
                         $" " +
                         $"status = {items[j].status}" +
                         $" |hash = {items[j].hash}");
@@ -197,7 +220,7 @@ namespace GuideSystemApp.Student.HashTable
             Console.WriteLine(size);
         }
 
-        private int ResolveCollisionLinearForAddNew(SuperKey key, int index, Item[] newItems)
+        private int ResolveCollisionLinearForAddNew(string key, int index, Item[] newItems)
         {
             int j = 1;
             int startIndex = index;
