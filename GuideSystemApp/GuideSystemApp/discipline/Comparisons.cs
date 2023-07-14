@@ -12,5 +12,8 @@ public class Comparisons<T>
 
     }
 
-
+    public override string ToString()
+    {
+        return $"[{k}]: {node}";
+    }
 }

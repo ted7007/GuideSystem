@@ -263,9 +263,15 @@ public class MarkRepository
         AddToIndexes((int)num);
     }
 
-    public IEnumerable<Mark> GetAll()
+    public IEnumerable<Comparisons<Mark>> GetAll()
     {
-        return MarkArray;
+        var marks = new List<Comparisons<Mark>>();
+        for (int i = 0; i < MarkArray.Count; i++)
+        {
+            marks.Add(new Comparisons<Mark>(MarkArray[i], i));
+        }
+
+        return marks;
     }
     
     public string GetUniqueView()
