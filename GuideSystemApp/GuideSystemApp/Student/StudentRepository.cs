@@ -88,7 +88,7 @@ namespace GuideSystemApp.Student
         public void Delete(Student student)
         {
             int res = Find(student);
-            if (res == -1)
+            if (res == -1 || res >= StudentArray.Count)
                 return;
 
             var removeItem = StudentArray[res];

@@ -493,7 +493,7 @@ namespace GuideSystemApp.Student.RB
 
             if (node.List != null)
             {
-                Node current = node.List.head;
+                List.Node current = node.List.head;
                 while (current != null)
                 {
                     string listIndent = GetIndent(level + 1);

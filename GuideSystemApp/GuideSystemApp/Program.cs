@@ -9,9 +9,17 @@ repository.ReadFromFile("input_student.txt");
 
 // Получение всех студентов
 var allStudents = repository.GetAll();
+
+
 foreach (var student in allStudents)
 {
     Console.WriteLine($"ФИО: {student.FIO}, Группа: {student.Group}, Паспорт: {student.Passport}, Дата поступления: {student.AdmissionDate}");
+}
+
+for (int i = 0; i <= 6; i++)
+{
+    var studentToDelete = allStudents[0];
+    repository.Delete(studentToDelete);
 }
 
 // Добавление нового студента
@@ -27,7 +35,30 @@ foreach (var node in studentsByFIO)
 
 // Удаление студента
 repository.Delete(newStudent);
+// Вывод всех студентов до удаления
+Console.WriteLine("Список студентов до удаления:");
+foreach (var student in repository.GetAll())
+{
+    Console.WriteLine(student);
+}
+Console.WriteLine();
 
+// Удаление нескольких студентов
+var student1 = new Student("Антонов Борис Владимирович", "Б9121-09.03.04прогин", "1111 444444", "30.06.2020");
+var student2 = new Student("Курицын Антон Антонович", "Б9121-09.03.04прогин", "5346 019287", "18.06.2020");
+var student3 = new Student("Рудь Владимир Владиславович", "Б9121-09.03.04прогин", "4321 086453", "17.06.2020");
+
+repository.Delete(student1);
+repository.Delete(student2);
+repository.Delete(student3);
+
+// Вывод всех студентов после удаления
+Console.WriteLine("Список студентов после удаления:");
+foreach (var student in repository.GetAll())
+{
+    Console.WriteLine(student);
+}
+Console.WriteLine();
 // Поиск студента по номеру паспорта
 var studentByPassport = repository.Find(new Student("", "", "1234 567890", ""));
 if (studentByPassport != -1 && studentByPassport < repository.GetAll().Count)
@@ -47,7 +78,7 @@ foreach (var item in hashTableItems)
 }
 
 
-DisciplineRepository rep = new DisciplineRepository(1);
+/*DisciplineRepository rep = new DisciplineRepository(1);
 rep.ReadFromFile("dataDisciplines.txt");
 
 
@@ -98,3 +129,4 @@ var one = rep.FindByKey("ИМКТ", IndexType.teacher);
 
 Console.WriteLine(1);
 
+*/
