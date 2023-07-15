@@ -6,7 +6,17 @@
         xmlns:local="clr-namespace:GuideSystemAppClient"
         mc:Ignorable="d"
         Title="GuideSystem" Height="450" Width="800">
-    <Grid ShowGridLines="True">
+    <Window.Resources>
+        <Style TargetType="ListView">
+            <Setter Property="Background" Value="NavajoWhite"></Setter>
+            <Setter Property="BorderThickness" Value="2"></Setter>
+        </Style>
+        <Style TargetType="ListBox">
+            <Setter Property="Background" Value="NavajoWhite"></Setter>
+            <Setter Property="BorderThickness" Value="2"></Setter>
+        </Style>
+    </Window.Resources>
+    <Grid >
         <Grid.ColumnDefinitions>
             <ColumnDefinition></ColumnDefinition>
             <ColumnDefinition Width="4*"></ColumnDefinition>
@@ -38,7 +48,6 @@
             <Button Margin="5" Width="100" Command="{Binding RemoveCommand}">Удалить</Button> 
             <Button Margin="5" Width="100" Command="{Binding FindCommand}">Найти</Button> 
         </StackPanel>
-        
         
     </Grid>
 </Window>

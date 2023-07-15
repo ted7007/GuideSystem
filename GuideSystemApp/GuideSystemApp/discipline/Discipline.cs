@@ -68,27 +68,20 @@ public class Discipline
         string[] wordArray = word.Split(' ');
         for (int i = 0; i < wordArray.Length; i++)
         {
-            if (char.IsUpper(wordArray[i][0]))
+            if (!char.IsUpper(wordArray[i][0]))
             {
-                startsWithUppercaseLetter = true;
-                break;
+                return false;
             }
         }
-        if (startsWithUppercaseLetter)
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+
+        return true;
     }
     private static bool IsRussianWord(string word)
     {
         foreach (char letter in word)
         {
             // Проверяем, что символ относится к диапазону русских букв по таблице Unicode.
-            if (!(letter >= 'А' && letter <= 'я'))
+            if (!((letter >= 'А' && letter <= 'я') || letter == ' '))
             {
                 return false;
             }
