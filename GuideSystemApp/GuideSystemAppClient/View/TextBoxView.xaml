@@ -5,7 +5,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:local="clr-namespace:GuideSystemAppClient.View"
         mc:Ignorable="d"
-        Title="TextBoxView" Height="450" Width="450">
+        Title="TextBoxView" Height="{Binding Path=Height}" Width="{Binding Path=Width}">
     <Grid ShowGridLines="True">
         
         <Grid.RowDefinitions>
@@ -13,12 +13,12 @@
             <RowDefinition></RowDefinition>
         </Grid.RowDefinitions>
         <StackPanel Margin="10">
-            <TextBlock Padding="5" Text="{Binding Path=Text}"></TextBlock>
-            <TextBox Text="{Binding Path=TextOutput}"></TextBox>
+            <TextBlock Padding="5" Text="{Binding Path=Text}" Visibility="{Binding Path=Visibility}"></TextBlock>
+            <TextBox Text="{Binding Path=TextOutput}" IsReadOnly="{Binding Path = IsReadOnly}"></TextBox>
         </StackPanel>
         <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center">
             <Button Padding = "5" Margin="10" Width="100" Command="{Binding Path= AcceptCommand}" IsDefault="True" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}">OK</Button>
-            <Button Padding = "5" Margin="10" Width="100" IsCancel="True">Отмена</Button>
+            <Button Padding = "5" Margin="10" Width="100" IsCancel="True" Visibility="{Binding Path=Visibility}">Отмена</Button>
         </StackPanel>
     </Grid>
 </Window>

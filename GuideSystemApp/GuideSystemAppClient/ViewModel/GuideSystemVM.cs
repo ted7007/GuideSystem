@@ -549,19 +549,19 @@ public class GuideSystemVM : INotifyPropertyChanged
                     switch (vm.ComboSelectedItem)
                     {
                           case  "Дерево по полю Паспорта":
-                              MessageBox.Show(_markRepository.GetIndexView(IndexType.Passport));
+                              ShowMessage(_markRepository.GetIndexView(IndexType.Passport));
                               break;
                           case  "Дерево по полю Дисциплины":
-                              MessageBox.Show(_markRepository.GetIndexView(IndexType.Discipline));
+                              ShowMessage(_markRepository.GetIndexView(IndexType.Discipline));
                               break;
                           case  "Дерево по полю Даты сдачи":
-                              MessageBox.Show(_markRepository.GetIndexView(IndexType.Date));
+                              ShowMessage(_markRepository.GetIndexView(IndexType.Date));
                               break;
                           case  "Дерево по полю Оценки":
-                              MessageBox.Show(_markRepository.GetIndexView(IndexType.Value));
+                              ShowMessage(_markRepository.GetIndexView(IndexType.Value));
                               break;
                           case  "Хеш таблица":
-                              MessageBox.Show(_markRepository.GetUniqueView());
+                              ShowMessage(_markRepository.GetUniqueView());
                               break;
                           
                           default:
@@ -592,19 +592,19 @@ public class GuideSystemVM : INotifyPropertyChanged
                     switch (vmDiscipline.ComboSelectedItem)
                     {
                         case  "Дерево по полю Дисциплины":
-                            MessageBox.Show(_disciplineRepository.GetIndexView(GuideSystemApp.Disciplines.IndexType.discipline));
+                            ShowMessage(_disciplineRepository.GetIndexView(GuideSystemApp.Disciplines.IndexType.discipline));
                             break;
                         case  "Дерево по полю Департамента":
-                            MessageBox.Show(_disciplineRepository.GetIndexView(GuideSystemApp.Disciplines.IndexType.department));
+                            ShowMessage(_disciplineRepository.GetIndexView(GuideSystemApp.Disciplines.IndexType.department));
                             break;
                         case  "Дерево по полю Преподавателя":
-                            MessageBox.Show(_disciplineRepository.GetIndexView(GuideSystemApp.Disciplines.IndexType.teacher));
+                            ShowMessage(_disciplineRepository.GetIndexView(GuideSystemApp.Disciplines.IndexType.teacher));
                             break;
                         case  "Дерево по полю Института":
-                            MessageBox.Show(_disciplineRepository.GetIndexView(GuideSystemApp.Disciplines.IndexType.institute));
+                            ShowMessage(_disciplineRepository.GetIndexView(GuideSystemApp.Disciplines.IndexType.institute));
                             break;
                         case  "Хеш таблица":
-                            MessageBox.Show(_disciplineRepository.GetUniqueView());
+                            ShowMessage(_disciplineRepository.GetUniqueView());
                             break;
                           
                         default:
@@ -759,6 +759,14 @@ public class GuideSystemVM : INotifyPropertyChanged
         }
 
         return sb.ToString();
+    }
+
+    private void ShowMessage(string message)
+    {
+        TextBoxView window = new TextBoxView();
+        window.DataContext = new TextBoxViewModel()
+            { Visibility = Visibility.Collapsed, IsReadOnly = true, TextOutput = message };
+        window.ShowDialog();
     }
     
     public event PropertyChangedEventHandler? PropertyChanged;
