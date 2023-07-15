@@ -11,8 +11,11 @@ public class DisciplineRepository
     private AVLTree treeInstitute;
     private AVLTree treeDepartment;
     private AVLTree treeTeacher;
+    private readonly int _startCount;
+
     public DisciplineRepository(int count)
     {
+        _startCount = count;
         this.DisciplineArray = new List<Discipline>();
         this.table = new HachTable(count);
         this.treeDiscipline = new AVLTree();
@@ -28,7 +31,7 @@ public class DisciplineRepository
 
             int count = int.Parse(reader.ReadLine()); // Преобразование строку в число
             this.DisciplineArray = new List<Discipline>();
-            this.table = new HachTable(count);
+            this.table = new HachTable(_startCount);
             this.treeDiscipline = new AVLTree();
             this.treeInstitute = new AVLTree();
             this.treeTeacher = new AVLTree();

@@ -5,7 +5,16 @@ namespace GuideSystemAppClient.ViewModel;
 
 public class TextBoxViewModel
 {
+
+    public int Width { get; set; } = 600;
+
+    public int Height { get; set; } = 450;
+    
     public string Text { get; set; }
+
+    public Visibility Visibility { get; set; } = Visibility.Visible;
+
+    public bool IsReadOnly { get; set; } = false;
     
     public string TextOutput { get; set; }
 

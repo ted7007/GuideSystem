@@ -228,6 +228,7 @@ public class HashTable
         
         _table[cur].Set(_table[prevKey]);
         _table[prevKey].Clear();
+        _curCount--;
     }
     
     private (bool, int?) GetOutCollision(int hash1, string key)
