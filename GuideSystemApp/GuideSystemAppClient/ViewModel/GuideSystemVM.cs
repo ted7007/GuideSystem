@@ -521,6 +521,12 @@ public class GuideSystemVM : INotifyPropertyChanged
     {
         get => new RelayCommand(obj =>
         {
+            if (SelectedList == null)
+            {
+                ShowError();
+                return;
+            }
+            
             switch (SelectedList.Content.ToString())
             {
                 case "Оценки":
