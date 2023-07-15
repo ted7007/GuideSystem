@@ -184,7 +184,22 @@ namespace GuideSystemApp.Student.List
                 }
                 Console.WriteLine();
             }
-        
+
+        // 9. Получение всех индексов элементов списка
+        public List<int> GetAllIndices()
+        {
+            List<int> indices = new List<int>();
+
+            Node current = head;
+            while (current != null)
+            {
+                indices.Add(current.data);
+                current = current.next;
+            }
+
+            return indices;
         }
+
+    }
     }
 

@@ -7,8 +7,15 @@ StudentRepository repository = new StudentRepository(20);
 
 // Чтение данных из файла
 repository.ReadFromFile("input_student.txt");
+repository.PrintStudentFIO();
+Console.WriteLine();
+repository.PrintStudentGroup();
+Console.WriteLine();
+repository.PrintStudentAdmissionDate();
+Console.WriteLine();
+repository.PrintPassportHashTable();
 
-// Вывод всех студентов
+/*// Вывод всех студентов
 Console.WriteLine("Список всех студентов:");
 var allStudents = repository.GetAll();
 foreach (var student in allStudents)
@@ -48,7 +55,7 @@ allStudents = repository.GetAll();
 foreach (var student in allStudents)
 {
     Console.WriteLine(student);
-}
+}*/
 
 // Запись данных в файл
 repository.WriteToFile("output_student.txt");

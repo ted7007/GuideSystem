@@ -197,24 +197,47 @@ namespace GuideSystemApp.Student
             return true;
         }
 
-        public string GetStudentFIOString()
+        public void PrintStudentFIO()
         {
-            return StudentFIO.ToString();
+            Console.WriteLine("Дерево по ФИО студентов:");
+            var studentFIO = GetStudentFIO();
+            foreach (var node in studentFIO)
+            {
+                var indices = string.Join(", ", node.List.GetAllIndices());
+                Console.WriteLine($"{node.Key} (Indices: {node.value}{(string.IsNullOrEmpty(indices) ? "" : ", " + indices)})");
+            }
         }
 
-        public string GetStudentGroupString()
+        public void PrintStudentGroup()
         {
-            return Group.ToString();
+            Console.WriteLine("Дерево по группам студентов:");
+            var studentGroup = GetStudentGroup();
+            foreach (var node in studentGroup)
+            {
+                var indices = string.Join(", ", node.List.GetAllIndices());
+                Console.WriteLine($"{node.Key} (Indices: {node.value}{(string.IsNullOrEmpty(indices) ? "" : ", " + indices)})");
+            }
         }
 
-        public string GetStudentAdmissionDateString()
+        public void PrintStudentAdmissionDate()
         {
-            return AdmissionDate.ToString();
+            Console.WriteLine("Дерево по дате поступления студентов:");
+            var studentAdmissionDate = GetStudentAdmissionDate();
+            foreach (var node in studentAdmissionDate)
+            {
+                var indices = string.Join(", ", node.List.GetAllIndices());
+                Console.WriteLine($"{node.Key} (Indices: {node.value}{(string.IsNullOrEmpty(indices) ? "" : ", " + indices)})");
+            }
         }
 
-        public string GetHashTableString()
+        public void PrintPassportHashTable()
         {
-            return HashTable.ToString();
+            Console.WriteLine("Хэш-таблица студентов:");
+            var hashTable = GetHashTable();
+            foreach (var item in hashTable)
+            {
+                Console.WriteLine($"{item.Key}: {item.Value}");
+            }
         }
     }
 }
