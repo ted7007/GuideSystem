@@ -2,51 +2,57 @@
 
 using GuideSystemApp.Student;
 using GuideSystemApp.Disciplines;
-var repository = new StudentRepository(5);
+// Создание экземпляра StudentRepository
+StudentRepository repository = new StudentRepository(20);
 
 // Чтение данных из файла
 repository.ReadFromFile("input_student.txt");
 
-// Получение всех студентов
+// Вывод всех студентов
+Console.WriteLine("Список всех студентов:");
 var allStudents = repository.GetAll();
 foreach (var student in allStudents)
 {
-    Console.WriteLine($"ФИО: {student.FIO}, Группа: {student.Group}, Паспорт: {student.Passport}, Дата поступления: {student.AdmissionDate}");
+    Console.WriteLine(student);
+}
+Console.WriteLine();
+
+// Удаление студентов
+Console.WriteLine("Удаление студентов:");
+
+// Удаление студента по индексу
+int indexToDelete = 3; // Пример удаления студента по индексу 3
+if (indexToDelete < allStudents.Count)
+{
+    Student studentToDelete = allStudents[indexToDelete];
+    repository.Delete(studentToDelete);
+    Console.WriteLine($"Студент с индексом {indexToDelete} удален.");
+}
+else
+{
+    Console.WriteLine($"Некорректный индекс: {indexToDelete}");
 }
 
-// Добавление нового студента
-var newStudent = new Student("Иванов Иван Иванович", "Б9122-09.03.04прогин", "1234 567890", "01.07.2023");
-repository.Add(newStudent);
+// Удаление студента по данным
+string fioToDelete = "Бухалихин Богдан Владиславович";
+string groupToDelete = "Б9121-09.03.04прогин";
+string passportToDelete = "0865 345143";
+string admissionDateToDelete = "13.06.2020";
+Student studentToDelete2 = new Student(fioToDelete, groupToDelete, passportToDelete, admissionDateToDelete);
+repository.Delete(studentToDelete2);
+Console.WriteLine($"Студент {fioToDelete} удален.");
 
-// Поиск студента по ФИО
-var studentsByFIO = repository.GetStudentFIO();
-foreach (var node in studentsByFIO)
+// Повторный вывод всех студентов после удаления
+Console.WriteLine("\nСписок всех студентов после удаления:");
+allStudents = repository.GetAll();
+foreach (var student in allStudents)
 {
-    Console.WriteLine($"Студент: {node.Key}, Индекс: {node.value}");
-}
-
-// Удаление студента
-repository.Delete(newStudent);
-
-// Поиск студента по номеру паспорта
-var studentByPassport = repository.Find(new Student("", "", "1234 567890", ""));
-if (studentByPassport != -1 && studentByPassport < repository.GetAll().Count)
-{
-    var foundStudent = repository.GetAll()[studentByPassport];
-    Console.WriteLine($"Найденный студент: ФИО: {foundStudent.FIO}, Группа: {foundStudent.Group}, Паспорт: {foundStudent.Passport}, Дата поступления: {foundStudent.AdmissionDate}");
+    Console.WriteLine(student);
 }
 
 // Запись данных в файл
-repository.WriteToFile("students_updated.txt");
-
-// Вывод всех студентов в хеш-таблице
-var hashTableItems = repository.GetHashTable();
-foreach (var item in hashTableItems)
-{
-    Console.WriteLine($"Ключ: {item.Key}, Значение: {item.Value}");
-}
-
-
+repository.WriteToFile("output_student.txt");
+/*
 DisciplineRepository rep = new DisciplineRepository(1);
 rep.ReadFromFile("dataDisciplines.txt");
 
@@ -98,3 +104,4 @@ var one = rep.FindByKey("ИМКТ", IndexType.teacher);
 
 Console.WriteLine(1);
 
+*/
