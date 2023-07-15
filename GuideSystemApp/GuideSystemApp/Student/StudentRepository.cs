@@ -55,6 +55,12 @@ namespace GuideSystemApp.Student
 
         public void Add(Student student)
         {
+            if (!Validate(student))
+            {
+                Console.WriteLine("Неверные данные студента. Не удалось добавить студента.");
+                return;
+            }
+
             StudentArray.Add(student);
             AddToIndexes(StudentArray.Count - 1);
         }
@@ -95,7 +101,7 @@ namespace GuideSystemApp.Student
         public void Delete(Student student)
         {
             int res = Find(student);
-            if (res == -1)
+            if (res == -1 || res >= StudentArray.Count)
                 return;
 
             var removeItem = StudentArray[res];
@@ -133,21 +139,29 @@ namespace GuideSystemApp.Student
 
         public int Find(Student student)
         {
+            int comparisonCount = 0;
+
             // Поиск по хеш-таблице
-            var res = HashTable.Search(student.Passport);
+            var res = HashTable.Search(student.Passport, out int hashTableComparisons);
+            comparisonCount += hashTableComparisons;
             if (res != -1)
                 return res;
 
             // Поиск по деревьям
-            res = StudentFIO.Search(student.FIO);
+            res = StudentFIO.Search(student.FIO, out int studentFIOComparisons);
+            comparisonCount += studentFIOComparisons;
             if (res != -1)
                 return res;
 
-            res = Group.Search(student.Group);
+            res = Group.Search(student.Group, out int groupComparisons);
+            comparisonCount += groupComparisons;
             if (res != -1)
                 return res;
 
-            res = AdmissionDate.Search(student.AdmissionDate);
+            res = AdmissionDate.Search(student.AdmissionDate, out int admissionDateComparisons);
+            comparisonCount += admissionDateComparisons;
+
+            Console.WriteLine($"Количество сравнений при поиске: {comparisonCount}");
             return res;
         }
 
@@ -165,9 +179,42 @@ namespace GuideSystemApp.Student
         {
             return AdmissionDate.GetNodes();
         }
+
         public List<KeyValuePair<string, int>> GetHashTable()
         {
             return HashTable.GetItems();
+        }
+
+        private bool Validate(Student student)
+        {
+            // Валидация данных студента
+            if (string.IsNullOrEmpty(student.FIO) || string.IsNullOrEmpty(student.Group) ||
+                string.IsNullOrEmpty(student.Passport) || string.IsNullOrEmpty(student.AdmissionDate))
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        public string GetStudentFIOString()
+        {
+            return StudentFIO.ToString();
+        }
+
+        public string GetStudentGroupString()
+        {
+            return Group.ToString();
+        }
+
+        public string GetStudentAdmissionDateString()
+        {
+            return AdmissionDate.ToString();
+        }
+
+        public string GetHashTableString()
+        {
+            return HashTable.ToString();
         }
     }
 }

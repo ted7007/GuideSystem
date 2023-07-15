@@ -450,34 +450,36 @@ namespace GuideSystemApp.Student.RB
             PrintTree(root, 0);
         }
 
-        public int Search(string key)
+        public int Search(string key, out int comparisons)
         {
-            TreeNode node = Find(root, key);
+            TreeNode node = Find(root, key, out comparisons);
             return node != null ? node.value : -1;
         }
 
-
-        private TreeNode Find(TreeNode node, string key)
+        private TreeNode Find(TreeNode node, string key, out int comparisons)
         {
-            if (node == null || key == null)
+            comparisons = 0;
+
+            while (node != null)
             {
-                return null;
+                comparisons++;
+                int comparisonResult = key.CompareTo(node.Key);
+
+                if (comparisonResult == 0)
+                {
+                    return node;
+                }
+                else if (comparisonResult < 0)
+                {
+                    node = node.Left;
+                }
+                else
+                {
+                    node = node.Right;
+                }
             }
 
-            int comparisonResult = key.CompareTo(node.Key);
-
-            if (comparisonResult == 0)
-            {
-                return node;
-            }
-            else if (comparisonResult < 0)
-            {
-                return Find(node.Left, key);
-            }
-            else
-            {
-                return Find(node.Right, key);
-            }
+            return null;
         }
         private void PrintTree(TreeNode node, int level)
         {

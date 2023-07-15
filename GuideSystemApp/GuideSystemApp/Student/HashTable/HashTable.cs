@@ -122,45 +122,57 @@ namespace GuideSystemApp.Student.Hash
             }
             CheckLoadFactor();
         }
-       
-        public void Delete(string key,int value)
+
+        public void Delete(string key, int value)
         {
             int index = FirstHash(key);
 
-            if (Check(key, index) == true)
+            if (Check(key, index))
             {
-
-                items[index] = new Item(); // Обновляем элемент
-                items[index].status = 2;// Устанавливаем статус как удаленную ячейку
-                count--; // Обновляем значение count
+                if (items[index].value == value)
+                {
+                    items[index] = new Item(); // Обновляем элемент
+                    items[index].status = 2; // Устанавливаем статус как удаленную ячейку
+                    count--; // Обновляем значение count
+                }
             }
             else
             {
-                int cur = (Search(key));
-                if (cur != -1)
+                int cur = -1;
+                int j = 1;
+                while (j <= size)
                 {
-                    items[cur] = new Item(); // Обновляем элемент
-                    items[cur].status = 2;// Устанавливаем статус как удаленную ячейку
-                    count--; // Обновляем значение count
+                    cur = SecondHash(index, j);
+                    if (Check(key, cur) && items[cur].value == value)
+                    {
+                        items[cur] = new Item(); // Обновляем элемент
+                        items[cur].status = 2; // Устанавливаем статус как удаленную ячейку
+                        count--; // Обновляем значение count
+                        break;
+                    }
+                    j++;
                 }
-
             }
 
             CheckLoadFactor();
         }
 
-        public int Search(string key3)
+
+        public int Search(string key, out int comparisonCount)
         {
-            int index = FirstHash(key3);
+            int index = FirstHash(key);
             int cur = index;
             int j = 1;
+            comparisonCount = 0;
+
             while (j <= size)
             {
-                if (items[cur].status == 1 &&
-                    items[cur].key == key3)
+                comparisonCount++;
+                if (items[cur].status == 1 && items[cur].key == key)
                 {
                     return items[cur].value;
                 }
+
                 cur = SecondHash(index, j);
                 j++;
             }
