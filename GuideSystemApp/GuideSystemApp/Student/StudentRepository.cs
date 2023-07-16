@@ -165,6 +165,114 @@ namespace GuideSystemApp.Student
             return res;
         }
 
+        public List<Student> SearchByFIO(string fio, out int comparisons)
+        {
+            comparisons = 0;
+            var students = new List<Student>();
+            var nodes = StudentFIO.GetNodes();
+
+            foreach (var node in nodes)
+            {
+                if (node.Key == fio)
+                {
+                    var indices = node.List.GetAllIndices();
+                    comparisons += indices.Count;
+
+                    // Вставляем индекс из node.value в начало списка индексов
+                    indices.Insert(0, node.value);
+
+                    foreach (var index in indices)
+                    {
+                        students.Add(StudentArray[index]);
+                    }
+
+                    Console.WriteLine($"Поиск по ФИО: {fio}, Шагов: {comparisons}");
+                    return students;
+                }
+            }
+
+            Console.WriteLine($"Поиск по ФИО: {fio}, Шагов: {comparisons}");
+            return students;
+        }
+
+
+
+        public List<Student> SearchByGroup(string group, out int comparisons)
+        {
+            comparisons = 0;
+            var students = new List<Student>();
+            var nodes = Group.GetNodes();
+
+            foreach (var node in nodes)
+            {
+                if (node.Key == group)
+                {
+                    var indices = node.List.GetAllIndices();
+                    comparisons += indices.Count;
+
+                    // Вставляем индекс из node.value в начало списка индексов
+                    indices.Insert(0, node.value);
+
+                    foreach (var index in indices)
+                    {
+                        students.Add(StudentArray[index]);
+                    }
+
+                    Console.WriteLine($"Поиск по группе: {group}, Шагов: {comparisons}");
+                    return students;
+                }
+            }
+
+            Console.WriteLine($"Поиск по группе: {group}, Шагов: {comparisons}");
+            return students;
+        }
+
+        public List<Student> SearchByAdmissionDate(string admissionDate, out int comparisons)
+        {
+            comparisons = 0;
+            var students = new List<Student>();
+            var nodes = AdmissionDate.GetNodes();
+
+            foreach (var node in nodes)
+            {
+                if (node.Key == admissionDate)
+                {
+                    var indices = node.List.GetAllIndices();
+                    comparisons += indices.Count;
+
+                    // Вставляем индекс из node.value в начало списка индексов
+                    indices.Insert(0, node.value);
+
+                    foreach (var index in indices)
+                    {
+                        students.Add(StudentArray[index]);
+                    }
+
+                    Console.WriteLine($"Поиск по дате поступления: {admissionDate}, Шагов: {comparisons}");
+                    return students;
+                }
+            }
+
+            Console.WriteLine($"Поиск по дате поступления: {admissionDate}, Шагов: {comparisons}");
+            return students;
+        }
+
+        public Student SearchByPassport(string passport, out int comparisons)
+        {
+            comparisons = 0;
+            foreach (var node in HashTable.GetItems())
+            {
+                if (node.Key == passport)
+                {
+                    comparisons++;
+                    int index = node.Value;
+                    return StudentArray[index];
+                }
+            }
+
+            return null;
+        }
+
         public List<TreeNode> GetStudentFIO()
         {
             return StudentFIO.GetNodes();
