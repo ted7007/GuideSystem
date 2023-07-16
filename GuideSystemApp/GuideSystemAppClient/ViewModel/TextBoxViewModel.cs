@@ -6,7 +6,7 @@ namespace GuideSystemAppClient.ViewModel;
 public class TextBoxViewModel
 {
 
-    public int Width { get; set; } = 600;
+    public int Width { get; set; } = 250;
 
     public int Height { get; set; } = 450;
     
