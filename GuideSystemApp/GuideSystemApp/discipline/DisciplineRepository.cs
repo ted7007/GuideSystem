@@ -31,11 +31,6 @@ public class DisciplineRepository
 
             int count = int.Parse(reader.ReadLine()); // Преобразование строку в число
             this.DisciplineArray = new List<Discipline>();
-            this.table = new HachTable(_startCount);
-            this.treeDiscipline = new AVLTree();
-            this.treeInstitute = new AVLTree();
-            this.treeTeacher = new AVLTree();
-            this.treeDepartment = new AVLTree();
             // Записываем данные в массив
             for (int i = 0; i < count; i++)
             {

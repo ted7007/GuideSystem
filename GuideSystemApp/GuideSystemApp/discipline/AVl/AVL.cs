@@ -27,7 +27,7 @@ class AVLTree
 {
     public NodeAvl root;
 
-    public int i = 0;
+    public int i = 1;
 
     private int Count(NodeAvl node)
     {
