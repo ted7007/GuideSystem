@@ -12,10 +12,13 @@
             <RowDefinition Height="4*"></RowDefinition>
             <RowDefinition></RowDefinition>
         </Grid.RowDefinitions>
-        <StackPanel Margin="10">
-            <TextBlock Padding="5" Text="{Binding Path=Text}" Visibility="{Binding Path=Visibility}"></TextBlock>
-            <TextBox Text="{Binding Path=TextOutput}" IsReadOnly="{Binding Path = IsReadOnly}"></TextBox>
-        </StackPanel>
+        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+            <StackPanel Margin="10">
+                <TextBlock Padding="5" Text="{Binding Path=Text}" Visibility="{Binding Path=Visibility}"></TextBlock>
+                <TextBox Text="{Binding Path=TextOutput}" IsReadOnly="{Binding Path = IsReadOnly}" TextWrapping="NoWrap"></TextBox>
+
+            </StackPanel>
+        </ScrollViewer>
         <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center">
             <Button Padding = "5" Margin="10" Width="100" Command="{Binding Path= AcceptCommand}" IsDefault="True" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}">OK</Button>
             <Button Padding = "5" Margin="10" Width="100" IsCancel="True" Visibility="{Binding Path=Visibility}">Отмена</Button>

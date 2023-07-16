@@ -29,6 +29,7 @@ public class Node
     public void Clear()
     {
         Status = NodeStatus.Free;
+        Key = null;
     }
 
     public void Set(Node value)

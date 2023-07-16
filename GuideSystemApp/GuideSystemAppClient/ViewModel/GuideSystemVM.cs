@@ -762,7 +762,7 @@ public class GuideSystemVM : INotifyPropertyChanged
     {
         TextBoxView window = new TextBoxView();
         window.DataContext = new TextBoxViewModel()
-            { Visibility = Visibility.Collapsed, IsReadOnly = true, TextOutput = message };
+            { Visibility = Visibility.Collapsed, IsReadOnly = true, TextOutput = message, Height = 300, Width = 300};
         window.ShowDialog();
     }
     

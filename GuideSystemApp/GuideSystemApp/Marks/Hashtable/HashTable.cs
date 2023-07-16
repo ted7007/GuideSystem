@@ -273,7 +273,7 @@ public class HashTable
 
     private int GetHash2(int hash1, int j)
     {
-        j = j % 1000;
+        j = j % 10000;
         CalculateCoefficients();
         var res = (hash1 + j * _k1 + j * j * _k2) % _maxCount-1;
         if (res < 0)
@@ -284,8 +284,8 @@ public class HashTable
     
     private void CalculateCoefficients()
     {
-        int prime = FindNextPrime(_maxCount); // Находим следующее простое число больше maxCount
-        int k = FindCoprime(_maxCount, prime); // Ищем число, которое является простым, взаимно простым с maxCount и prime
+        int prime = FindNextPrime(_maxCount-1); // Находим следующее простое число больше maxCount
+        int k = FindCoprime(_maxCount-1, prime); // Ищем число, которое является простым, взаимно простым с maxCount и prime
         // Используем найденное значение k для дальнейшего вычисления хеша
         _k1 = k;
         _k2 = FindNextPrime(k); // Для k2 используем следующее простое число после k1
