@@ -1,59 +1,59 @@
 ﻿
 
-using GuideSystemApp.Student;
+// using GuideSystemApp.Student;
 using GuideSystemApp.Disciplines;
-// Создание экземпляра StudentRepository
-StudentRepository repository = new StudentRepository(20);
+// // Создание экземпляра StudentRepository
+// StudentRepository repository = new StudentRepository(20);
 
-// Чтение данных из файла
-repository.ReadFromFile("input_student.txt");
+// // Чтение данных из файла
+// repository.ReadFromFile("input_student.txt");
 
-// Вывод всех студентов
-Console.WriteLine("Список всех студентов:");
-var allStudents = repository.GetAll();
-foreach (var student in allStudents)
-{
-    Console.WriteLine(student);
-}
-Console.WriteLine();
+// // Вывод всех студентов
+// Console.WriteLine("Список всех студентов:");
+// var allStudents = repository.GetAll();
+// foreach (var student in allStudents)
+// {
+//     Console.WriteLine(student);
+// }
+// Console.WriteLine();
 
-// Удаление студентов
-Console.WriteLine("Удаление студентов:");
+// // Удаление студентов
+// Console.WriteLine("Удаление студентов:");
 
-// Удаление студента по индексу
-int indexToDelete = 3; // Пример удаления студента по индексу 3
-if (indexToDelete < allStudents.Count)
-{
-    Student studentToDelete = allStudents[indexToDelete];
-    repository.Delete(studentToDelete);
-    Console.WriteLine($"Студент с индексом {indexToDelete} удален.");
-}
-else
-{
-    Console.WriteLine($"Некорректный индекс: {indexToDelete}");
-}
+// // Удаление студента по индексу
+// int indexToDelete = 3; // Пример удаления студента по индексу 3
+// if (indexToDelete < allStudents.Count)
+// {
+//     Student studentToDelete = allStudents[indexToDelete];
+//     repository.Delete(studentToDelete);
+//     Console.WriteLine($"Студент с индексом {indexToDelete} удален.");
+// }
+// else
+// {
+//     Console.WriteLine($"Некорректный индекс: {indexToDelete}");
+// }
 
-// Удаление студента по данным
-string fioToDelete = "Бухалихин Богдан Владиславович";
-string groupToDelete = "Б9121-09.03.04прогин";
-string passportToDelete = "0865 345143";
-string admissionDateToDelete = "13.06.2020";
-Student studentToDelete2 = new Student(fioToDelete, groupToDelete, passportToDelete, admissionDateToDelete);
-repository.Delete(studentToDelete2);
-Console.WriteLine($"Студент {fioToDelete} удален.");
+// // Удаление студента по данным
+// string fioToDelete = "Бухалихин Богдан Владиславович";
+// string groupToDelete = "Б9121-09.03.04прогин";
+// string passportToDelete = "0865 345143";
+// string admissionDateToDelete = "13.06.2020";
+// Student studentToDelete2 = new Student(fioToDelete, groupToDelete, passportToDelete, admissionDateToDelete);
+// repository.Delete(studentToDelete2);
+// Console.WriteLine($"Студент {fioToDelete} удален.");
 
-// Повторный вывод всех студентов после удаления
-Console.WriteLine("\nСписок всех студентов после удаления:");
-allStudents = repository.GetAll();
-foreach (var student in allStudents)
-{
-    Console.WriteLine(student);
-}
+// // Повторный вывод всех студентов после удаления
+// Console.WriteLine("\nСписок всех студентов после удаления:");
+// allStudents = repository.GetAll();
+// foreach (var student in allStudents)
+// {
+//     Console.WriteLine(student);
+// }
 
 // Запись данных в файл
-repository.WriteToFile("output_student.txt");
-/*
-DisciplineRepository rep = new DisciplineRepository(1);
+// repository.WriteToFile("output_student.txt");
+
+DisciplineRepository rep = new DisciplineRepository(20);
 rep.ReadFromFile("dataDisciplines.txt");
 
 
@@ -104,4 +104,3 @@ var one = rep.FindByKey("ИМКТ", IndexType.teacher);
 
 Console.WriteLine(1);
 
-*/

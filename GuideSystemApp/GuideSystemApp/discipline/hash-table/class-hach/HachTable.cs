@@ -88,7 +88,7 @@ public class HachTable
             }
         }
         float capacity = (float)count / size;
-        if (capacity > 0.6)
+        if (capacity > 0.61)
         {
             Increase(item, "add");
         }
@@ -115,7 +115,8 @@ public class HachTable
         {
             if (items[j].status == 1)
             {
-                res = res + $"{j}|" + items[j].print() + $"|{items[j].status}|hash={items[j].hash1}|шаг={items[j].k}";
+                int hash2= j != items[j].hash1? j : -1;
+                res = res+  $"[{j}]"+ $"[status:{items[j].status}]" + items[j].print() + $"|hash1={items[j].hash1}|hash2={hash2}|шаг={items[j].k}";
                 res = res + "\n";
             }
             else
