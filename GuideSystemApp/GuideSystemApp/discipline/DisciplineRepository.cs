@@ -11,8 +11,11 @@ public class DisciplineRepository
     private AVLTree treeInstitute;
     private AVLTree treeDepartment;
     private AVLTree treeTeacher;
+    private readonly int _startCount;
+
     public DisciplineRepository(int count)
     {
+        _startCount = count;
         this.DisciplineArray = new List<Discipline>();
         this.table = new HachTable(count);
         this.treeDiscipline = new AVLTree();

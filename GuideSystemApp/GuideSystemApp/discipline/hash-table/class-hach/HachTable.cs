@@ -88,6 +88,7 @@ public class HachTable
             }
         }
         float capacity = (float)count / size;
+
         if (capacity > 0.61)
         {
             Increase(item, "add");

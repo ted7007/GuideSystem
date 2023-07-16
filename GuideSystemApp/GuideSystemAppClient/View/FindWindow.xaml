@@ -9,8 +9,8 @@
     <Window.Resources>
         <DataTemplate x:Key="ViewTemplate">
             <StackPanel>
-                <TextBlock Text="{Binding Path=FieldName}"></TextBlock>
-                <TextBox Text="{Binding Path=FieldValue}"></TextBox>
+                <TextBlock Text="{Binding Path=FieldName}" TextWrapping="Wrap"></TextBlock>
+                <TextBox Text="{Binding Path=FieldValue}" TextWrapping="Wrap"></TextBox>
             </StackPanel>
         </DataTemplate>
     </Window.Resources>
