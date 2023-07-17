@@ -125,7 +125,7 @@ public class Mark : IComparable<Mark>
 
     public static bool Validate(string passport, string discipline, string date, string value)
     {
-        return ValidatePassport(passport) && ValidateDiscipline(discipline) && ValidateDate(value) && ValidateValue(value);
+        return ValidatePassport(passport) && ValidateDiscipline(discipline) && ValidateDate(date) && ValidateValue(value);
     }
     
     public bool Validate()

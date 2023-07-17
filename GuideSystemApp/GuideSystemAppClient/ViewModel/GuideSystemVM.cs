@@ -437,11 +437,11 @@ public class GuideSystemVM : INotifyPropertyChanged
                                 ShowError("Не найдено.");
                                 return;
                             }
-                            MessageBox.Show(GetViewDisciplines(new Comparisons<List<Discipline>>(node:new List<Discipline>{resDisciplinesOne.node}, resDisciplinesOne.k)));
+                            ShowMessage(GetViewDisciplines(new Comparisons<List<Discipline>>(node:new List<Discipline>{resDisciplinesOne.node}, resDisciplinesOne.k)));
                             break;
                     }
                     break;
-                /*case "Студенты":
+                case "Студенты":
                     var findStudents = new FindWindow();
                     var findStudentsVm = new FindWindowVM(new List<SearchModel>()
                     {
@@ -458,59 +458,62 @@ public class GuideSystemVM : INotifyPropertyChanged
                     var resStudent = findStudents.ShowDialog();
                     if (!(bool)resStudent)
                         return;
-                    Comparisons<List<Student>> resStudents = null;
+                    List<Student> resStudents = null;
                     switch (findStudentsVm.ComboSelectedItem)
                     {
                         case "По ФИО":
                             resStudents = 
-                                _studentRepository.Find(туцfindStudentsVm.FieldInputList.First().FieldValue);
+                                _studentRepository.SearchByFIO(findStudentsVm.FieldInputList.First().FieldValue, out int countChecks);
                             if (resStudents == null)
                             {
                                 CurrentList = new ObservableCollection<object>();
                                 OnPropertyChanged("CurrentList");
                                 return;
                             }
-                            CurrentList = new ObservableCollection<object>(resStudents.node);
-                            countChecks = resStudents.k;
+
+                            ShowMessage(GetViewStudents(resStudents, countChecks));
                             break;
                         case "По группе":
                             resStudents = 
-                                _studentRepository.FindByKey(findStudentsVm.FieldInputList.First().FieldValue, GuideSystemApp.Disciplines.IndexType.discipline);
+                                _studentRepository.SearchByGroup(findStudentsVm.FieldInputList.First().FieldValue, out int countChecks2);
                             if (resStudents == null)
                             {
                                 CurrentList = new ObservableCollection<object>();
                                 OnPropertyChanged("CurrentList");
                                 return;
                             }
-                            CurrentList = new ObservableCollection<object>(resStudents.node);
-                            countChecks = resStudents.k;
+                            
+                            ShowMessage(GetViewStudents(resStudents, countChecks2));
                             break;
                         case "По Дате поступления":
                             resStudents = 
-                                _studentRepository.FindByKey(findStudentsVm.FieldInputList.First().FieldValue, GuideSystemApp.Disciplines.IndexType.discipline);
+                                _studentRepository.SearchByAdmissionDate(findStudentsVm.FieldInputList.First().FieldValue, out int countChecks3);
                             if (resStudents == null)
                             {
                                 CurrentList = new ObservableCollection<object>();
                                 OnPropertyChanged("CurrentList");
                                 return;
                             }
-                            CurrentList = new ObservableCollection<object>(resStudents.node);
-                            countChecks = resStudents.k;
+                            
+                            ShowMessage(GetViewStudents(resStudents, countChecks3));
                             break;
-                        case "Поиск конкретной дисциплины":
-                            resStudents = 
-                                _studentRepository.FindByKey(findStudentsVm.FieldInputList.First().FieldValue, GuideSystemApp.Disciplines.IndexType.discipline);
+                        case "Поиск конкретного студента":
+                            resStudents = new List<Student>()
+                            {
+                                _studentRepository.SearchByPassport(findStudentsVm.FieldInputList.First().FieldValue,
+                                    out int countChecks4)
+                            };
                             if (resStudents == null)
                             {
                                 CurrentList = new ObservableCollection<object>();
                                 OnPropertyChanged("CurrentList");
                                 return;
                             }
-                            CurrentList = new ObservableCollection<object>(resStudents.node);
-                            countChecks = resStudents.k;
+                            
+                            ShowMessage(GetViewStudents(resStudents, countChecks4));
                             break;
                     }
-                    break;*/
+                    break;
                 default:
                     throw new NotImplementedException();
             }
@@ -613,7 +616,7 @@ public class GuideSystemVM : INotifyPropertyChanged
                     }
                     break;
                 
-                case "Студенты":
+                /*case "Студенты":
                     var comboBoxWindowStudent = new ComboBoxWindow();
                     var vmStudent = new ComboBoxViewModel()
                     {
@@ -648,7 +651,7 @@ public class GuideSystemVM : INotifyPropertyChanged
                             MessageBox.Show("incorrect data");
                             break;
                     }
-                    break;
+                    break;*/
                 default:
                     ShowError();
                     break;
@@ -748,6 +751,23 @@ public class GuideSystemVM : INotifyPropertyChanged
         sb.Append($"Поиск занял {disciplines.k} итераций.");
         sb.Append("Дисциплины: \n");
         foreach (var mark in disciplines.node)
+        {
+            var newMark = mark;
+            newMark.Index = i;
+            sb.Append(newMark + "\n");
+            i++;
+        }
+
+        return sb.ToString();
+    }
+    
+    private string GetViewStudents(List<Student> students, int comparisons)
+    {
+        StringBuilder sb = new StringBuilder();
+        int i = 0;
+        sb.Append($"Поиск занял {comparisons} итераций.");
+        sb.Append("Дисциплины: \n");
+        foreach (var mark in students)
         {
             var newMark = mark;
             newMark.Index = i;

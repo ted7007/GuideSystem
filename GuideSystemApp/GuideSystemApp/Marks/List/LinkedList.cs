@@ -8,7 +8,7 @@ public class LinkedList<T> where T : IComparable<T>
 
     public Node<T> tail;
 
-    public void Add(T data)
+        public void Add(T data)
     {
         Node<T> newNode = new Node<T>(data);
 

@@ -86,6 +86,8 @@ public class HashTable
         if (curPercents < 25f)
         {
             int newCount = _maxCount / 2;
+            if (newCount % 3 == 0)
+                newCount--;
             if (newCount < _startCount)
                 return;
             Resize(newCount);
@@ -94,6 +96,8 @@ public class HashTable
         if (curPercents > 75f)
         {
             int newCount = _maxCount * 2;
+            if (newCount % 3 == 0)
+                newCount++;
             Resize(newCount);
         }
     }
@@ -139,7 +143,7 @@ public class HashTable
         {
             k++;
             j++;
-            if (_table[hash2].Key == key)
+            if (_table[hash2].Key == key && _table[hash2].Status == NodeStatus.Taken)
                 return new Comparisons<Node>(_table[hash2], k);
             hash2 = GetHash2(hash1, j);
         }
@@ -216,18 +220,27 @@ public class HashTable
         int nextKey = cur;
         int realCurHash = hash;
         int prevKey = cur;
-        while ( realCurHash == hash)
+        int lastCollision = hash;
+        while (true)
         { 
              j++;
              prevKey = nextKey;
+                 Console.WriteLine("tyt");
              nextKey = GetHash2(hash, j);
              if(_table[nextKey].Status == NodeStatus.Free && String.IsNullOrEmpty(_table[nextKey].Key))
-                 break;
+                break;
              realCurHash = hashFunc(_table[nextKey].Key);
+             if (realCurHash == hash && _table[nextKey].Status == NodeStatus.Taken)
+                lastCollision = nextKey;
+             
         }
-        
-        _table[cur].Set(_table[prevKey]);
-        _table[prevKey].Clear();
+
+
+        var tmp = new Node()
+            { Hash1 = _table[cur].Hash1, Hash2 = _table[cur].Hash2, Key = _table[cur].Key, Value = _table[cur].Value };
+        _table[cur].Set(_table[lastCollision]);
+        _table[lastCollision].Set(tmp);
+        _table[lastCollision].Clear();
         _curCount--;
     }
     
@@ -273,12 +286,7 @@ public class HashTable
 
     private int GetHash2(int hash1, int j)
     {
-        j = j % 10000;
-        CalculateCoefficients();
-        var res = (hash1 + j * _k1 + j * j * _k2) % _maxCount-1;
-        if (res < 0)
-            res = res * -1;
-        return res;
+        return (int)((hash1 + 3 * j) % _maxCount);
     }
 
     
