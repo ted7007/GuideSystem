@@ -163,7 +163,7 @@ public class GuideSystemVM : INotifyPropertyChanged
                         studentVm.TextBoxDatas[1].Answer,
                         studentVm.TextBoxDatas[2].Answer,
                         studentVm.TextBoxDatas[3].Answer);
-                    // if (!_markRepository.isCorrect(newStudent))
+                    // if (!_studentRepository.newStudent))
                     // {
                     //     ShowError();
                     //     return;

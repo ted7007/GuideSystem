@@ -31,6 +31,11 @@ public class DisciplineRepository
 
             int count = int.Parse(reader.ReadLine()); // Преобразование строку в число
             this.DisciplineArray = new List<Discipline>();
+            this.table = new HachTable(count);
+            this.treeDiscipline = new AVLTree();
+            this.treeInstitute = new AVLTree();
+            this.treeTeacher = new AVLTree();
+            this.treeDepartment = new AVLTree();
             // Записываем данные в массив
             for (int i = 0; i < count; i++)
             {
@@ -98,7 +103,7 @@ public class DisciplineRepository
         treeTeacher.Delete(removeItem.teacher, res);
         treeDepartment.Delete(removeItem.department, res);
         table.Remove(key, res);
-        // Console.WriteLine(treeDiscipline.DisplayTree(treeDiscipline.root));
+        Console.WriteLine(treeDepartment.DisplayTree(treeDepartment.root));
         //заменяем
         if (res != index)
         {
@@ -135,7 +140,7 @@ public class DisciplineRepository
         else
         {
             Comparisons<Discipline> comparisons = new Comparisons<Discipline>(DisciplineArray[res], table.k);
-            table.k = 0;
+            table.k = 1;
             return comparisons;
         }
     }
@@ -160,22 +165,22 @@ public class DisciplineRepository
         switch (type)
         {
             case IndexType.discipline:
-                treeDiscipline.i = 0;
+                treeDiscipline.i = 1;
                 res = treeDiscipline.Find(key);
                 i = treeDiscipline.i;
                 break;
             case IndexType.department:
-                treeDepartment.i = 0;
+                treeDepartment.i = 1;
                 res = treeDepartment.Find(key);
                 i = treeDepartment.i;
                 break;
             case IndexType.teacher:
-                treeTeacher.i = 0;
+                treeTeacher.i = 1;
                 res = treeTeacher.Find(key);
                 i = treeTeacher.i;
                 break;
             case IndexType.institute:
-                treeInstitute.i = 0;
+                treeInstitute.i = 1;
                 res = treeInstitute.Find(key);
                 i = treeInstitute.i;
                 break;

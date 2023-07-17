@@ -158,7 +158,7 @@ public class AVLTree<T> where T : IComparable<T>
         if (node != null)
         {
             sb.Append(GetViewTree(node.Right, level + 1));
-            for (int i = 0; i < level; i++) sb.Append("   ");
+            for (int i = 0; i < level; i++) sb.Append("       ");
             sb.Append(string.Join(", ", node.List)+"\n");
             sb.Append(GetViewTree(node.Left, level + 1));
         }
