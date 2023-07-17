@@ -16,10 +16,6 @@ public class Discipline
         this.teacher = teacher;
         this.institute = institute;
     }
-    public void print()
-    {
-        Console.Write($"[{Index}]: {this.discipline} {this.department} {this.teacher} {this.institute}");
-    }
 
     public override string ToString()
     {

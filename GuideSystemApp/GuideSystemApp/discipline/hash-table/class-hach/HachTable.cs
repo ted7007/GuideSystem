@@ -117,12 +117,12 @@ public class HachTable
             if (items[j].status == 1)
             {
                 int hash2= j != items[j].hash1? j : -1;
-                res = res+  $"[{j}]"+ $"[status:{items[j].status}]" + items[j].print() + $"|hash1={items[j].hash1}|hash2={hash2}|шаг={items[j].k}";
+                res = res+  $"[{j}]"+ $"[status:{items[j].status}]" + items[j].print() + $"|hash1={items[j].hash1}|hash2={hash2}|шаг={items[j].steep}";
                 res = res + "\n";
             }
             else
             {
-                res = res + $"{j}|{items[j].status}";
+                res = res + $"{j}[status:{items[j].status}]";
                 res = res + "\n";
             }
 
