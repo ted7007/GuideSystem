@@ -11,7 +11,7 @@ namespace GuideSystemApp.Student.RB
 {
     public class RB_Tree
     {
-        private TreeNode root;
+        public TreeNode root;
 
         public RB_Tree()
         {
@@ -291,7 +291,7 @@ namespace GuideSystemApp.Student.RB
                var resItem = node.List.Find(expression);
                resItem.Data = newValue;
            }*/
-        private TreeNode Find(string value)
+        public TreeNode Find(string value)
         {
             return FindNode(root, value);
         }
@@ -423,7 +423,7 @@ namespace GuideSystemApp.Student.RB
             return nodes;
         }
 
-        private void InOrderTraversal(TreeNode node, List<TreeNode> nodes)
+        public void InOrderTraversal(TreeNode node, List<TreeNode> nodes)
         {
             if (node == null)
             {
@@ -434,7 +434,7 @@ namespace GuideSystemApp.Student.RB
             nodes.Add(node);
             InOrderTraversal(node.Right, nodes);
         }
-        private TreeNode GetSibling(TreeNode node)
+        public TreeNode GetSibling(TreeNode node)
         {
             if (node == node.Parent.Left)
             {
@@ -456,7 +456,7 @@ namespace GuideSystemApp.Student.RB
             return node != null ? node.value : -1;
         }
 
-        private TreeNode Find(TreeNode node, string key, out int comparisons)
+        public TreeNode Find(TreeNode node, string key, out int comparisons)
         {
             comparisons = 0;
 
@@ -481,7 +481,7 @@ namespace GuideSystemApp.Student.RB
 
             return null;
         }
-        private void PrintTree(TreeNode node, int level)
+        public void PrintTree(TreeNode node, int level)
         {
             if (node == null)
             {
@@ -507,7 +507,69 @@ namespace GuideSystemApp.Student.RB
             PrintTree(node.Left, level + 1);
         }
 
-        private string GetIndent(int level)
+        private class TreeNodeWithLevel
+        {
+            public TreeNode Node;
+            public int Level;
+
+            public TreeNodeWithLevel(TreeNode node, int level)
+            {
+                Node = node;
+                Level = level;
+            }
+        }
+
+        public string GenerateTreeString(TreeNode root)
+        {
+            StringBuilder treeString = new StringBuilder();
+
+            if (root == null)
+            {
+                treeString.AppendLine("Дерево пусто.");
+                return treeString.ToString();
+            }
+
+            Queue<TreeNodeWithLevel> queue = new Queue<TreeNodeWithLevel>();
+            queue.Enqueue(new TreeNodeWithLevel(root, 0));
+
+            while (queue.Count > 0)
+            {
+                var treeNodeWithLevel = queue.Dequeue();
+                var node = treeNodeWithLevel.Node;
+                var level = treeNodeWithLevel.Level;
+
+                string indent = GetIndent(level);
+                treeString.AppendLine($"{indent}{node.Key} ({node.value})");
+
+                if (node.List != null)
+                {
+                    Node current = node.List.head;
+                    while (current != null)
+                    {
+                        string listIndent = GetIndent(level + 1);
+                        treeString.AppendLine($"{listIndent}Index: {current.data}");
+                        current = current.next;
+                    }
+                }
+
+                if (node.Left != null)
+                {
+                    queue.Enqueue(new TreeNodeWithLevel(node.Left, level + 1));
+                }
+
+                if (node.Right != null)
+                {
+                    queue.Enqueue(new TreeNodeWithLevel(node.Right, level + 1));
+                }
+            }
+
+            return treeString.ToString();
+        }
+        public TreeNode GetRoot()
+        {
+            return root;
+        }
+        public string GetIndent(int level)
         {
             const int SpacesPerLevel = 4;
             return new string(' ', level * SpacesPerLevel);

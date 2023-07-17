@@ -311,13 +311,26 @@ namespace GuideSystemApp.Student
             var result = new StringBuilder();
             result.AppendLine("Дерево по ФИО студентов:");
             var studentFIO = GetStudentFIO();
-            foreach (var node in studentFIO)
+
+            if (studentFIO.Count == 0)
             {
-                var indices = string.Join(", ", node.List.GetAllIndices());
-                result.AppendLine($"{node.Key} (Indices: {node.value}{(string.IsNullOrEmpty(indices) ? "" : ", " + indices)})");
+                result.AppendLine("Дерево пусто.");
             }
+            else
+            {
+                RB_Tree fioTree = new RB_Tree();
+                foreach (var node in studentFIO)
+                {
+                    fioTree.Insert(node.Key, node.value);
+                }
+
+                string treeString = fioTree.GenerateTreeString(fioTree.root);
+                result.Append(treeString);
+            }
+
             return result.ToString();
         }
+
 
         public string GetStudentGroupString()
         {

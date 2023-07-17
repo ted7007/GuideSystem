@@ -2,6 +2,7 @@
 
 using GuideSystemApp.Student;
 using GuideSystemApp.Disciplines;
+using GuideSystemApp.Student.RB;
 // Создание экземпляра StudentRepository
 StudentRepository repository = new StudentRepository(20);
 
@@ -18,7 +19,17 @@ Console.WriteLine(studentAdmissionDateTreeString);
 
 string passportHashTableString = repository.GetPassportHashTableString();
 Console.WriteLine(passportHashTableString);
+RB_Tree tree = new RB_Tree();
+tree.Insert("5", 10);
+tree.Insert("3", 30);
+tree.Insert("8", 80);
+tree.Insert("1", 100);
+tree.Insert("4", 40);
+tree.Insert("9", 90);
 
+// Выводим структуру дерева на консоль
+string treeStructure = tree.GenerateTreeString(tree.GetRoot());
+Console.WriteLine(treeStructure);
 
 /*// Вывод всех студентов
 Console.WriteLine("Список всех студентов:");
