@@ -179,7 +179,7 @@ class AVLTree
         return node;
 
     }
-    public NodeAvl EditeNode(NodeAvl node, string key, int value, int index)
+    private NodeAvl EditeNode(NodeAvl node, string key, int value, int index)
     {
         if (node == null)
         {
@@ -223,111 +223,95 @@ class AVLTree
         return node;
     }
 
-    private NodeAvl DeleteNode(NodeAvl node, string key, int value, ref bool deleted)
+private NodeAvl DeleteNode(NodeAvl node, string key, int value, ref bool deleted)
+{
+    if (node == null)
     {
-        if (node == null)
-        {
-            return node;
-        }
-
-        if (key.CompareTo(node.key) < 0)
-        {
-            node.left = DeleteNode(node.left, key, value, ref deleted);
-        }
-        else if (key.CompareTo(node.key) > 0)
-        {
-            node.right = DeleteNode(node.right, key, value, ref deleted);
-        }
-        else
-        {
-            if (node.count > 1 && node.value != value)
-            {
-                node.count--;
-                node.listAvl.RemoveNode(value);
-                return node;
-
-            }
-            if (node.value == value && node.count == 1)
-            {
-                if ((node.left == null) || (node.right == null))
-                {
-                    NodeAvl temp = null;
-                    if (temp == node.left)
-                    {
-                        temp = node.right;
-                    }
-                    else
-                    {
-                        temp = node.left;
-                    }
-
-                    if (temp == null)
-                    {
-                        temp = node;
-                        node = null;
-                    }
-                    else
-                    {
-                        node = temp;
-                    }
-                }
-                else
-                {
-                    NodeAvl temp = FindMaxValueNode(node.left);
-                    node.key = temp.key;
-                    node.value = temp.value;
-                    node.count = temp.count;
-                    node.listAvl = temp.listAvl;
-                    deleted = true;
-                    node.left = DeleteNode(node.left, temp.key, temp.value, ref deleted);
-                }
-                return node;
-            }
-            if (node.count > 1 && node.value == value && !deleted)
-            {
-                node.count -= 1;
-                node.value = node.listAvl.head.Data;
-                node.listAvl.RemoveNode(node.value);
-                return node;
-            }
-            else if (deleted)
-            {
-                node = null;
-            }
-
-        }
-
-        if (node == null)
-        {
-            return node;
-        }
-
-        node.balance = BalanceFactor(node);
-
-        if (node.balance > 1 && BalanceFactor(node.left) >= 0)
-        {
-            return RotateRight(node);
-        }
-
-        if (node.balance > 1 && BalanceFactor(node.left) < 0)
-        {
-            node.left = RotateLeft(node.left);
-            return RotateRight(node);
-        }
-
-        if (node.balance < -1 && BalanceFactor(node.right) <= 0)
-        {
-            return RotateLeft(node);
-        }
-
-        if (node.balance < -1 && BalanceFactor(node.right) > 0)
-        {
-            node.right = RotateRight(node.right);
-            return RotateLeft(node);
-        }
-
         return node;
     }
+
+    if (key.CompareTo(node.key) < 0)
+    {
+        node.left = DeleteNode(node.left, key, value, ref deleted);
+    }
+    else if (key.CompareTo(node.key) > 0)
+    {
+        node.right = DeleteNode(node.right, key, value, ref deleted);
+    }
+    else // key.CompareTo(node.key) == 0
+    {
+        if (node.count > 1 && node.value != value && !deleted)
+        {
+            node.count--;
+            node.listAvl.RemoveNode(value);
+            return node;
+        }
+
+        if (node.value == value && (node.count == 1 || node.count > 1 && deleted))
+        {
+            if (node.left == null && node.right == null)
+            {
+                deleted = true; 
+                return null;
+            }
+            else if (node.left == null)
+            {;
+                deleted = true;
+                return node.right;
+            }
+            else if (node.right == null)
+            {
+                deleted = true;
+                return node.left;
+            }
+            else
+            {
+                NodeAvl temp = FindMaxValueNode(node.left);
+                node.key = temp.key;
+                node.value = temp.value;
+                node.count = temp.count;
+                node.listAvl = temp.listAvl;
+                deleted = true;
+                node.left = DeleteNode(node.left, temp.key, temp.value, ref deleted);
+            }
+        }
+
+        if (node.count > 1 && node.value == value && !deleted)
+        {
+            node.count -= 1;
+            node.value = node.listAvl.head.Data;
+            node.listAvl.RemoveNode(node.value);
+            return node;
+        }
+        // else if (deleted)
+        // {
+        //     return node;
+        // }
+    }
+
+    node.balance = BalanceFactor(node);
+
+    if (node.balance > 1 && BalanceFactor(node.left) >= 0)
+    {
+        node = RotateRight(node);
+    }
+    else if (node.balance > 1 && BalanceFactor(node.left) < 0)
+    {
+        node.left = RotateLeft(node.left);
+        node = RotateRight(node);
+    }
+    else if (node.balance < -1 && BalanceFactor(node.right) <= 0)
+    {
+        node = RotateLeft(node);
+    }
+    else if (node.balance < -1 && BalanceFactor(node.right) > 0)
+    {
+        node.right = RotateRight(node.right);
+        node = RotateLeft(node);
+    }
+
+    return node;
+}
 
     public void Delete(string key, int value)
     {

@@ -74,7 +74,7 @@ public class Collision
         {
             Item item_1 = new Item(item.key, item.value, hash);
 
-            item_1.k = j - 1;
+            item_1.steep = j - 1;
 
             items[index] = item_1;
             count++;
@@ -83,7 +83,7 @@ public class Collision
         if (flag == 2 || j == this.size)
         {
             Item item_1 = new Item(item.key, item.value, hash);
-            item_1.k = j - 2;
+            item_1.steep = j - 2;
             items[hash_2] = item_1;
             count++;
         }
@@ -139,7 +139,6 @@ public class Collision
             return -1;
         }
     }
-
     public void CollisionRemove(Key key, int value, ref Item[] items, ref int count)
     {
         while (items[index].status != 0 && flag == 1 && j <= this.size)

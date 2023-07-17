@@ -6,11 +6,11 @@ public class Item
 
     public int hash1;
 
-    public int k;
+    public int steep;
 
     public Item(Key key, int value, int hash)
     {
-        this.k = 0;
+        this.steep = 0;
         this.hash1 = hash;
         this.key = key;
         this.value = value;
@@ -18,7 +18,7 @@ public class Item
     }
     public Item()
     {
-        this.k = 0;
+        this.steep = 0;
         this.hash1 = -1;
         this.key = null;
         this.value = -1;
