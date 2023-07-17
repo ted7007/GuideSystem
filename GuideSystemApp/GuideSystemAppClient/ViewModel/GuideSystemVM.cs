@@ -163,7 +163,7 @@ public class GuideSystemVM : INotifyPropertyChanged
                         studentVm.TextBoxDatas[1].Answer,
                         studentVm.TextBoxDatas[2].Answer,
                         studentVm.TextBoxDatas[3].Answer);
-                    // if (!_markRepository.isCorrect(newStudent))
+                    // if (!_studentRepository.newStudent))
                     // {
                     //     ShowError();
                     //     return;
@@ -616,7 +616,7 @@ public class GuideSystemVM : INotifyPropertyChanged
                     }
                     break;
                 
-                /*case "Студенты":
+                case "Студенты":
                     var comboBoxWindowStudent = new ComboBoxWindow();
                     var vmStudent = new ComboBoxViewModel()
                     {
@@ -651,7 +651,7 @@ public class GuideSystemVM : INotifyPropertyChanged
                             MessageBox.Show("incorrect data");
                             break;
                     }
-                    break;*/
+                    break;
                 default:
                     ShowError();
                     break;
