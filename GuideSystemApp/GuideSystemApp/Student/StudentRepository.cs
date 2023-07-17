@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using GuideSystemApp.Student.Hash;
 using GuideSystemApp.Student.List;
 using GuideSystemApp.Student.RB;
@@ -305,47 +306,55 @@ namespace GuideSystemApp.Student
             return true;
         }
 
-        public void PrintStudentFIO()
+        public string GetStudentFIOString()
         {
-            Console.WriteLine("Дерево по ФИО студентов:");
+            var result = new StringBuilder();
+            result.AppendLine("Дерево по ФИО студентов:");
             var studentFIO = GetStudentFIO();
             foreach (var node in studentFIO)
             {
                 var indices = string.Join(", ", node.List.GetAllIndices());
-                Console.WriteLine($"{node.Key} (Indices: {node.value}{(string.IsNullOrEmpty(indices) ? "" : ", " + indices)})");
+                result.AppendLine($"{node.Key} (Indices: {node.value}{(string.IsNullOrEmpty(indices) ? "" : ", " + indices)})");
             }
+            return result.ToString();
         }
 
-        public void PrintStudentGroup()
+        public string GetStudentGroupString()
         {
-            Console.WriteLine("Дерево по группам студентов:");
+            var result = new StringBuilder();
+            result.AppendLine("Дерево по группам студентов:");
             var studentGroup = GetStudentGroup();
             foreach (var node in studentGroup)
             {
                 var indices = string.Join(", ", node.List.GetAllIndices());
-                Console.WriteLine($"{node.Key} (Indices: {node.value}{(string.IsNullOrEmpty(indices) ? "" : ", " + indices)})");
+                result.AppendLine($"{node.Key} (Indices: {node.value}{(string.IsNullOrEmpty(indices) ? "" : ", " + indices)})");
             }
+            return result.ToString();
         }
 
-        public void PrintStudentAdmissionDate()
+        public string GetStudentAdmissionDateString()
         {
-            Console.WriteLine("Дерево по дате поступления студентов:");
+            var result = new StringBuilder();
+            result.AppendLine("Дерево по дате поступления студентов:");
             var studentAdmissionDate = GetStudentAdmissionDate();
             foreach (var node in studentAdmissionDate)
             {
                 var indices = string.Join(", ", node.List.GetAllIndices());
-                Console.WriteLine($"{node.Key} (Indices: {node.value}{(string.IsNullOrEmpty(indices) ? "" : ", " + indices)})");
+                result.AppendLine($"{node.Key} (Indices: {node.value}{(string.IsNullOrEmpty(indices) ? "" : ", " + indices)})");
             }
+            return result.ToString();
         }
 
-        public void PrintPassportHashTable()
+        public string GetPassportHashTableString()
         {
-            Console.WriteLine("Хэш-таблица студентов:");
+            var result = new StringBuilder();
+            result.AppendLine("Хэш-таблица студентов:");
             var hashTable = GetHashTable();
             foreach (var item in hashTable)
             {
-                Console.WriteLine($"{item.Key}: {item.Value}");
+                result.AppendLine($"{item.Key}: {item.Value}");
             }
+            return result.ToString();
         }
     }
 }

@@ -7,89 +7,19 @@ StudentRepository repository = new StudentRepository(20);
 
 // Чтение данных из файла
 repository.ReadFromFile("input_student.txt");
-repository.PrintStudentFIO();
-Console.WriteLine();
-repository.PrintStudentGroup();
-Console.WriteLine();
-repository.PrintStudentAdmissionDate();
-Console.WriteLine();
-repository.PrintPassportHashTable();
-Console.WriteLine();
+string studentFIOTreeString = repository.GetStudentFIOString();
+Console.WriteLine(studentFIOTreeString);
+
+string studentGroupTreeString = repository.GetStudentGroupString();
+Console.WriteLine(studentGroupTreeString);
+
+string studentAdmissionDateTreeString = repository.GetStudentAdmissionDateString();
+Console.WriteLine(studentAdmissionDateTreeString);
+
+string passportHashTableString = repository.GetPassportHashTableString();
+Console.WriteLine(passportHashTableString);
 
 
-int comparisonsByFIO;
-string searchFIO = "Бухалихин Богдан Владиславович";
-var studentsByFIO = repository.SearchByFIO(searchFIO, out comparisonsByFIO);
-
-if (studentsByFIO.Count > 0)
-{
-    Console.WriteLine($"Результаты поиска по ФИО \"{searchFIO}\":");
-    foreach (var student in studentsByFIO)
-    {
-        Console.WriteLine($"ФИО: {student.FIO}, Группа: {student.Group}, Паспорт: {student.Passport}, Дата поступления: {student.AdmissionDate}");
-    }
-    Console.WriteLine($"Количество сравнений при поиске: {comparisonsByFIO}");
-}
-else
-{
-    Console.WriteLine($"Студенты с ФИО \"{searchFIO}\" не найдены.");
-}
-Console.WriteLine();
-
-// Пример поиска по группе
-int comparisonsByGroup;
-string searchGroup = "Б9121-09.03.04прогин";
-var studentsByGroup = repository.SearchByGroup(searchGroup, out comparisonsByGroup);
-
-if (studentsByGroup.Count > 0)
-{
-    Console.WriteLine($"Результаты поиска по группе \"{searchGroup}\":");
-    foreach (var student in studentsByGroup)
-    {
-        Console.WriteLine($"ФИО: {student.FIO}, Группа: {student.Group}, Паспорт: {student.Passport}, Дата поступления: {student.AdmissionDate}");
-    }
-    Console.WriteLine($"Количество сравнений при поиске: {comparisonsByGroup}");
-}
-else
-{
-    Console.WriteLine($"Студенты из группы \"{searchGroup}\" не найдены.");
-}
-Console.WriteLine();
-
-// Пример поиска по дате поступления
-int comparisonsByAdmissionDate;
-string searchAdmissionDate = "12.06.2020";
-var studentsByAdmissionDate = repository.SearchByAdmissionDate(searchAdmissionDate, out comparisonsByAdmissionDate);
-
-if (studentsByAdmissionDate.Count > 0)
-{
-    Console.WriteLine($"Результаты поиска по дате поступления \"{searchAdmissionDate}\":");
-    foreach (var student in studentsByAdmissionDate)
-    {
-        Console.WriteLine($"ФИО: {student.FIO}, Группа: {student.Group}, Паспорт: {student.Passport}, Дата поступления: {student.AdmissionDate}");
-    }
-    Console.WriteLine($"Количество сравнений при поиске: {comparisonsByAdmissionDate}");
-}
-else
-{
-    Console.WriteLine($"Студенты с датой поступления \"{searchAdmissionDate}\" не найдены.");
-}
-Console.WriteLine();
-
-string searchPassport = "4321 086453";
-int comparisonsByPassport;
-Student foundStudent = repository.SearchByPassport(searchPassport, out comparisonsByPassport);
-
-if (foundStudent != null)
-{
-    Console.WriteLine("Студент найден:");
-    Console.WriteLine($"ФИО: {foundStudent.FIO}, Группа: {foundStudent.Group}, Паспорт: {foundStudent.Passport}, Дата поступления: {foundStudent.AdmissionDate}");
-    Console.WriteLine($"Количество сравнений при поиске: {comparisonsByPassport}");
-}
-else
-{
-    Console.WriteLine($"Студент с паспортом \"{searchPassport}\" не найден.");
-}
 /*// Вывод всех студентов
 Console.WriteLine("Список всех студентов:");
 var allStudents = repository.GetAll();
