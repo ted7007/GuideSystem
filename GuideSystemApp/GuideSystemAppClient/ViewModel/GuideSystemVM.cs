@@ -641,7 +641,7 @@ public class GuideSystemVM : INotifyPropertyChanged
                             MessageBox.Show(_studentRepository.GetStudentAdmissionDateString());
                             break;
                         case  "Хеш таблица":
-                            MessageBox.Show(_studentRepository.GetHashTableString());
+                            MessageBox.Show(_studentRepository.GetPassportHashTableString());
                             break;
                           
                         default:
