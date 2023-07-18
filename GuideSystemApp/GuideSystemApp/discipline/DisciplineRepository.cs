@@ -103,7 +103,7 @@ public class DisciplineRepository
         treeTeacher.Delete(removeItem.teacher, res);
         treeDepartment.Delete(removeItem.department, res);
         table.Remove(key, res);
-        Console.WriteLine(treeDepartment.DisplayTree(treeDepartment.root));
+        Console.WriteLine(table.Print());
         //заменяем
         if (res != index)
         {
@@ -219,7 +219,7 @@ public class DisciplineRepository
         {
             return false;
         }
-        if (discipline.department == null && discipline.discipline == null && discipline.institute == null && discipline.teacher == null)
+        if (discipline.department == null || discipline.discipline == null || discipline.institute == null || discipline.teacher == null)
         {
             return false;
         }

@@ -46,6 +46,7 @@ public class HachTable
             {
                 items[hash] = item;
                 this.count--;
+                items[hash].status = 2;
             }
             else
             {
@@ -63,7 +64,7 @@ public class HachTable
 
         }
         float capacity = (float)count / size;
-        if (capacity < 0.25 && initial_size < size)
+        if (capacity < 0.4 && initial_size < size)
         {
             Increase(item, "remove");
         }
@@ -122,7 +123,7 @@ public class HachTable
             }
             else
             {
-                res = res + $"{j}[status:{items[j].status}]";
+                res = res + $"[{j}][status:{items[j].status}]";
                 res = res + "\n";
             }
 
