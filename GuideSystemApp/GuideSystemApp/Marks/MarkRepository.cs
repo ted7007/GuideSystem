@@ -20,6 +20,8 @@ public class MarkRepository
 
     public AVLTree<KeyValue> MarkIndexByDate { get; set; }
 
+    public AVLTree<KeyValue> MarkindexByKafedra { get; set; }
+
     public MarkRepository(int startCount)
     {
         MarkArray = new List<Mark>();
@@ -28,6 +30,7 @@ public class MarkRepository
         MarkIndexByDiscipline = new AVLTree<KeyValue>();
         MarkIndexByValue = new AVLTree<KeyValue>();
         MarkIndexByDate = new AVLTree<KeyValue>();
+        MarkindexByKafedra = new AVLTree<KeyValue>();
     }
 
     public void WriteToFile(string path)
@@ -39,7 +42,7 @@ public class MarkRepository
 
             foreach (var mark in MarkArray)
             {
-                writer.WriteLine($"{mark.PassportSerialNumber}/{mark.Discipline}/{mark.Date}/{(int)mark.Value}");
+                writer.WriteLine($"{mark.PassportSerialNumber}/{mark.Discipline}/{mark.Date}/{(int)mark.Value}/{mark.Kafedra}");
             }
         }
     }
@@ -62,7 +65,8 @@ public class MarkRepository
                     PassportSerialNumber = markStr[0],
                     Discipline = markStr[1],
                     Date = markStr[2],
-                    Value = (MarkEnum)int.Parse(markStr[3])
+                    Value = (MarkEnum)int.Parse(markStr[3]),
+                    Kafedra = markStr[4]
                 };
                 MarkArray.Add(mark);
             }
@@ -77,6 +81,7 @@ public class MarkRepository
         MarkIndexByDiscipline = new AVLTree<KeyValue>();
         MarkIndexByValue = new AVLTree<KeyValue>();
         MarkIndexByDate = new AVLTree<KeyValue>();
+        MarkindexByKafedra = new AVLTree<KeyValue>();
         for (int i = 0; i < MarkArray.Count; i++)
         {
             MarkIndexByPassport.Add(new KeyValue() {Key = MarkArray[i].PassportSerialNumber, Value = i});
@@ -95,6 +100,7 @@ public class MarkRepository
         MarkIndexByDiscipline.Add(new KeyValue() {Key = MarkArray[i].Discipline, Value = i});
         MarkIndexByDate.Add(new KeyValue() {Key = MarkArray[i].Date, Value = i});
         MarkIndexByValue.Add(new KeyValue() {Key = ((int)MarkArray[i].Value).ToString(), Value = i});
+        MarkindexByKafedra.Add(new KeyValue() {Key = MarkArray[i].Kafedra, Value = i });
         HashTable.Insert(
             MarkArray[i].PassportSerialNumber + MarkArray[i].Discipline + MarkArray[i].Date +
             ((int)MarkArray[i].Value), i);
@@ -111,6 +117,8 @@ public class MarkRepository
             (elem => elem.Key == deleteElem.Date && elem.Value == i));
         MarkIndexByValue.Remove(new KeyValue() {Key = ((int)MarkArray[i].Value).ToString(), Value = i},
             (elem => elem.Key == ((int)deleteElem.Value).ToString() && elem.Value == i));
+        MarkIndexByValue.Remove(new KeyValue() {Key = MarkArray[i].Kafedra, Value = i},
+            (elem => elem.Key == deleteElem.Kafedra && elem.Value == i));
         HashTable.Remove(
             MarkArray[i].PassportSerialNumber + MarkArray[i].Discipline + MarkArray[i].Date +
             ((int)MarkArray[i].Value));
@@ -214,6 +222,9 @@ public class MarkRepository
             case IndexType.Value:
                 res = MarkIndexByValue.Find(new KeyValue() { Key = key });
                 break;
+            case IndexType.Kafedra:
+                res = MarkindexByKafedra.Find(new KeyValue() {Key=key});
+                break;
             default:
                 return null;
         }
@@ -248,6 +259,8 @@ public class MarkRepository
                 return MarkIndexByDate.GetView();
             case IndexType.Value:
                 return MarkIndexByValue.GetView();
+            case IndexType.Kafedra:
+                return MarkindexByKafedra.GetView();
         }
 
         return "Ошибка";
