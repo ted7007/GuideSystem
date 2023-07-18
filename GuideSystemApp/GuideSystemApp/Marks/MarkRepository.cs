@@ -88,6 +88,7 @@ public class MarkRepository
             MarkIndexByDiscipline.Add(new KeyValue() {Key = MarkArray[i].Discipline, Value = i});
             MarkIndexByDate.Add(new KeyValue() {Key = MarkArray[i].Date, Value = i});
             MarkIndexByValue.Add(new KeyValue() {Key = ((int)MarkArray[i].Value).ToString(), Value = i});
+            MarkindexByKafedra.Add(new KeyValue() {Key = MarkArray[i].Kafedra, Value = i});
             HashTable.Insert(
                 MarkArray[i].PassportSerialNumber + MarkArray[i].Discipline + MarkArray[i].Date +
                 ((int)MarkArray[i].Value), i);

@@ -116,11 +116,11 @@ public class Mark : IComparable<Mark>
 
     public static bool ValidateKafedra(string value)
     {
-         if (value == null)
+        if (value == null)
             return false;
         
-        // Паттерн для валидации паспорта
-        string pattern = @"^\d{4} \d{6}$";
+        // Паттерн для валидации переменной
+        string pattern = @"^[а-яА-ЯёЁ\s]+$";
 
         // Проверка на соответствие паттерну
         Match match = Regex.Match(value, pattern);
