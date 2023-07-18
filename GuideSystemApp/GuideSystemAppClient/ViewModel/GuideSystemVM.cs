@@ -106,7 +106,7 @@ public class GuideSystemVM : INotifyPropertyChanged
                     }
                     
                     if(_disciplineRepository.FindByKey(vm.Discipline, GuideSystemApp.Disciplines.IndexType.discipline) == null
-                       )//|| _studentRepository.FindByKey(vm.PassportSerialNumber))
+                       || _studentRepository.SearchByPassport(vm.PassportSerialNumber, out int some) == null)
                         ShowError("Ошибка валидации");
                     
                     
