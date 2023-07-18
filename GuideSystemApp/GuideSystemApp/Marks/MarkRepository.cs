@@ -91,7 +91,7 @@ public class MarkRepository
             MarkindexByKafedra.Add(new KeyValue() {Key = MarkArray[i].Kafedra, Value = i});
             HashTable.Insert(
                 MarkArray[i].PassportSerialNumber + MarkArray[i].Discipline + MarkArray[i].Date +
-                ((int)MarkArray[i].Value), i);
+                ((int)MarkArray[i].Value) + MarkArray[i].Kafedra, i);
         }
     }
 
@@ -104,7 +104,7 @@ public class MarkRepository
         MarkindexByKafedra.Add(new KeyValue() {Key = MarkArray[i].Kafedra, Value = i });
         HashTable.Insert(
             MarkArray[i].PassportSerialNumber + MarkArray[i].Discipline + MarkArray[i].Date +
-            ((int)MarkArray[i].Value), i);
+            ((int)MarkArray[i].Value) + MarkArray[i].Kafedra, i);
     }
 
     private void RemoveFromIndexes(int i)
@@ -122,12 +122,12 @@ public class MarkRepository
             (elem => elem.Key == deleteElem.Kafedra && elem.Value == i));
         HashTable.Remove(
             MarkArray[i].PassportSerialNumber + MarkArray[i].Discipline + MarkArray[i].Date +
-            ((int)MarkArray[i].Value));
+            ((int)MarkArray[i].Value)+ MarkArray[i].Kafedra);
     }
     private int? Find(Mark mark)
     {
         var res = HashTable.Find(mark.PassportSerialNumber + mark.Discipline + mark.Date +
-                              ((int)mark.Value));
+                              ((int)mark.Value) + mark.Kafedra);
         return res.node.Value;
     }
 
