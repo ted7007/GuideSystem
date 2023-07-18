@@ -16,6 +16,8 @@ public class MarkFieldsInputVM: INotifyPropertyChanged
     private string markValue;
 
     private string date;
+
+    private string kafedra;
     
     /// <summary>
     /// Серия и номер паспорта разделенные пробелом
@@ -36,6 +38,8 @@ public class MarkFieldsInputVM: INotifyPropertyChanged
     /// Дата сдачи
     /// </summary>
     public string Date { get => date; set => SetField(ref date, value); }
+
+    public string Kafedra { get => kafedra; set => SetField(ref kafedra, value); }
     
     public RelayCommand AcceptCommand => new RelayCommand(Accept);
 

@@ -17,6 +17,7 @@
             <ColumnDefinition></ColumnDefinition>
             <ColumnDefinition></ColumnDefinition>
             <ColumnDefinition></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
         </Grid.ColumnDefinitions>
         
         
@@ -38,6 +39,11 @@
         <StackPanel Grid.Column="3" Margin="10">
             <TextBlock Padding="5" Text="Оценка от 2 до 5" TextWrapping="WrapWithOverflow"></TextBlock>
             <TextBox Text="{Binding Path=Value}" TextWrapping="WrapWithOverflow"></TextBox>
+        </StackPanel>
+
+        <StackPanel Grid.Column="4" Margin="10">
+            <TextBlock Padding="5" Text="Кафедра" TextWrapping="WrapWithOverflow"></TextBlock>
+            <TextBox Text="{Binding Path=Kafedra}" TextWrapping="WrapWithOverflow"></TextBox>
         </StackPanel>
         
         <StackPanel Grid.Row="1" Grid.ColumnSpan="4" Orientation="Horizontal" HorizontalAlignment="Center">
