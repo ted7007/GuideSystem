@@ -99,14 +99,14 @@ public class GuideSystemVM : INotifyPropertyChanged
                     var res = markFieldsInpitWindow.ShowDialog();
                     if(res == null || !(bool)res)
                         return;
-                    if (!Mark.Validate(vm.PassportSerialNumber, vm.Discipline, vm.Date, vm.Value))
+                    if (!Mark.Validate(vm.PassportSerialNumber, vm.Discipline, vm.Date, vm.Value, vm.Kafedra))
                     {
                         ShowError();
                         return;
                     }
                     
-                    if(_disciplineRepository.FindByKey(vm.Discipline, GuideSystemApp.Disciplines.IndexType.discipline) == null
-                       )//|| _studentRepository.FindByKey(vm.PassportSerialNumber))
+                    if(_disciplineRepository.FindUnique(vm.Discipline, vm.Kafedra) == null
+                       || _studentRepository.SearchByPassport(vm.PassportSerialNumber, out int some) == null)
                         ShowError("Ошибка валидации");
                     
                     
@@ -116,7 +116,8 @@ public class GuideSystemVM : INotifyPropertyChanged
                         PassportSerialNumber = vm.PassportSerialNumber,
                         Discipline = vm.Discipline,
                         Date = vm.Date,
-                        Value = (MarkEnum)int.Parse(vm.Value)
+                        Value = (MarkEnum)int.Parse(vm.Value), 
+                        Kafedra = vm.Kafedra
                     });
                     CurrentList = new ObservableCollection<object>(_markRepository.GetAll());
                     break;
@@ -243,10 +244,11 @@ public class GuideSystemVM : INotifyPropertyChanged
                         new SearchModel() { SearchName = "По дисциплине", SearchFields = new[] { "Дисциплина" } },
                         new SearchModel() { SearchName = "По дате сдачи", SearchFields = new[] { "Дата сдачи" } },
                         new SearchModel() { SearchName = "По оценке", SearchFields = new[] { "Оценка" } },
+                        new SearchModel() { SearchName = "По кафедре", SearchFields = new[] {"Кафедра"}},
                         new SearchModel()
                         {
                             SearchName = "Поиск конкретной оценки",
-                            SearchFields = new[] { "Паспорт", "Дисциплина", "Дата сдачи", "Оценка" }
+                            SearchFields = new[] { "Паспорт", "Дисциплина", "Дата сдачи", "Оценка", "Кафедра" }
                         }
                     });
                     w.DataContext = vm;
@@ -317,16 +319,31 @@ public class GuideSystemVM : INotifyPropertyChanged
                             }
                             MessageBox.Show(GetViewMarks(resMarks));
                             break;
+                        case "По кафедре":
+                            if (!Mark.ValidateKafedra(vm.FieldInputList.First().FieldValue))
+                            {
+                                ShowError();
+                                return;
+                            }
+                            resMarks = 
+                                _markRepository.FindByKey(vm.FieldInputList.First().FieldValue, IndexType.Kafedra);
+                            if (resMarks == null)
+                            {
+                                ShowError("Не найдено.");
+                                return;
+                            }
+                            MessageBox.Show(GetViewMarks(resMarks));
+                        break;
                         case "Поиск конкретной оценки":
                             
                             var fields = vm.FieldInputList.Select(f => f.FieldValue).ToList();
-                            if (!Mark.Validate(fields[0], fields[1], fields[2], fields[3]))
+                            if (!Mark.Validate(fields[0], fields[1], fields[2], fields[3], fields[4]))
                             {
                                 ShowError();
                                 return;
                             }
                             var resMarksOne = 
-                                _markRepository.FindUnique(new Mark() { PassportSerialNumber = fields[0], Date = fields[2], Discipline = fields[1], Value = (MarkEnum)Int32.Parse(fields[3])});
+                                _markRepository.FindUnique(new Mark() { PassportSerialNumber = fields[0], Date = fields[2], Discipline = fields[1], Value = (MarkEnum)Int32.Parse(fields[3]), Kafedra = fields[4]});
                             
                             if (resMarksOne == null)
                             {
@@ -542,6 +559,7 @@ public class GuideSystemVM : INotifyPropertyChanged
                             "Дерево по полю Дисциплины",
                             "Дерево по полю Даты сдачи",
                             "Дерево по полю Оценки",
+                            "Дерево по полю Кафедра",
                             "Хеш таблица"
                         }
                     };
@@ -562,6 +580,9 @@ public class GuideSystemVM : INotifyPropertyChanged
                               break;
                           case  "Дерево по полю Оценки":
                               ShowMessage(_markRepository.GetIndexView(IndexType.Value));
+                              break;
+                          case "Дерево по полю Кафедра":
+                              ShowMessage(_markRepository.GetIndexView(IndexType.Kafedra));
                               break;
                           case  "Хеш таблица":
                               ShowMessage(_markRepository.GetUniqueView());

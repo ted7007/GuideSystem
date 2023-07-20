@@ -5,5 +5,7 @@ public enum IndexType
     Passport,
     Discipline,
     Date,
-    Value
+    Value,
+
+    Kafedra
 }

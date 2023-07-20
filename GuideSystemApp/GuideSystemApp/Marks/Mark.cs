@@ -23,6 +23,8 @@ public class Mark : IComparable<Mark>
     /// </summary>
     public MarkEnum Value { get; set; }
 
+    public string Kafedra { get; set; }
+
     /// <summary>
     /// Дата сдачи
     /// </summary>
@@ -32,7 +34,7 @@ public class Mark : IComparable<Mark>
 
     public int CompareTo(Mark? other)
     {
-        if (other.Date == Date && other.Discipline == Discipline && other.Value == Value &&
+        if (other.Date == Date && other.Discipline == Discipline && other.Kafedra == Kafedra &&
             other.PassportSerialNumber == PassportSerialNumber)
             return 0;
         if (other.Value > Value)
@@ -43,7 +45,7 @@ public class Mark : IComparable<Mark>
     
     public override string ToString()
     {
-        return $"[{Index}]: Паспорт: {PassportSerialNumber}, Дисциплина: {Discipline}, Дата: {Date}, Оценка: {Value}";
+        return $"[{Index}]: Паспорт: {PassportSerialNumber}, Дисциплина: {Discipline}, Кафедра: {Kafedra}, Дата: {Date}, Оценка: {Value}";
     }
     
     public static bool ValidatePassport(string passport)
@@ -112,6 +114,21 @@ public class Mark : IComparable<Mark>
         return true;
     }
 
+    public static bool ValidateKafedra(string value)
+    {
+        if (value == null)
+            return false;
+        
+        // Паттерн для валидации переменной
+        string pattern = @"^[а-яА-ЯёЁ\s]+$";
+
+        // Проверка на соответствие паттерну
+        Match match = Regex.Match(value, pattern);
+
+        // Возвращаем результат валидации
+        return match.Success;
+    }
+
     public static bool ValidateValue(string value)
     {
         if (value == null)
@@ -123,13 +140,13 @@ public class Mark : IComparable<Mark>
         return false;
     }
 
-    public static bool Validate(string passport, string discipline, string date, string value)
+    public static bool Validate(string passport, string discipline, string date, string value, string Kafedra)
     {
-        return ValidatePassport(passport) && ValidateDiscipline(discipline) && ValidateDate(date) && ValidateValue(value);
+        return ValidatePassport(passport) && ValidateDiscipline(discipline) && ValidateDate(date) && ValidateValue(value) && ValidateKafedra(Kafedra);
     }
     
     public bool Validate()
     {
-        return ValidatePassport(PassportSerialNumber) && ValidateDiscipline(Discipline) && ValidateDate(Date);
+        return ValidatePassport(PassportSerialNumber) && ValidateDiscipline(Discipline) && ValidateDate(Date) && ValidateKafedra(Kafedra);
     }
 }
