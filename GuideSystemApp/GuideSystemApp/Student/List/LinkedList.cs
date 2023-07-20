@@ -13,9 +13,10 @@ namespace GuideSystemApp.Student.List
 
         // 2. Инициализация списка
         public void Inicializaciya(ref Node head)
-            {
-                head = null;
-            }
+        {
+            head = null;
+            tail = null; // Добавляем инициализацию хвоста
+        }
 
         // 3. Освобождение памяти (удаление всего списка)
         public void DeletePamyat(ref Node head)
@@ -36,22 +37,22 @@ namespace GuideSystemApp.Student.List
 
         // 4. Метод добавляющий новый элемент в конец
         public void AddNode(ref Node head, int d)
-            {
-                Node p = new Node();
-                p.data = d;
-                p.next = null;
+        {
+            Node p = new Node();
+            p.data = d;
+            p.next = null;
 
-                if (head == null)
-                    head = p;
-                else
-                {
-                    Node current = head;
-                    while (current.next != null)
-                        current = current.next;
-                    current.next = p;
-                    p.next = null;
-                }
+            if (head == null)
+            {
+                head = p;
+                tail = p; // Устанавливаем хвост на новый узел, если список пуст
             }
+            else
+            {
+                tail.next = p; // Обновляем ссылку next у текущего хвоста
+                tail = p; // Обновляем хвост на новый узел
+            }
+        }
 
         // 5. Метод удаления элемента перед заданным
         public void DeletePeredElementom(ref Node head, int a)
@@ -98,6 +99,11 @@ namespace GuideSystemApp.Student.List
             if (head.data == index)
             {
                 head = head.next;
+                // Если удаляемый узел является последним, обновляем хвост на новый последний узел или null
+                if (head == null)
+                {
+                    tail = null;
+                }
                 return;
             }
 
@@ -109,6 +115,11 @@ namespace GuideSystemApp.Student.List
                 if (current.data == index)
                 {
                     previous.next = current.next;
+                    // Если удаляемый узел является последним, обновляем хвост на новый последний узел или null
+                    if (current.next == null)
+                    {
+                        tail = previous;
+                    }
                     return;
                 }
 

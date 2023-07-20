@@ -766,7 +766,7 @@ public class GuideSystemVM : INotifyPropertyChanged
         StringBuilder sb = new StringBuilder();
         int i = 0;
         sb.Append($"Поиск занял {comparisons} итераций.");
-        sb.Append("Дисциплины: \n");
+        sb.Append("Студенты: \n");
         foreach (var mark in students)
         {
             var newMark = mark;

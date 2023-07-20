@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection.Emit;
 using System.Text;
 using GuideSystemApp.Student.Hash;
 using GuideSystemApp.Student.List;
@@ -11,7 +12,7 @@ namespace GuideSystemApp.Student
     public class StudentRepository
     {
         public List<Student> StudentArray;
-        public HashTable HashTable;
+        public HashTable HashTableStudenst;
         private RB_Tree StudentFIO;
         private RB_Tree Group;
         private RB_Tree AdmissionDate;
@@ -22,7 +23,7 @@ namespace GuideSystemApp.Student
             StudentFIO = new RB_Tree();
             Group = new RB_Tree();
             AdmissionDate = new RB_Tree();
-            HashTable = new HashTable(count);
+            HashTableStudenst = new HashTable(count);
         }
 
         public void ReadFromFile(string path)
@@ -50,7 +51,7 @@ namespace GuideSystemApp.Student
                 StudentFIO.Insert(StudentArray[i].FIO, i);
                 Group.Insert(StudentArray[i].Group, i);
                 AdmissionDate.Insert(StudentArray[i].AdmissionDate, i);
-                HashTable.Add(StudentArray[i].Passport, i);
+                HashTableStudenst.Add(StudentArray[i].Passport, i);
             }
         }
 
@@ -71,7 +72,7 @@ namespace GuideSystemApp.Student
             StudentFIO.Insert(StudentArray[i].FIO, i);
             Group.Insert(StudentArray[i].Group, i);
             AdmissionDate.Insert(StudentArray[i].AdmissionDate, i);
-            HashTable.Add(StudentArray[i].Passport, i);
+            HashTableStudenst.Add(StudentArray[i].Passport, i);
         }
 
         public List<Student> GetAll()
@@ -102,23 +103,29 @@ namespace GuideSystemApp.Student
         public void Delete(Student student)
         {
             int res = Find(student);
-            if (res == -1 || res >= StudentArray.Count)
+            if (res == -1)
                 return;
 
-            var removeItem = StudentArray[res];
-            int lastIndex = StudentArray.Count - 1;
+            StudentArray.RemoveAt(res);
 
-            if (res == lastIndex)
+            // Очистка и пересоздание структур
+            StudentFIO = new RB_Tree();
+            Group = new RB_Tree();
+            AdmissionDate = new RB_Tree();
+            HashTableStudenst.Delete(student.Passport, res);
+
+            // Обновление индексов в хэш-таблице
+            for (int i = res; i < StudentArray.Count; i++)
             {
-                RemoveFromIndexes(res);
-                StudentArray.RemoveAt(res);
+                HashTableStudenst.Edit(StudentArray[i].Passport, i);
             }
-            else
+            // Перенос данных в новые структуры
+            for (int i = 0; i < StudentArray.Count; i++)
             {
-                StudentArray[res] = StudentArray[lastIndex];
-                StudentArray.RemoveAt(lastIndex);
+                StudentFIO.Insert(StudentArray[i].FIO, i);
+                Group.Insert(StudentArray[i].Group, i);
+                AdmissionDate.Insert(StudentArray[i].AdmissionDate, i);
 
-                UpdateIndexesAfterDelete(removeItem, lastIndex, res);
             }
         }
 
@@ -127,7 +134,7 @@ namespace GuideSystemApp.Student
             StudentFIO.Delete(StudentArray[i].FIO, i);
             Group.Delete(StudentArray[i].Group, i);
             AdmissionDate.Delete(StudentArray[i].AdmissionDate, i);
-            HashTable.Delete(StudentArray[i].Passport, i);
+            HashTableStudenst.Delete(StudentArray[i].Passport, i);
         }
 
         private void UpdateIndexesAfterDelete(Student student, int oldIndex, int newIndex)
@@ -135,7 +142,7 @@ namespace GuideSystemApp.Student
             StudentFIO.EditValue(student.FIO, oldIndex, newIndex);
             Group.EditValue(student.Group, oldIndex, newIndex);
             AdmissionDate.EditValue(student.AdmissionDate, oldIndex, newIndex);
-            HashTable.Edit(student.Passport, newIndex);
+            HashTableStudenst.Edit(student.Passport, newIndex);
         }
 
         public int Find(Student student)
@@ -143,7 +150,7 @@ namespace GuideSystemApp.Student
             int comparisonCount = 0;
 
             // Поиск по хеш-таблице
-            var res = HashTable.Search(student.Passport, out int hashTableComparisons);
+            var res = HashTableStudenst.Search(student.Passport, out int hashTableComparisons);
             comparisonCount += hashTableComparisons;
             if (res != -1)
                 return res;
@@ -195,8 +202,6 @@ namespace GuideSystemApp.Student
             Console.WriteLine($"Поиск по ФИО: {fio}, Шагов: {comparisons}");
             return students;
         }
-
-
 
         public List<Student> SearchByGroup(string group, out int comparisons)
         {
@@ -261,7 +266,7 @@ namespace GuideSystemApp.Student
         public Student SearchByPassport(string passport, out int comparisons)
         {
             comparisons = 0;
-            foreach (var node in HashTable.GetItems())
+            foreach (var node in HashTableStudenst.GetItems())
             {
                 if (node.Key == passport)
                 {
@@ -291,14 +296,14 @@ namespace GuideSystemApp.Student
 
         public List<KeyValuePair<string, int>> GetHashTable()
         {
-            return HashTable.GetItems();
+            return HashTableStudenst.GetItems();
         }
 
         private bool Validate(Student student)
         {
             // Валидация данных студента
             if (string.IsNullOrEmpty(student.FIO) || string.IsNullOrEmpty(student.Group) ||
-                string.IsNullOrEmpty(student.Passport) || string.IsNullOrEmpty(student.AdmissionDate))
+                string.IsNullOrEmpty(student.Passport) || string.IsNullOrEmpty(student.AdmissionDate)||HashTableStudenst.SearchStudent(student.Passport)==true)
             {
                 return false;
             }
@@ -308,33 +313,22 @@ namespace GuideSystemApp.Student
 
         public string GetStudentFIOString()
         {
-            var result = new StringBuilder();
+            return StudentFIO.GetTreeString(StudentFIO.root);
+            /*var result = new StringBuilder();
             result.AppendLine("Дерево по ФИО студентов:");
             var studentFIO = GetStudentFIO();
-
-            if (studentFIO.Count == 0)
+            foreach (var node in studentFIO)
             {
-                result.AppendLine("Дерево пусто.");
+                var indices = string.Join(", ", node.List.GetAllIndices());
+                result.AppendLine($"{node.Key} (Indices: {node.value}{(string.IsNullOrEmpty(indices) ? "" : ", " + indices)})");
             }
-            else
-            {
-                RB_Tree fioTree = new RB_Tree();
-                foreach (var node in studentFIO)
-                {
-                    fioTree.Insert(node.Key, node.value);
-                }
-
-                string treeString = fioTree.GenerateTreeString(fioTree.root);
-                result.Append(treeString);
-            }
-
-            return result.ToString();
+            return result.ToString();*/
         }
-
 
         public string GetStudentGroupString()
         {
-            var result = new StringBuilder();
+            return Group.GetTreeString(Group.root);
+            /*var result = new StringBuilder();
             result.AppendLine("Дерево по группам студентов:");
             var studentGroup = GetStudentGroup();
             foreach (var node in studentGroup)
@@ -342,12 +336,13 @@ namespace GuideSystemApp.Student
                 var indices = string.Join(", ", node.List.GetAllIndices());
                 result.AppendLine($"{node.Key} (Indices: {node.value}{(string.IsNullOrEmpty(indices) ? "" : ", " + indices)})");
             }
-            return result.ToString();
+            return result.ToString();*/
         }
 
         public string GetStudentAdmissionDateString()
         {
-            var result = new StringBuilder();
+            return AdmissionDate.GetTreeString(AdmissionDate.root);
+            /*var result = new StringBuilder();
             result.AppendLine("Дерево по дате поступления студентов:");
             var studentAdmissionDate = GetStudentAdmissionDate();
             foreach (var node in studentAdmissionDate)
@@ -355,19 +350,21 @@ namespace GuideSystemApp.Student
                 var indices = string.Join(", ", node.List.GetAllIndices());
                 result.AppendLine($"{node.Key} (Indices: {node.value}{(string.IsNullOrEmpty(indices) ? "" : ", " + indices)})");
             }
-            return result.ToString();
+            return result.ToString();*/
         }
 
         public string GetPassportHashTableString()
         {
-            var result = new StringBuilder();
-            result.AppendLine("Хэш-таблица студентов:");
-            var hashTable = GetHashTable();
-            foreach (var item in hashTable)
-            {
-                result.AppendLine($"{item.Key}: {item.Value}");
-            }
-            return result.ToString();
+            string hashTableString = HashTableStudenst.GetHashTableString();
+            return hashTableString;
+            /* var result = new StringBuilder();
+             result.AppendLine("Хэш-таблица студентов:");
+             var hashTable = GetHashTable();
+             foreach (var item in hashTable)
+             {
+                 result.AppendLine($"{item.Key}: {item.Value}");
+             }
+             return result.ToString();*/
         }
     }
 }

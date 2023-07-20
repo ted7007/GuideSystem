@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace GuideSystemApp.Student.Hash
 {
-    internal class Item
+    public class Item
 
     {
         public string key;

@@ -8,11 +8,11 @@ namespace GuideSystemApp.Student.Hash
 {
     public class HashTable
     {
-        private Item[] items;
-        private int size;
-        private int count;
-        private int initialSize;
-        private double loadFactorThreshold = 0.75; // Пороговое значение заполненности для увеличения и уменьшения размера
+        public Item[] items;
+        public int size;
+        public int count;
+        public int initialSize;
+        public double loadFactorThreshold = 0.75; // Пороговое значение заполненности для увеличения и уменьшения размера
 
         // private int hash;
 
@@ -179,7 +179,27 @@ namespace GuideSystemApp.Student.Hash
 
             return -1;
         }
-        private Item SearchNode(string key3)
+        public bool SearchStudent(string key)
+        {
+            int index = FirstHash(key);
+            int cur = index;
+            int j = 1;
+
+            while (j <= size)
+            {
+                
+                if (items[cur].status == 1 && items[cur].key == key)
+                {
+                    return true;
+                }
+
+                cur = SecondHash(index, j);
+                j++;
+            }
+
+            return false;
+        }
+        public Item SearchNode(string key3)
         {
             int index = FirstHash(key3);
             int cur = index;
@@ -231,7 +251,26 @@ namespace GuideSystemApp.Student.Hash
             }
             Console.WriteLine(size);
         }
+        public string GetHashTableString()
+        {
+            StringBuilder hashTableString = new StringBuilder();
 
+            for (int j = 0; j < size; j++)
+            {
+                if (items[j].status == 1 || items[j].status == 2 || items[j].status == 0)
+                {
+                    hashTableString.AppendLine($"{j}|{" "}{items[j].key}" +                                               
+                                                $" {items[j].value}" +
+                                                $" " +
+                                                $"status = {items[j].status}" +
+                                                $" |hash = {items[j].hash}");
+                }
+            }
+
+            hashTableString.AppendLine($"{size}");
+
+            return hashTableString.ToString();
+        }
         public List<KeyValuePair<string, int>> GetItems()
         {
             List<KeyValuePair<string, int>> itemList = new List<KeyValuePair<string, int>>();

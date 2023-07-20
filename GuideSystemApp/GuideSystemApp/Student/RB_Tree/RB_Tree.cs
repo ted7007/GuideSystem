@@ -203,17 +203,32 @@ namespace GuideSystemApp.Student.RB
         }
         public void Delete(string key, int index)
         {
+
             var node = Find(key);
             if (node != null)
             {
-                if (node.List != null && node.List.Contains(index))
                 {
-                    node.List.DeleteNode(ref node.List.head, index);
+                    if(node.value == index && node.List.head == null)
+                    {
+                        DeleteTreeNode(root, node.Key, index);
+                    }
+                    else if (node.List.head != null&&node.value==index)                  
+                    {
+                            var a = node.List.head.data;
+                            node.List.head.data = node.value;
+                            node.value = a;
+                            node.List.DeleteNode(ref node.List.head, index);                       
+                    }
+                    else
+                    {
+                        node.List.DeleteNode(ref node.List.head, index);
+                    }
+
                 }
             }
         }
 
-        private TreeNode DeleteNode(TreeNode root, string key, int i)
+        private TreeNode DeleteTreeNode(TreeNode root, string key, int i)
         {
             if (root == null)
             {
@@ -224,11 +239,11 @@ namespace GuideSystemApp.Student.RB
 
             if (comparisonResult < 0)
             {
-                root.Left = DeleteNode(root.Left, key, i);
+                root.Left = DeleteTreeNode(root.Left, key, i);
             }
             else if (comparisonResult > 0)
             {
-                root.Right = DeleteNode(root.Right, key, i);
+                root.Right = DeleteTreeNode(root.Right, key, i);
             }
             else
             {
@@ -278,7 +293,7 @@ namespace GuideSystemApp.Student.RB
 
                     TreeNode successor = FindMinimum(root.Right);
                     root.Key = successor.Key;
-                    root.Right = DeleteNode(root.Right, successor.Key, i);
+                    root.Right = DeleteTreeNode(root.Right, successor.Key, i);
                 }
             }
 
@@ -506,37 +521,13 @@ namespace GuideSystemApp.Student.RB
 
             PrintTree(node.Left, level + 1);
         }
-
-        private class TreeNodeWithLevel
-        {
-            public TreeNode Node;
-            public int Level;
-
-            public TreeNodeWithLevel(TreeNode node, int level)
-            {
-                Node = node;
-                Level = level;
-            }
-        }
-
-        public string GenerateTreeString(TreeNode root)
+        public string GetTreeString(TreeNode node, int level = 0)
         {
             StringBuilder treeString = new StringBuilder();
 
-            if (root == null)
+            if (node != null)
             {
-                treeString.AppendLine("Дерево пусто.");
-                return treeString.ToString();
-            }
-
-            Queue<TreeNodeWithLevel> queue = new Queue<TreeNodeWithLevel>();
-            queue.Enqueue(new TreeNodeWithLevel(root, 0));
-
-            while (queue.Count > 0)
-            {
-                var treeNodeWithLevel = queue.Dequeue();
-                var node = treeNodeWithLevel.Node;
-                var level = treeNodeWithLevel.Level;
+                treeString.Append(GetTreeString(node.Right, level + 1));
 
                 string indent = GetIndent(level);
                 treeString.AppendLine($"{indent}{node.Key} ({node.value})");
@@ -552,26 +543,15 @@ namespace GuideSystemApp.Student.RB
                     }
                 }
 
-                if (node.Left != null)
-                {
-                    queue.Enqueue(new TreeNodeWithLevel(node.Left, level + 1));
-                }
-
-                if (node.Right != null)
-                {
-                    queue.Enqueue(new TreeNodeWithLevel(node.Right, level + 1));
-                }
+                treeString.Append(GetTreeString(node.Left, level + 1));
             }
 
             return treeString.ToString();
         }
-        public TreeNode GetRoot()
-        {
-            return root;
-        }
+
         public string GetIndent(int level)
         {
-            const int SpacesPerLevel = 4;
+            const int SpacesPerLevel = 12;
             return new string(' ', level * SpacesPerLevel);
         }
     }
