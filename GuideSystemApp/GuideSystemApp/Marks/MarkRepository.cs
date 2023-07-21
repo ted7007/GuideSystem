@@ -90,8 +90,7 @@ public class MarkRepository
             MarkIndexByValue.Add(new KeyValue() {Key = ((int)MarkArray[i].Value).ToString(), Value = i});
             MarkindexByKafedra.Add(new KeyValue() {Key = MarkArray[i].Kafedra, Value = i});
             HashTable.Insert(
-                MarkArray[i].PassportSerialNumber + MarkArray[i].Discipline + MarkArray[i].Date +
-                ((int)MarkArray[i].Value) + MarkArray[i].Kafedra, i);
+                MarkArray[i].PassportSerialNumber + MarkArray[i].Discipline + MarkArray[i].Date + MarkArray[i].Kafedra, i);
         }
     }
 
@@ -103,8 +102,7 @@ public class MarkRepository
         MarkIndexByValue.Add(new KeyValue() {Key = ((int)MarkArray[i].Value).ToString(), Value = i});
         MarkindexByKafedra.Add(new KeyValue() {Key = MarkArray[i].Kafedra, Value = i });
         HashTable.Insert(
-            MarkArray[i].PassportSerialNumber + MarkArray[i].Discipline + MarkArray[i].Date +
-            ((int)MarkArray[i].Value) + MarkArray[i].Kafedra, i);
+            MarkArray[i].PassportSerialNumber + MarkArray[i].Discipline + MarkArray[i].Date + MarkArray[i].Kafedra, i);
     }
 
     private void RemoveFromIndexes(int i)
@@ -121,35 +119,23 @@ public class MarkRepository
         MarkIndexByValue.Remove(new KeyValue() {Key = MarkArray[i].Kafedra, Value = i},
             (elem => elem.Key == deleteElem.Kafedra && elem.Value == i));
         HashTable.Remove(
-            MarkArray[i].PassportSerialNumber + MarkArray[i].Discipline + MarkArray[i].Date +
-            ((int)MarkArray[i].Value)+ MarkArray[i].Kafedra);
+            MarkArray[i].PassportSerialNumber + MarkArray[i].Discipline + MarkArray[i].Date + MarkArray[i].Kafedra);
     }
     private int? Find(Mark mark)
     {
-        var res = HashTable.Find(mark.PassportSerialNumber + mark.Discipline + mark.Date +
-                              ((int)mark.Value) + mark.Kafedra);
+        var res = HashTable.Find(mark.PassportSerialNumber + mark.Discipline + mark.Date + mark.Kafedra);
         return res.node.Value;
     }
 
     public Comparisons<Mark> FindUnique(Mark mark)
     {
-        var res = HashTable.Find(mark.PassportSerialNumber + mark.Discipline + mark.Date +
-                                 ((int)mark.Value));
+        var res = HashTable.Find(mark.PassportSerialNumber + mark.Discipline + mark.Date + mark.Kafedra);
         return new Comparisons<Mark>(MarkArray[(int)res.node.Value], res.k);
     }
     
     public void Add(Mark mark)
     {
         MarkArray.Add(mark);
-        // var tmp = MarkArray;
-        // MarkArray = new List<Mark>(MarkArray.Count+1);
-        // for (int i = 0; i < tmp.Count; i++)
-        // {
-        //     MarkArray[i] = tmp[i];
-        // }
-        //
-        // int newNum = tmp.Count;
-        // MarkArray[newNum] = mark;
         AddToIndexes(MarkArray.Count-1);
     }
 
@@ -168,23 +154,14 @@ public class MarkRepository
 
         MarkArray[num] = new Mark()
         {
-            Date = MarkArray[^1].Date, Discipline = MarkArray[^1].Discipline, Value = MarkArray[^1].Value,
-            PassportSerialNumber = MarkArray[^1].PassportSerialNumber
+            Date = MarkArray[^1].Date, 
+            Discipline = MarkArray[^1].Discipline, 
+            Value = MarkArray[^1].Value,
+            PassportSerialNumber = MarkArray[^1].PassportSerialNumber,
+            Kafedra = MarkArray[^1].Kafedra
         };
         MarkArray.Remove(MarkArray[^1]);
         ChangeIndexForMark(MarkArray[num], MarkArray.Count, num);
-        // var removeItem = MarkArray[(int)res];
-        // RemoveFromIndexes((int)res);
-        // var tmp = MarkArray;
-        // MarkArray = new Mark[tmp.Length-1];
-        // int count = 0;
-        // foreach (var i in MarkArray)
-        // {
-        //     if (i == removeItem)
-        //         continue;
-        //     MarkArray[count] = i;
-        //     count++;
-        // }
     }
 
     private void ChangeIndexForMark(Mark mark, int oldNum, int newNum)
@@ -202,8 +179,7 @@ public class MarkRepository
             key => key.Value == oldNum, 
             new KeyValue() { Key = ((int)mark.Value).ToString(), Value = newNum});
         HashTable.Edit(
-            mark.PassportSerialNumber + mark.Discipline + mark.Date +
-            ((int)mark.Value), newNum);
+            mark.PassportSerialNumber + mark.Discipline + mark.Date + mark.Kafedra, newNum);
     }
 
     public Comparisons<List<Mark>> FindByKey(string key, IndexType type)
