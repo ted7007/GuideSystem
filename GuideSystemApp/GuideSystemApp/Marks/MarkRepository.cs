@@ -130,11 +130,13 @@ public class MarkRepository
     public Comparisons<Mark> FindUnique(Mark mark)
     {
         var res = HashTable.Find(mark.PassportSerialNumber + mark.Discipline + mark.Date + mark.Kafedra);
+        if (res == null)
+            return null;
         return new Comparisons<Mark>(MarkArray[(int)res.node.Value], res.k);
     }
     
     public void Add(Mark mark)
-    {
+    { 
         MarkArray.Add(mark);
         AddToIndexes(MarkArray.Count-1);
     }

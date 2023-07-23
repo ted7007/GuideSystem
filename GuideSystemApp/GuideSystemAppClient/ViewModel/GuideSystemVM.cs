@@ -97,28 +97,37 @@ public class GuideSystemVM : INotifyPropertyChanged
                     var vm = new MarkFieldsInputVM();
                     markFieldsInpitWindow.DataContext = vm;
                     var res = markFieldsInpitWindow.ShowDialog();
-                    if(res == null || !(bool)res)
+                    if (res == null || !(bool)res)
                         return;
-                    if (!Mark.Validate(vm.PassportSerialNumber, vm.Discipline, vm.Date, vm.Value, vm.Kafedra))
+                    if (!Mark.Validate(vm.PassportSerialNumber, vm.Discipline, vm.Date, vm.Kafedra))
+                    {
+                        ShowError();
+                        return;
+                    }
+
+                    if (_disciplineRepository.FindUnique(vm.Discipline, vm.Kafedra) == null
+                        || _studentRepository.SearchByPassport(vm.PassportSerialNumber, out int some) == null)
+                    {
+                         ShowError("Ошибка валидации");
+                         return;
+                    }
+
+                    var markToAdd = new Mark()
+                    {
+                        PassportSerialNumber = vm.PassportSerialNumber,
+                        Discipline = vm.Discipline,
+                        Date = vm.Date,
+                        Value = (MarkEnum)int.Parse(vm.Value),
+                        Kafedra = vm.Kafedra
+                    };
+                    if (_markRepository.FindUnique(markToAdd) != null)
                     {
                         ShowError();
                         return;
                     }
                     
-                    if(_disciplineRepository.FindUnique(vm.Discipline, vm.Kafedra) == null
-                       || _studentRepository.SearchByPassport(vm.PassportSerialNumber, out int some) == null)
-                        ShowError("Ошибка валидации");
                     
-                    
-                    
-                    _markRepository.Add(new Mark()
-                    {
-                        PassportSerialNumber = vm.PassportSerialNumber,
-                        Discipline = vm.Discipline,
-                        Date = vm.Date,
-                        Value = (MarkEnum)int.Parse(vm.Value), 
-                        Kafedra = vm.Kafedra
-                    });
+                    _markRepository.Add(markToAdd);
                     CurrentList = new ObservableCollection<object>(_markRepository.GetAll());
                     break;
                 case "Дисциплины":
@@ -198,7 +207,8 @@ public class GuideSystemVM : INotifyPropertyChanged
                         PassportSerialNumber = mark.PassportSerialNumber,
                         Discipline = mark.Discipline,
                         Date = mark.Date,
-                        Value = mark.Value
+                        Value = mark.Value,
+                        Kafedra = mark.Kafedra
                     });
                     CurrentList = new ObservableCollection<object>(_markRepository.GetAll());
                     OnPropertyChanged("CurrentList");
@@ -248,7 +258,7 @@ public class GuideSystemVM : INotifyPropertyChanged
                         new SearchModel()
                         {
                             SearchName = "Поиск конкретной оценки",
-                            SearchFields = new[] { "Паспорт", "Дисциплина", "Дата сдачи", "Оценка", "Кафедра" }
+                            SearchFields = new[] { "Паспорт", "Дисциплина", "Дата сдачи", "Кафедра" }
                         }
                     });
                     w.DataContext = vm;
@@ -337,13 +347,13 @@ public class GuideSystemVM : INotifyPropertyChanged
                         case "Поиск конкретной оценки":
                             
                             var fields = vm.FieldInputList.Select(f => f.FieldValue).ToList();
-                            if (!Mark.Validate(fields[0], fields[1], fields[2], fields[3], fields[4]))
+                            if (!Mark.Validate(fields[0], fields[1], fields[2], fields[3]))
                             {
                                 ShowError();
                                 return;
                             }
                             var resMarksOne = 
-                                _markRepository.FindUnique(new Mark() { PassportSerialNumber = fields[0], Date = fields[2], Discipline = fields[1], Value = (MarkEnum)Int32.Parse(fields[3]), Kafedra = fields[4]});
+                                _markRepository.FindUnique(new Mark() { PassportSerialNumber = fields[0], Date = fields[2], Discipline = fields[1], Kafedra = fields[3]});
                             
                             if (resMarksOne == null)
                             {
