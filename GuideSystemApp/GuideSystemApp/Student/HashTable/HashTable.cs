@@ -223,7 +223,15 @@ namespace GuideSystemApp.Student.Hash
             var node = SearchNode(key);
             node.value = newValue;
         }
-
+        // Метод очистки хэш-таблицы(для студенов)))
+        public void Clear()
+        {
+            for (int i = 0; i < size; i++)
+            {
+                items[i].Clear();
+            }
+            count = 0;
+        }
         public bool Check(string key3, int index)
         {
             if (items[index].status == 1 &&

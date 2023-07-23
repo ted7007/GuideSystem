@@ -506,7 +506,8 @@ namespace GuideSystemApp.Student.RB
             PrintTree(node.Right, level + 1);
 
             string indent = GetIndent(level);
-            Console.WriteLine($"{indent}{node.Key} ({node.value})");
+            string nodeColor = node.Color == Colors.Red ? "Red" : "Black"; // Получаем символ цвета вершины
+            Console.WriteLine($"{indent}{nodeColor} {node.Key} ({node.value})");
 
             if (node.List != null)
             {
@@ -530,7 +531,8 @@ namespace GuideSystemApp.Student.RB
                 treeString.Append(GetTreeString(node.Right, level + 1));
 
                 string indent = GetIndent(level);
-                treeString.AppendLine($"{indent}{node.Key} ({node.value})");
+                string nodeColor = node.Color == Colors.Red ? "Red" : "Black"; // Получаем символ цвета вершины
+                treeString.AppendLine($"{indent}{nodeColor} {node.Key} ({node.value})");
 
                 if (node.List != null)
                 {

@@ -28,9 +28,17 @@ namespace GuideSystemApp.Student
 
         public void ReadFromFile(string path)
         {
+
             using (StreamReader reader = new StreamReader(path))
-            {
+            {    
+                // Очищаем массив перед новой загрузкой данных
+
+                HashTableStudenst.Clear();
+                StudentArray = new List<Student>();
                 int count = int.Parse(reader.ReadLine()); // Преобразование строки в число
+                StudentFIO = new RB_Tree();
+                Group = new RB_Tree();
+                AdmissionDate = new RB_Tree();
 
                 // Записываем данные в массив
                 for (int i = 0; i < count; i++)

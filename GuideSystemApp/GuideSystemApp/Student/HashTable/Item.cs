@@ -28,5 +28,12 @@ namespace GuideSystemApp.Student.Hash
             value = -1;
             status = 0;
         }
+        public void Clear()
+        {
+            hash = -1;
+            key = null;
+            value = -1;
+            status = 0;
+        }
     }
 }
